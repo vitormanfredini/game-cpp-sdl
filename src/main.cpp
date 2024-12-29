@@ -9,6 +9,8 @@
 #include "DeltaTime.h"
 #include "Menu.h"
 #include <random>
+#include "HealthBar.h"
+#include "Projectile.h"
 
 int main() {
 
@@ -43,6 +45,8 @@ int main() {
     SDL_Texture* texture_dog = BinaryResourceLoader::toTexture(renderer, "images/dog.png");
     SDL_Texture* texture_enemy = BinaryResourceLoader::toTexture(renderer, "images/enemy.png");
     SDL_Texture* texture_menu = BinaryResourceLoader::toTexture(renderer, "images/menu.png");
+    SDL_Texture* texture_projectile = BinaryResourceLoader::toTexture(renderer, "images/projectile.png");
+    SDL_Texture* texture_healthbar = SDLUtils::textureFromRGB(renderer,240,20,20);
 
     Character mainChar;
     mainChar.setTexture(texture_dog);
@@ -66,6 +70,12 @@ int main() {
 
     Menu menu;
     menu.setTexture(texture_menu);
+
+    HealthBar healthBar;
+    healthBar.setTexture(texture_healthbar);
+    healthBar.setPosition(0,0);
+
+    std::vector<Projectile> projectiles = {};
     
     Input input;
     DeltaTime deltaTime;
@@ -102,11 +112,57 @@ int main() {
         auto deltaTimeInfo = deltaTime.getDeltaTimeInfo();
 
         if(!paused){
-            input.update(deltaTimeInfo.deltaTime);
-            mainChar.move(input.getMovementDirections(), deltaTimeInfo.multiplier);
-            for(Character& enemy : enemies){
-                enemy.moveTowards(mainChar, deltaTimeInfo.multiplier);
+
+            for(int update=0;update<deltaTimeInfo.updatesNeeded;update++){
+                
+                input.update();
+
+                mainChar.update();
+                mainChar.move(input.getMovementDirections(), deltaTimeInfo.multiplier);
+                
+                if(mainChar.shouldFireProjectile()){
+                    Projectile newProjectile {};
+                    newProjectile.setAttack(1.0f);
+                    newProjectile.setPosition(
+                        mainChar.getX() + (mainChar.getWidth() / 2.0f),
+                        mainChar.getY() + (mainChar.getHeight() / 2.0f)
+                    );
+                    newProjectile.setTexture(texture_projectile);
+                    newProjectile.setVelocity(1.0f, 0.5f);
+                    projectiles.push_back(newProjectile);
+                }
+
+                for(Projectile& projectile : projectiles){
+                    projectile.update();
+                }
+
+                std::vector<int> diedEnemies = {};
+
+                for(size_t c=0; c<enemies.size(); c++){
+                    enemies[c].moveTowards(mainChar, deltaTimeInfo.multiplier);
+                    if(mainChar.isCollidingWith(enemies[c])){
+                        mainChar.takeDamageFrom(enemies[c].getAttack());
+                    }
+                    for(Projectile& projectile : projectiles){
+                        if(projectile.isCollidingWith(enemies[c])){
+                            enemies[c].takeDamageFrom(projectile.getAttack());
+                        }
+                    }
+                    if(enemies[c].getHealth() <= 0.0f){
+                        diedEnemies.push_back(c);
+                    }
+                }
+                for(int index : diedEnemies){
+                    enemies.erase(enemies.begin() + index);
+                }
             }
+
+            healthBar.setHealth(mainChar.getHealth());
+
+            if(mainChar.getHealth() <= 0.0f){
+                paused = true;
+            }
+            
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -115,6 +171,10 @@ int main() {
         mainChar.draw(renderer);
         for(Character& enemy : enemies){
             enemy.draw(renderer);
+        }
+        healthBar.draw(renderer);
+        for(Projectile& projectile : projectiles){
+            projectile.draw(renderer);
         }
         if(paused){
             menu.draw(renderer);
@@ -126,7 +186,10 @@ int main() {
     }
 
     SDL_DestroyTexture(texture_dog);
+    SDL_DestroyTexture(texture_enemy);
     SDL_DestroyTexture(texture_menu);
+    SDL_DestroyTexture(texture_projectile);
+    SDL_DestroyTexture(texture_healthbar);
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

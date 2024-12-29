@@ -3,5 +3,5 @@
 This is a project I'm doing for studying C++ and SDL.
 
 Todo:
-load game objects from a json file
-render stuff proportionally to the width of the window
+when firing projectiles, get closest enemy to shoot in its direction.
+render stuff proportionally to the width of the window.

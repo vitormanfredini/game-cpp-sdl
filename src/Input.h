@@ -21,10 +21,10 @@ private:
     MovingAverage horizontal {10};
     MovingAverage vertical {10};
 
-    double ellapsedTimeSinceLastUpdate = 0;
-    double timeBetweenUpdates = 1000 / 60;
+public:
 
-    void updateDirections(){
+    void update(){
+
         if(up){
             vertical.addValue(-1.0f);
         }else if(down){
@@ -39,20 +39,6 @@ private:
             horizontal.addValue(-1.0f);
         }else{
             horizontal.addValue(0.0f);
-        }
-    }
-
-public:
-
-    void update(double deltaTime){
-
-        ellapsedTimeSinceLastUpdate += deltaTime;
-        int updatesNeeded = floor(static_cast<float>(ellapsedTimeSinceLastUpdate) / static_cast<float>(timeBetweenUpdates));
-        for(int c=0; c<updatesNeeded; c++){
-            updateDirections();
-        }
-        if(updatesNeeded > 0){
-            ellapsedTimeSinceLastUpdate -= timeBetweenUpdates * updatesNeeded;
         }
         
     }

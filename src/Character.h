@@ -6,8 +6,10 @@
 #include "BinaryResourceLoader.h"
 #include <SDL2/SDL_render.h>
 #include "Input.h"
+#include "interfaces/ICollidable.h"
+#include "Projectile.h"
 
-class Character {
+class Character: public ICollidable {
 
 private:
     SDL_Rect rect = {0, 0, 200, 200};
@@ -16,6 +18,11 @@ private:
     float velocity = 5.0f;
     float x = 0.0f;
     float y = 0.0f;
+    float health = 1.0f;
+    float attack = 0.001;
+
+    int fireEveryXUpdates = 30;
+    int updatesUntilNextFire = 0;
 
     void updateRect(){
         rect.x = round(x);
@@ -23,6 +30,21 @@ private:
     }
 
 public:
+
+    void update(){
+        if(updatesUntilNextFire <= 0){
+            updatesUntilNextFire = fireEveryXUpdates;
+        }
+        updatesUntilNextFire -= 1;
+    }
+
+    float getHealth(){
+        return health;
+    }
+
+    float getAttack(){
+        return attack;
+    }
 
     void setTexture(SDL_Texture* _texture){
         texture = _texture;
@@ -59,6 +81,14 @@ public:
         }, deltaTimeMultiplier);
     }
 
+    void takeDamageFrom(float damage){
+        health -= damage;
+    }
+
+    double distanceFrom(Character& other){
+        return sqrt(pow(other.getX() - x, 2) +  pow(y - other.getY(), 2));
+    }
+
     void draw(SDL_Renderer *renderer) {
         if(texture == nullptr){
             return;
@@ -67,11 +97,23 @@ public:
         SDL_RenderCopy(renderer, texture, NULL, &rect);
     }
 
-    float getX(){
+    bool shouldFireProjectile(){
+        return updatesUntilNextFire == 0;
+    }
+
+    virtual float getX(){
         return x;
     }
 
-    float getY(){
+    virtual float getY(){
         return y;
+    }
+
+    virtual int getWidth(){
+        return rect.w;
+    }
+
+    virtual int getHeight(){
+        return rect.h;
     }
 };
