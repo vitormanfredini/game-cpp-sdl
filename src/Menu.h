@@ -10,7 +10,7 @@
 class Menu {
 
 private:
-    SDL_Rect rect = {0, 0, 800, 600};
+    SDL_Rect rect = {0, 0, 2*800, 2*600};
     SDL_Texture* texture = nullptr;
 
     float x = 0.0f;

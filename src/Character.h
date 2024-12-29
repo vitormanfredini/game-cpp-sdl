@@ -10,7 +10,7 @@
 class Character {
 
 private:
-    SDL_Rect rect = {0, 0, 200, 120};
+    SDL_Rect rect = {0, 0, 200, 200};
     SDL_Texture* texture = nullptr;
 
     float velocity = 5.0f;
