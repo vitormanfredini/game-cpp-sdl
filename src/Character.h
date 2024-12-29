@@ -7,7 +7,7 @@
 #include <SDL2/SDL_render.h>
 #include "Input.h"
 
-class PlayableCharacter {
+class Character {
 
 private:
     SDL_Rect rect = {0, 0, 200, 120};
@@ -34,10 +34,29 @@ public:
         updateRect();
     }
 
+    void setVelocity(float newVelocity) {
+        velocity = newVelocity;
+    }
+
     void move(MovementDirections directions, float deltaTimeMultiplier){
         y += directions.vertical * velocity * deltaTimeMultiplier;
         x += directions.horizontal * velocity * deltaTimeMultiplier;
         updateRect();
+    }
+
+    void moveTowards(Character& other, float deltaTimeMultiplier){
+
+        float deltaX = other.getX() - x;
+        float absDeltaX = abs(deltaX);
+        float deltaY = other.getY() - y;
+        float absDeltaY = abs(deltaY);
+
+        float maxAbsDelta = abs(absDeltaX) > abs(absDeltaY) ? absDeltaX : absDeltaY;
+
+        move(MovementDirections {
+            deltaX / maxAbsDelta,
+            deltaY / maxAbsDelta,
+        }, deltaTimeMultiplier);
     }
 
     void draw(SDL_Renderer *renderer) {
@@ -46,5 +65,13 @@ public:
         }
 
         SDL_RenderCopy(renderer, texture, NULL, &rect);
+    }
+
+    float getX(){
+        return x;
+    }
+
+    float getY(){
+        return y;
     }
 };

@@ -4,7 +4,7 @@
 
 #include "SDLUtils.h"
 #include "BinaryResourceLoader.h"
-#include "PlayableCharacter.h"
+#include "Character.h"
 #include "Input.h"
 #include "DeltaTime.h"
 #include "Menu.h"
@@ -40,11 +40,17 @@ int main() {
     }
 
     SDL_Texture* texture_rabisco = BinaryResourceLoader::toTexture(renderer, "images/rabisco.png");
+    SDL_Texture* texture_enemy = BinaryResourceLoader::toTexture(renderer, "images/enemy.png");
     SDL_Texture* texture_menu = BinaryResourceLoader::toTexture(renderer, "images/menu.png");
 
-    PlayableCharacter mainChar;
+    Character mainChar;
     mainChar.setTexture(texture_rabisco);
     mainChar.setPosition(220,80);
+
+    Character enemy;
+    enemy.setTexture(texture_enemy);
+    enemy.setPosition(650,500);
+    enemy.setVelocity(1.0f);
 
     Menu menu;
     menu.setTexture(texture_menu);
@@ -86,13 +92,14 @@ int main() {
         if(!paused){
             input.update(deltaTimeInfo.deltaTime);
             mainChar.move(input.getMovementDirections(), deltaTimeInfo.multiplier);
+            enemy.moveTowards(mainChar, deltaTimeInfo.multiplier);
         }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
-
         
         mainChar.draw(renderer);
+        enemy.draw(renderer);
         if(paused){
             menu.draw(renderer);
         }

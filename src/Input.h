@@ -6,8 +6,8 @@
 #include "MovingAverage.h"
 
 struct MovementDirections {
-    float vertical;
     float horizontal;
+    float vertical;
 };
 
 class Input {
@@ -97,8 +97,8 @@ public:
 
     MovementDirections getMovementDirections(){
         return {
-            vertical.getAverage(),
-            horizontal.getAverage()
+            horizontal.getAverage(),
+            vertical.getAverage()
         };
     }
 
