@@ -60,14 +60,13 @@ public:
         velocity = newVelocity;
     }
 
-    void move(MovementDirections directions, float deltaTimeMultiplier){
+    void move(MovementDirection directions, float deltaTimeMultiplier){
         y += directions.vertical * velocity * deltaTimeMultiplier;
         x += directions.horizontal * velocity * deltaTimeMultiplier;
         updateRect();
     }
 
-    void moveTowards(Character& other, float deltaTimeMultiplier){
-
+    MovementDirection getMovementDirectionTowards(Character& other){
         float deltaX = other.getX() - x;
         float absDeltaX = abs(deltaX);
         float deltaY = other.getY() - y;
@@ -75,14 +74,23 @@ public:
 
         float maxAbsDelta = abs(absDeltaX) > abs(absDeltaY) ? absDeltaX : absDeltaY;
 
-        move(MovementDirections {
+        return MovementDirection {
             deltaX / maxAbsDelta,
             deltaY / maxAbsDelta,
-        }, deltaTimeMultiplier);
+        };
     }
 
-    void takeDamageFrom(float damage){
-        health -= damage;
+    void moveTowards(Character& other, float deltaTimeMultiplier){
+        move(getMovementDirectionTowards(other), deltaTimeMultiplier);
+    }
+
+    void takeDamageFrom(Projectile& projectile){
+        health -= projectile.getAttack();
+        projectile.takeHit();
+    }
+
+    void takeDamageFrom(Character& other){
+        health -= other.getAttack();
     }
 
     double distanceFrom(Character& other){
@@ -99,6 +107,19 @@ public:
 
     bool shouldFireProjectile(){
         return updatesUntilNextFire == 0;
+    }
+
+    Projectile createProjectile(Character& towardsOther, SDL_Texture* texture_projectile){
+        Projectile projectile {};
+        projectile.setAttack(1.0f);
+        projectile.setPosition(
+            getX() + (getWidth() / 2.0f),
+            getY() + (getHeight() / 2.0f)
+        );
+        projectile.setTexture(texture_projectile);
+        projectile.setDirection(getMovementDirectionTowards(towardsOther));
+        projectile.setVelocity(3.0f);
+        return projectile;
     }
 
     virtual float getX(){

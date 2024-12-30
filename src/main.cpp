@@ -8,9 +8,9 @@
 #include "Input.h"
 #include "DeltaTime.h"
 #include "Menu.h"
-#include <random>
 #include "HealthBar.h"
 #include "Projectile.h"
+#include "CharacterUtils.h"
 
 int main() {
 
@@ -52,20 +52,17 @@ int main() {
     mainChar.setTexture(texture_dog);
     mainChar.setPosition(220,80);
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-
     int numberOfEnemies = 15;
     std::vector<Character> enemies = {};
     for(size_t c=0; c<numberOfEnemies; c++){
         enemies.push_back(Character{});
         enemies[c].setTexture(texture_enemy);
+        std::vector<float> pos = CharacterUtils::getRandomPositionOutsideScreen();
         enemies[c].setPosition(
-            round(2.0f * 800.0f * dis(gen)),
-            round(2.0f * 600.0f * dis(gen))
+            pos[0],
+            pos[1]
         );
-        enemies[c].setVelocity(0.5f + 2.5f * dis(gen));
+        enemies[c].setVelocity(2.0f);
     }
 
     Menu menu;
@@ -118,18 +115,15 @@ int main() {
                 input.update();
 
                 mainChar.update();
-                mainChar.move(input.getMovementDirections(), deltaTimeInfo.multiplier);
+                mainChar.move(input.getMovementDirection(), deltaTimeInfo.multiplier);
                 
                 if(mainChar.shouldFireProjectile()){
-                    Projectile newProjectile {};
-                    newProjectile.setAttack(1.0f);
-                    newProjectile.setPosition(
-                        mainChar.getX() + (mainChar.getWidth() / 2.0f),
-                        mainChar.getY() + (mainChar.getHeight() / 2.0f)
-                    );
-                    newProjectile.setTexture(texture_projectile);
-                    newProjectile.setVelocity(1.0f, 0.5f);
-                    projectiles.push_back(newProjectile);
+                    int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
+                    if(closestEnemyIndex >= 0){
+                        projectiles.push_back(
+                            mainChar.createProjectile(enemies[closestEnemyIndex], texture_projectile)
+                        );
+                    }
                 }
 
                 for(Projectile& projectile : projectiles){
@@ -138,22 +132,32 @@ int main() {
 
                 std::vector<int> diedEnemies = {};
 
-                for(size_t c=0; c<enemies.size(); c++){
-                    enemies[c].moveTowards(mainChar, deltaTimeInfo.multiplier);
-                    if(mainChar.isCollidingWith(enemies[c])){
-                        mainChar.takeDamageFrom(enemies[c].getAttack());
+                for(size_t e=0; e<enemies.size(); e++){
+                    enemies[e].moveTowards(mainChar, deltaTimeInfo.multiplier);
+                    if(mainChar.isCollidingWith(enemies[e])){
+                        mainChar.takeDamageFrom(enemies[e]);
                     }
-                    for(Projectile& projectile : projectiles){
-                        if(projectile.isCollidingWith(enemies[c])){
-                            enemies[c].takeDamageFrom(projectile.getAttack());
+                    std::vector<int> diedProjectiles = {};
+                    for(size_t p=0; p<projectiles.size(); p++){
+                        if(projectiles[p].isCollidingWith(enemies[e])){
+                            enemies[e].takeDamageFrom(projectiles[p]);
+                        }
+                        if(projectiles[p].remainingHits() <= 0){
+                            diedProjectiles.push_back(p);
                         }
                     }
-                    if(enemies[c].getHealth() <= 0.0f){
-                        diedEnemies.push_back(c);
+                    for(int index : diedProjectiles){
+                        projectiles.erase(projectiles.begin() + index);
+                    }
+                    if(enemies[e].getHealth() <= 0.0f){
+                        diedEnemies.push_back(e);
                     }
                 }
                 for(int index : diedEnemies){
                     enemies.erase(enemies.begin() + index);
+
+                    enemies.push_back(CharacterUtils::createNewCharacter(texture_enemy, 2.0f));
+                    enemies.push_back(CharacterUtils::createNewCharacter(texture_enemy, 2.0f));
                 }
             }
 

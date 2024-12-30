@@ -28,13 +28,21 @@ public:
 
     DeltaTimeInfo getDeltaTimeInfo(){
         
-        int timerLoops = timer.howManyTimesTimerLooped();;
+        int timerLoops = timer.howManyTimesTimerLooped();
+        if(timerLoops <= 0){
+            return DeltaTimeInfo {
+                0.0f,
+                1.0f,
+                0
+            };
+        }
+
         float deltaTimeMultiplier = (static_cast<float>(deltaTime) / static_cast<float>(timerLoops)) / static_cast<float>(updateFrequencyInMs);
 
         return DeltaTimeInfo {
             deltaTime,
             deltaTimeMultiplier,
-            timer.howManyTimesTimerLooped()
+            timerLoops
         };
     }
 

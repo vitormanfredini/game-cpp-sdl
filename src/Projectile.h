@@ -16,10 +16,12 @@ private:
 
     float x = 0.0f;
     float y = 0.0f;
-    float velocityX = 0.0f;
-    float velocityY = 0.0f;
+    float velocity = 0.0f;
+    MovementDirection movementDirection;
 
     float attack = 0.0f;
+
+    int remainingHitsBeforeDisappearing = 1;
 
     void updateRect(){
         rect.x = round(x);
@@ -33,19 +35,30 @@ public:
         y = newY;
     }
 
+    void takeHit(){
+        remainingHitsBeforeDisappearing--;
+    }
+
+    int remainingHits(){
+        return remainingHitsBeforeDisappearing;
+    }
+
+    void setDirection(MovementDirection newDirection){
+        movementDirection = newDirection;
+    }
+
     void setTexture(SDL_Texture* _texture){
         texture = _texture;
     }
 
     void update() {
-        x += velocityX;
-        y += velocityY;
+        x += movementDirection.horizontal * velocity;
+        y += movementDirection.vertical * velocity;
         updateRect();
     }
 
-    void setVelocity(float newVelocityX, float newVelocityY){
-        velocityX = newVelocityX;
-        velocityY = newVelocityY;
+    void setVelocity(float newVelocity){
+        velocity = newVelocity;
     }
 
     void draw(SDL_Renderer *renderer) {

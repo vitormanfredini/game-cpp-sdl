@@ -5,7 +5,7 @@
 #include <SDL2/SDL_keycode.h>
 #include "MovingAverage.h"
 
-struct MovementDirections {
+struct MovementDirection {
     float horizontal;
     float vertical;
 };
@@ -81,7 +81,7 @@ public:
         }
     }
 
-    MovementDirections getMovementDirections(){
+    MovementDirection getMovementDirection(){
         return {
             horizontal.getAverage(),
             vertical.getAverage()
