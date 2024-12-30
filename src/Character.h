@@ -67,9 +67,9 @@ public:
     }
 
     MovementDirection getMovementDirectionTowards(Character& other){
-        float deltaX = other.getX() + (other.getWidth() / 2) - x + (getWidth() / 2);
+        float deltaX = other.getX() + (other.getWidth() / 2) - (x + (getWidth() / 2));
         float absDeltaX = abs(deltaX);
-        float deltaY = other.getY() + (other.getHeight() / 2) - y + (getHeight() / 2);
+        float deltaY = other.getY() + (other.getHeight() / 2) - (y + (getHeight() / 2));
         float absDeltaY = abs(deltaY);
 
         float maxAbsDelta = abs(absDeltaX) > abs(absDeltaY) ? absDeltaX : absDeltaY;
