@@ -46,7 +46,7 @@ int main() {
     SDL_Texture* texture_enemy = BinaryResourceLoader::toTexture(renderer, "images/enemy.png");
     SDL_Texture* texture_menu = BinaryResourceLoader::toTexture(renderer, "images/menu.png");
     SDL_Texture* texture_projectile = BinaryResourceLoader::toTexture(renderer, "images/projectile.png");
-    SDL_Texture* texture_healthbar = SDLUtils::textureFromRGB(renderer,240,20,20);
+    SDL_Texture* texture_healthbar = SDLUtils::textureFromRGB(renderer,182,114,28);
 
     Character mainChar;
     mainChar.setTexture(texture_dog);
