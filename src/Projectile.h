@@ -8,7 +8,7 @@
 #include "Input.h"
 #include "interfaces/ICollidable.h"
 
-class Projectile: public ICollidable {
+class Projectile: public ICollidable, public IRenderable {
 
 private:
     SDL_Rect rect = {0, 0, 32, 32};
@@ -61,7 +61,7 @@ public:
         velocity = newVelocity;
     }
 
-    void draw(SDL_Renderer *renderer) {
+    void render(SDL_Renderer* renderer) override {
         if(texture == nullptr){
             return;
         }

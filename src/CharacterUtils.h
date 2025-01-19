@@ -11,7 +11,7 @@ class CharacterUtils {
 
 public:
 
-    static int getClosestCharacterIndex(std::vector<Character>& chars, Character& refChar) {
+    static int getClosestCharacterIndex(std::vector<Character*>& chars, Character& refChar) {
         if(chars.size() == 0){
             return -1;
         }
@@ -56,15 +56,15 @@ public:
         return {x,y};
     }
 
-    static Character createNewCharacter(SDL_Texture* texture, float velocity){
-        Character newEnemy = Character{};
-        newEnemy.setTexture(texture);
+    static Character* createNewCharacter(SDL_Texture* texture, float velocity){
+        Character* newEnemy = new Character();
+        newEnemy->setTexture(texture);
         std::vector<float> pos = CharacterUtils::getRandomPositionOutsideScreen();
-        newEnemy.setPosition(
+        newEnemy->setPosition(
             pos[0],
             pos[1]
         );
-        newEnemy.setVelocity(velocity);
+        newEnemy->setVelocity(velocity);
         return newEnemy;
     }
 

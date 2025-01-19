@@ -7,9 +7,10 @@
 #include <SDL2/SDL_render.h>
 #include "Input.h"
 #include "interfaces/ICollidable.h"
+#include "interfaces/IRenderable.h"
 #include "Projectile.h"
 
-class Character: public ICollidable {
+class Character: public ICollidable, public IRenderable {
 
 private:
     SDL_Rect rect = {0, 0, 200, 200};
@@ -66,10 +67,10 @@ public:
         updateRect();
     }
 
-    MovementDirection getMovementDirectionTowards(Character& other){
-        float deltaX = other.getX() + (other.getWidth() / 2) - (x + (getWidth() / 2));
+    MovementDirection getMovementDirectionTowards(Character* other){
+        float deltaX = other->getX() + (other->getWidth() / 2) - (x + (getWidth() / 2));
         float absDeltaX = abs(deltaX);
-        float deltaY = other.getY() + (other.getHeight() / 2) - (y + (getHeight() / 2));
+        float deltaY = other->getY() + (other->getHeight() / 2) - (y + (getHeight() / 2));
         float absDeltaY = abs(deltaY);
 
         float maxAbsDelta = abs(absDeltaX) > abs(absDeltaY) ? absDeltaX : absDeltaY;
@@ -80,24 +81,24 @@ public:
         };
     }
 
-    void moveTowards(Character& other, float deltaTimeMultiplier){
+    void moveTowards(Character* other, float deltaTimeMultiplier){
         move(getMovementDirectionTowards(other), deltaTimeMultiplier);
     }
 
-    void takeDamageFrom(Projectile& projectile){
-        health -= projectile.getAttack();
-        projectile.takeHit();
+    void takeDamageFrom(Projectile* projectile){
+        health -= projectile->getAttack();
+        projectile->takeHit();
     }
 
-    void takeDamageFrom(Character& other){
-        health -= other.getAttack();
+    void takeDamageFrom(Character* other){
+        health -= other->getAttack();
     }
 
-    double distanceFrom(Character& other){
-        return sqrt(pow(other.getX() - x, 2) +  pow(y - other.getY(), 2));
+    double distanceFrom(Character* other){
+        return sqrt(pow(other->getX() - x, 2) +  pow(y - other->getY(), 2));
     }
 
-    void draw(SDL_Renderer *renderer) {
+    void render(SDL_Renderer* renderer) override {
         if(texture == nullptr){
             return;
         }
@@ -109,16 +110,16 @@ public:
         return updatesUntilNextFire == 0;
     }
 
-    Projectile createProjectile(Character& towardsOther, SDL_Texture* texture_projectile){
-        Projectile projectile {};
-        projectile.setAttack(1.0f);
-        projectile.setPosition(
+    Projectile* createProjectile(Character* towardsOther, SDL_Texture* texture_projectile){
+        Projectile* projectile = new Projectile();
+        projectile->setAttack(1.0f);
+        projectile->setPosition(
             getX() + (getWidth() / 2.0f),
             getY() + (getHeight() / 2.0f)
         );
-        projectile.setTexture(texture_projectile);
-        projectile.setDirection(getMovementDirectionTowards(towardsOther));
-        projectile.setVelocity(3.0f);
+        projectile->setTexture(texture_projectile);
+        projectile->setDirection(getMovementDirectionTowards(towardsOther));
+        projectile->setVelocity(7.0f);
         return projectile;
     }
 

@@ -7,7 +7,7 @@
 #include <SDL2/SDL_render.h>
 #include "Input.h"
 
-class Menu {
+class Menu: public IRenderable {
 
 private:
     SDL_Rect rect = {0, 0, 2*800, 2*600};
@@ -41,7 +41,7 @@ public:
         texture = _texture;
     }
 
-    void draw(SDL_Renderer *renderer) {
+    void render(SDL_Renderer* renderer) override {
         if(texture == nullptr){
             return;
         }

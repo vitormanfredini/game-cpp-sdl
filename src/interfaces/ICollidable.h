@@ -9,21 +9,21 @@ public:
     virtual int getHeight() = 0;
     virtual ~ICollidable() = default;
 
-    bool isCollidingWith(ICollidable& other){
+    bool isCollidingWith(ICollidable* other){
 
-        if(other.getX() > getX() + static_cast<float>(getWidth())){
+        if(other->getX() > getX() + static_cast<float>(getWidth())){
             return false;
         }
 
-        if(other.getY() > getY() + static_cast<float>(getHeight())){
+        if(other->getY() > getY() + static_cast<float>(getHeight())){
             return false;
         }
 
-        if(other.getX() + static_cast<float>(other.getWidth()) < getX()){
+        if(other->getX() + static_cast<float>(other->getWidth()) < getX()){
             return false;
         }
 
-        if(other.getY() + static_cast<float>(other.getHeight()) < getY()){
+        if(other->getY() + static_cast<float>(other->getHeight()) < getY()){
             return false;
         }
 

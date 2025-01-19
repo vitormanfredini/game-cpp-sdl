@@ -7,7 +7,7 @@
 #include <SDL2/SDL_render.h>
 #include "Input.h"
 
-class HealthBar {
+class HealthBar: public IRenderable {
 
 private:
     SDL_Rect rect = {0, 0, 800*2, 40};
@@ -37,7 +37,7 @@ public:
         rect.w = round(health * static_cast<float>(800*2));
     }
 
-    void draw(SDL_Renderer *renderer) {
+    void render(SDL_Renderer* renderer) override {
         if(texture == nullptr){
             return;
         }
