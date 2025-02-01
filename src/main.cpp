@@ -15,8 +15,8 @@
 
 int main() {
 
-    int windowWidth = 2*800;
-    int windowHeight = 2*600;
+    int windowWidth = 2*1200;
+    int windowHeight = 2*800;
 
     Renderer renderer {windowWidth, windowHeight};
 
@@ -28,7 +28,9 @@ int main() {
 
     Character mainChar;
     mainChar.setTexture(renderer.loadTexture("images/dog.png"));
-    mainChar.setPosition(220,80);
+    mainChar.setPosition(renderer.getPositionCenterOfScreen());
+    mainChar.setSize(0.2f,0.2f);
+    mainChar.setVelocity(0.01f);
 
     int numberOfEnemies = 10;
     std::vector<Character*> enemies = {};
@@ -36,22 +38,24 @@ int main() {
 
         enemies.push_back(new Character());
         enemies[c]->setTexture(renderer.loadTexture("images/enemy.png"));
-        std::vector<float> pos = CharacterUtils::getRandomPositionOutsideScreen();
-        enemies[c]->setPosition(
-            pos[0],
-            pos[1]
-        );
-        enemies[c]->setVelocity(2.0f);
+        enemies[c]->setPosition(renderer.getRandomPositionOutsideScreen());
+        enemies[c]->setSize(0.15f,0.15f);
+        enemies[c]->setVelocity(0.003f);
 
         enemies.push_back(enemies[c]);
     }
 
     Menu menu;
     menu.setTexture(renderer.loadTexture("images/menu.png"));
+    menu.setPosition(0.0f,0.0f);
+    menu.setSize(renderer.getMaxWidth(),renderer.getMaxHeight());
 
     HealthBar healthBar;
     healthBar.setTexture(renderer.loadTexture(182,114,28));
     healthBar.setPosition(0,0);
+    healthBar.setSize(1.0f,0.03f);
+    healthBar.setMaxWidth(renderer.getMaxWidth());
+    healthBar.setHealth(mainChar.getHealth());
 
     std::vector<Projectile*> projectiles = {};
     
@@ -87,16 +91,16 @@ int main() {
         }
 
         deltaTime.update();
-        auto deltaTimeInfo = deltaTime.getDeltaTimeInfo();
+        int updatesNeeded = deltaTime.getUpdatesNeeded();
 
         if(!paused){
 
-            for(int update=0;update<deltaTimeInfo.updatesNeeded;update++){
+            for(int update=0;update<updatesNeeded;update++){
                 
                 input.update();
 
                 mainChar.update();
-                mainChar.move(input.getMovementDirection(), deltaTimeInfo.multiplier);
+                mainChar.move(input.getMovementDirection());
                 
                 if(mainChar.shouldFireProjectile()){
                     int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
@@ -114,7 +118,7 @@ int main() {
                 std::vector<int> diedEnemies = {};
 
                 for(size_t e=0; e<enemies.size(); e++){
-                    enemies[e]->moveTowards(&mainChar, deltaTimeInfo.multiplier);
+                    enemies[e]->moveTowards(&mainChar);
                     if(mainChar.isCollidingWith(enemies[e])){
                         mainChar.takeDamageFrom(enemies[e]);
                     }
@@ -136,7 +140,12 @@ int main() {
                 }
                 for(int index : diedEnemies){
                     enemies.erase(enemies.begin() + index);
-                    enemies.push_back(CharacterUtils::createNewCharacter(renderer.loadTexture("images/enemy.png"), 2.0f));
+                    Character* newEnemy = new Character();
+                    newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
+                    newEnemy->setPosition(renderer.getRandomPositionOutsideScreen());
+                    newEnemy->setSize(0.15f,0.15f);
+                    newEnemy->setVelocity(0.005f);
+                    enemies.push_back(newEnemy);
                 }
             }
 

@@ -13,22 +13,12 @@
 class Character: public ICollidable, public IRenderable {
 
 private:
-    SDL_Rect rect = {0, 0, 200, 200};
-    SDL_Texture* texture = nullptr;
-
-    float velocity = 5.0f;
-    float x = 0.0f;
-    float y = 0.0f;
+    float velocity = 0.01f;
     float health = 1.0f;
     float attack = 0.001;
 
-    int fireEveryXUpdates = 30;
+    int fireEveryXUpdates = 15;
     int updatesUntilNextFire = 0;
-
-    void updateRect(){
-        rect.x = round(x);
-        rect.y = round(y);
-    }
 
 public:
 
@@ -47,24 +37,13 @@ public:
         return attack;
     }
 
-    void setTexture(SDL_Texture* _texture){
-        texture = _texture;
-    }
-
-    void setPosition(int newX, int newY) {
-        x = newX;
-        y = newY;
-        updateRect();
-    }
-
     void setVelocity(float newVelocity) {
         velocity = newVelocity;
     }
 
-    void move(MovementDirection directions, float deltaTimeMultiplier){
-        y += directions.vertical * velocity * deltaTimeMultiplier;
-        x += directions.horizontal * velocity * deltaTimeMultiplier;
-        updateRect();
+    void move(MovementDirection directions){
+        y += directions.vertical * velocity;
+        x += directions.horizontal * velocity;
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
@@ -73,7 +52,7 @@ public:
         float deltaY = other->getY() + (other->getHeight() / 2) - (y + (getHeight() / 2));
         float absDeltaY = abs(deltaY);
 
-        float maxAbsDelta = abs(absDeltaX) > abs(absDeltaY) ? absDeltaX : absDeltaY;
+        float maxAbsDelta = absDeltaX > absDeltaY ? absDeltaX : absDeltaY;
 
         return MovementDirection {
             deltaX / maxAbsDelta,
@@ -81,8 +60,8 @@ public:
         };
     }
 
-    void moveTowards(Character* other, float deltaTimeMultiplier){
-        move(getMovementDirectionTowards(other), deltaTimeMultiplier);
+    void moveTowards(Character* other){
+        move(getMovementDirectionTowards(other));
     }
 
     void takeDamageFrom(Projectile* projectile){
@@ -98,14 +77,6 @@ public:
         return sqrt(pow(other->getX() - x, 2) +  pow(y - other->getY(), 2));
     }
 
-    void render(SDL_Renderer* renderer) override {
-        if(texture == nullptr){
-            return;
-        }
-
-        SDL_RenderCopy(renderer, texture, NULL, &rect);
-    }
-
     bool shouldFireProjectile(){
         return updatesUntilNextFire == 0;
     }
@@ -117,25 +88,11 @@ public:
             getX() + (getWidth() / 2.0f),
             getY() + (getHeight() / 2.0f)
         );
+        projectile->setSize(0.03,0.03);
         projectile->setTexture(texture_projectile);
         projectile->setDirection(getMovementDirectionTowards(towardsOther));
-        projectile->setVelocity(7.0f);
+        projectile->setVelocity(0.01f);
         return projectile;
     }
 
-    virtual float getX(){
-        return x;
-    }
-
-    virtual float getY(){
-        return y;
-    }
-
-    virtual int getWidth(){
-        return rect.w;
-    }
-
-    virtual int getHeight(){
-        return rect.h;
-    }
 };

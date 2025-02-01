@@ -1,9 +1,22 @@
 #pragma once
 
-class IRenderable {
+#include "Transformable.h"
+
+class IRenderable : public virtual Transformable {
+
+protected:
+SDL_Texture* texture = nullptr;
 
 public:
-    virtual void render(SDL_Renderer* renderer) = 0;
+
+    void setTexture(SDL_Texture* _texture){
+        texture = _texture;
+    }
+
+    SDL_Texture* getTexture(){
+        return texture;
+    }
+
     virtual ~IRenderable() = default;
 
 };

@@ -1,29 +1,28 @@
 #pragma once
 
-class ICollidable {
+#include "Transformable.h"
+
+class ICollidable : public virtual Transformable {
 
 public:
-    virtual float getX() = 0;
-    virtual float getY() = 0;
-    virtual int getWidth() = 0;
-    virtual int getHeight() = 0;
+
     virtual ~ICollidable() = default;
 
     bool isCollidingWith(ICollidable* other){
 
-        if(other->getX() > getX() + static_cast<float>(getWidth())){
+        if(other->getX() > getX() + getWidth()){
             return false;
         }
 
-        if(other->getY() > getY() + static_cast<float>(getHeight())){
+        if(other->getY() > getY() + getHeight()){
             return false;
         }
 
-        if(other->getX() + static_cast<float>(other->getWidth()) < getX()){
+        if(other->getX() + other->getWidth() < getX()){
             return false;
         }
 
-        if(other->getY() + static_cast<float>(other->getHeight()) < getY()){
+        if(other->getY() + other->getHeight() < getY()){
             return false;
         }
 

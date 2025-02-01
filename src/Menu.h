@@ -9,13 +9,6 @@
 
 class Menu: public IRenderable {
 
-private:
-    SDL_Rect rect = {0, 0, 2*800, 2*600};
-    SDL_Texture* texture = nullptr;
-
-    float x = 0.0f;
-    float y = 0.0f;
-
 public:
 
     void handleKeyDown(SDL_Keycode keyCode){
@@ -35,18 +28,6 @@ public:
             default:
                 break;
         }
-    }
-
-    void setTexture(SDL_Texture* _texture){
-        texture = _texture;
-    }
-
-    void render(SDL_Renderer* renderer) override {
-        if(texture == nullptr){
-            return;
-        }
-
-        SDL_RenderCopy(renderer, texture, NULL, &rect);
     }
 
 };

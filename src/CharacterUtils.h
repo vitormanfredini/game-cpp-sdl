@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include "Character.h"
-#include <random>
 
 class CharacterUtils {
 
@@ -27,45 +26,6 @@ public:
         }
 
         return index;
-    }
-
-    static std::vector<float> getRandomPositionOutsideScreen(){
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-
-        float x = 0;
-        float y = 0;
-
-        if(dis(gen) > 0.5){
-            if(dis(gen) > 0.5){
-                x = 800*2 + (800*2)*0.1;
-            }else{
-                x = -(800*2)*0.1;
-            }
-            y = (600*2) * dis(gen);
-        }else{
-            x = (800*2) * dis(gen);
-            if(dis(gen) > 0.5){
-                y = 600*2 + (600*2)*0.1;
-            }else{
-                y = -(600*2)*0.1;
-            }
-        }
-
-        return {x,y};
-    }
-
-    static Character* createNewCharacter(SDL_Texture* texture, float velocity){
-        Character* newEnemy = new Character();
-        newEnemy->setTexture(texture);
-        std::vector<float> pos = CharacterUtils::getRandomPositionOutsideScreen();
-        newEnemy->setPosition(
-            pos[0],
-            pos[1]
-        );
-        newEnemy->setVelocity(velocity);
-        return newEnemy;
     }
 
 };
