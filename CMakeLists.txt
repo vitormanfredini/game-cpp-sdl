@@ -1,16 +1,13 @@
 cmake_minimum_required(VERSION 3.10)
 project(SDL2Test)
 
-# Find SDL2 packages
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(/usr/include/SDL2)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image REQUIRED)
 
-# Define resource directory
 set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources)
 
-# Collect all source files
 file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_SOURCE_DIR}/src/*.cpp
     ${CMAKE_SOURCE_DIR}/src/*.c
@@ -31,18 +28,13 @@ set(RESOURCE_VARS "")
 set(RESOURCE_LENGTHS "")
 
 foreach(RESOURCE ${RESOURCE_FILES})
-    # Get relative path from resources directory
     string(REPLACE "${RESOURCE_DIR}/" "" RESOURCE_REL_PATH ${RESOURCE})
     
-    # Create header name from relative path (e.g., images_subfolder_file_png)
     string(REPLACE "/" "_" HEADER_BASE_NAME "${RESOURCE_REL_PATH}")
     string(REPLACE "." "_" HEADER_BASE_NAME "${HEADER_BASE_NAME}")
     set(HEADER_NAME "${CMAKE_BINARY_DIR}/${HEADER_BASE_NAME}.h")
-    
-    # Variable name for the binary data
     set(BINARY_VAR_NAME "binary_${HEADER_BASE_NAME}")
 
-    # Append to our lists
     list(APPEND RESOURCE_NAMES "${RESOURCE_REL_PATH}")
     list(APPEND RESOURCE_VARS "${BINARY_VAR_NAME}")
     list(APPEND RESOURCE_LENGTHS "${BINARY_VAR_NAME}_len")
