@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- set up tests
 - health bar needs to be rewritten (think of a way to render stuff that isn't just a texture, maybe separate the game rendering from the UI rendering)
 - allow character to move outside of the screen (and make the screen follow the main character)
 - create a Engine class that will take care of game logic, loading assets and destroying them.
