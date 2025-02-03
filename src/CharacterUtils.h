@@ -4,6 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <random>
 #include "Character.h"
 
 class CharacterUtils {
@@ -26,6 +27,27 @@ public:
         }
 
         return index;
+    }
+
+    
+    static const std::vector<float> getRandomPositionOutsideScreen(){
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
+
+        if(dis(gen) > 0.5){
+            return {
+                dis(gen) > 0.5 ? 1.1f: -0.1f,
+                dis(gen)
+            };
+        }
+
+        return {
+            dis(gen),
+            dis(gen) > 0.5 ? 1.1f : -0.1f
+        };
+
     }
 
 };

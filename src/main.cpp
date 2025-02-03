@@ -28,7 +28,7 @@ int main() {
 
     Character mainChar;
     mainChar.setTexture(renderer.loadTexture("images/dog.png"));
-    mainChar.setPosition(renderer.getPositionCenterOfScreen());
+    mainChar.setPosition(0.5f,0.5f);
     mainChar.setSize(0.2f,0.2f);
     mainChar.setVelocity(0.01f);
 
@@ -38,7 +38,7 @@ int main() {
 
         enemies.push_back(new Character());
         enemies[c]->setTexture(renderer.loadTexture("images/enemy.png"));
-        enemies[c]->setPosition(renderer.getRandomPositionOutsideScreen());
+        enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen());
         enemies[c]->setSize(0.15f,0.15f);
         enemies[c]->setVelocity(0.003f);
 
@@ -48,14 +48,14 @@ int main() {
     Menu menu;
     menu.setTexture(renderer.loadTexture("images/menu.png"));
     menu.setPosition(0.0f,0.0f);
-    menu.setSize(renderer.getMaxWidth(),renderer.getMaxHeight());
+    menu.setSize(1.0f,1.0f);
 
     HealthBar healthBar;
     healthBar.setTexture(renderer.loadTexture(182,114,28));
-    healthBar.setPosition(0,0);
+    healthBar.setPosition(0.0f,0.0f);
     healthBar.setSize(1.0f,0.03f);
-    healthBar.setMaxWidth(renderer.getMaxWidth());
     healthBar.setHealth(mainChar.getHealth());
+    healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
     std::vector<Projectile*> projectiles = {};
     
@@ -142,7 +142,7 @@ int main() {
                     enemies.erase(enemies.begin() + index);
                     Character* newEnemy = new Character();
                     newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
-                    newEnemy->setPosition(renderer.getRandomPositionOutsideScreen());
+                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen());
                     newEnemy->setSize(0.15f,0.15f);
                     newEnemy->setVelocity(0.005f);
                     enemies.push_back(newEnemy);
