@@ -32,7 +32,7 @@ int main() {
     Character mainChar;
     mainChar.setTexture(renderer.loadTexture("images/dog.png"));
     mainChar.setPosition(0.0f,0.0f);
-    mainChar.setSize(0.15f,0.15f);
+    mainChar.setSize(0.10f,0.10f);
     mainChar.setVelocity(0.01f);
 
     Camera camera {
@@ -48,7 +48,7 @@ int main() {
         enemies.push_back(new Character());
         enemies[c]->setTexture(renderer.loadTexture("images/enemy.png"));
         enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
-        enemies[c]->setSize(0.10f,0.10f);
+        enemies[c]->setSize(0.066f,0.066f);
         enemies[c]->setVelocity(0.003f);
 
         enemies.push_back(enemies[c]);
@@ -153,7 +153,7 @@ int main() {
                     Character* newEnemy = new Character();
                     newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
                     newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
-                    newEnemy->setSize(0.10f,0.10f);
+                    newEnemy->setSize(0.066f,0.066f);
                     newEnemy->setVelocity(0.005f);
                     enemies.push_back(newEnemy);
                 }
