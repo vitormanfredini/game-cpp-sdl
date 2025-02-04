@@ -30,22 +30,25 @@ public:
     }
 
     
-    static const std::vector<float> getRandomPositionOutsideScreen(){
+    static const std::vector<float> getRandomPositionOutsideScreen(float cameraX, float cameraY){
 
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_real_distribution<float> dis(0.0f, 1.0f);
 
+        float offsetX = cameraX - 0.5f;
+        float offsetY = cameraY - 0.5f;
+
         if(dis(gen) > 0.5){
             return {
-                dis(gen) > 0.5 ? 1.1f: -0.1f,
-                dis(gen)
+                dis(gen) > 0.5 ? (offsetX + 1.1f) : (offsetX - 0.1f),
+                offsetY + dis(gen)
             };
         }
 
         return {
-            dis(gen),
-            dis(gen) > 0.5 ? 1.1f : -0.1f
+            offsetX + dis(gen),
+            dis(gen) > 0.5 ? (offsetY + 1.1f) : (offsetY - 0.1f)
         };
 
     }

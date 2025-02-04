@@ -29,7 +29,7 @@ int main() {
     Character mainChar;
     mainChar.setTexture(renderer.loadTexture("images/dog.png"));
     mainChar.setPosition(0.5f,0.5f);
-    mainChar.setSize(0.2f,0.2f);
+    mainChar.setSize(0.15f,0.15f);
     mainChar.setVelocity(0.01f);
 
     int numberOfEnemies = 10;
@@ -38,8 +38,8 @@ int main() {
 
         enemies.push_back(new Character());
         enemies[c]->setTexture(renderer.loadTexture("images/enemy.png"));
-        enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen());
-        enemies[c]->setSize(0.15f,0.15f);
+        enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen(mainChar.getX(), mainChar.getY()));
+        enemies[c]->setSize(0.10f,0.10f);
         enemies[c]->setVelocity(0.003f);
 
         enemies.push_back(enemies[c]);
@@ -49,6 +49,7 @@ int main() {
     menu.setTexture(renderer.loadTexture("images/menu.png"));
     menu.setPosition(0.0f,0.0f);
     menu.setSize(1.0f,1.0f);
+    menu.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
     HealthBar healthBar;
     healthBar.setTexture(renderer.loadTexture(182,114,28));
@@ -142,8 +143,8 @@ int main() {
                     enemies.erase(enemies.begin() + index);
                     Character* newEnemy = new Character();
                     newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
-                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen());
-                    newEnemy->setSize(0.15f,0.15f);
+                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(mainChar.getX(), mainChar.getY()));
+                    newEnemy->setSize(0.10f,0.10f);
                     newEnemy->setVelocity(0.005f);
                     enemies.push_back(newEnemy);
                 }
@@ -170,6 +171,7 @@ int main() {
             renderables.push_back(&menu);
         }
 
+        renderer.setCameraPosition({mainChar.getX(), mainChar.getY()});
         renderer.render(renderables);
 
         //running = false;

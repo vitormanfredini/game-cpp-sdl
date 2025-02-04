@@ -9,17 +9,31 @@
 class Renderer {
 
 private:
-    int width;
-    int height;
+    int widthPixels;
+    int heightPixels;
+    
     float screenScale;
+
+    float leftOffset = 0.0f;
+    float topOffset = 0.0f;
+
+    std::vector<float> cameraPos = {0.5, 0.5};
 
     SDL_Window* window;
     SDL_Renderer* sdl_renderer;
 
 public:
 
-    Renderer(int _width, int _height) : width(_width), height(_height), window(nullptr), sdl_renderer(nullptr) {
-        screenScale = _width > _height ? static_cast<float>(_width) : static_cast<float>(_height);
+    Renderer(int _widthPixels, int _heightPixels) : widthPixels(_widthPixels), heightPixels(_heightPixels), window(nullptr), sdl_renderer(nullptr) {
+        screenScale = _widthPixels > _heightPixels ? static_cast<float>(_widthPixels) : static_cast<float>(_heightPixels);
+
+        if(widthPixels > heightPixels){
+            float ratio = static_cast<float>(heightPixels) / static_cast<float>(widthPixels);
+            topOffset = ((1.0f - ratio) / 2) * -1;
+        }else{
+            float ratio = static_cast<float>(widthPixels) / static_cast<float>(heightPixels);
+            leftOffset = ((1.0f - ratio) / 2) * -1;
+        }
     };
 
     ~Renderer(){
@@ -43,7 +57,7 @@ public:
             return false;
         }
 
-        window = SDL_CreateWindow("GAME!!!!!1", 100, 100, width, height, SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow("GAME!!!!!1", 100, 100, widthPixels, heightPixels, SDL_WINDOW_SHOWN);
         if (window == nullptr) {
             std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
             IMG_Quit();
@@ -68,15 +82,8 @@ public:
         SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 255);
         SDL_RenderClear(sdl_renderer);
 
-        float leftOffset = 0.0f;
-        float topOffset = 0.0f;
-        if(width > height){
-            float ratio = static_cast<float>(height) / static_cast<float>(width);
-            topOffset = ((1.0f - ratio) / 2) * -1;
-        }else{
-            float ratio = static_cast<float>(width) / static_cast<float>(height);
-            leftOffset = ((1.0f - ratio) / 2) * -1;
-        }
+        float cameraOffsetLeft = cameraPos[0] - 0.5f;
+        float cameraOffsetTop = cameraPos[1] - 0.5f;
 
         for (size_t i = 0; i < renderables.size(); ++i) {
             SDL_Texture* texture = renderables[i]->getTexture();
@@ -84,34 +91,40 @@ public:
                 continue;
             }
 
+            float x = renderables[i]->getX();
+            float y = renderables[i]->getY();
+            float width = renderables[i]->getWidth();
+            float height = renderables[i]->getHeight();
+
             if(renderables[i]->getRenderAnchor() == RenderAnchor::GAMEWORLD){
-                SDL_Rect rect = {
-                    static_cast<int>(std::round((renderables[i]->getX() + leftOffset) * screenScale)),
-                    static_cast<int>(std::round((renderables[i]->getY() + topOffset) * screenScale)),
-                    static_cast<int>(std::round(renderables[i]->getWidth() * screenScale)),
-                    static_cast<int>(std::round(renderables[i]->getHeight() * screenScale)),
-                };
-                SDL_RenderCopy(sdl_renderer, texture, NULL, &rect);
-                continue;
+                x = x - cameraOffsetLeft + leftOffset;
+                y = y - cameraOffsetTop + topOffset;
             }
 
             if(renderables[i]->getRenderAnchor() == RenderAnchor::UI_FULLWIDTH_TOP){
-
                 float scaleToFitScreenWidth = renderables[i]->getWidth() / 1.0f;
+                width = width * scaleToFitScreenWidth;
+                height = height * scaleToFitScreenWidth;
+            }
 
+            if(renderables[i]->getRenderAnchor() == RenderAnchor::GAMEWORLD || renderables[i]->getRenderAnchor() == RenderAnchor::UI_FULLWIDTH_TOP){
                 SDL_Rect rect = {
-                    static_cast<int>(std::round(renderables[i]->getX() * screenScale)),
-                    static_cast<int>(std::round(renderables[i]->getY() * screenScale)),
-                    static_cast<int>(std::round(renderables[i]->getWidth() * scaleToFitScreenWidth * screenScale)),
-                    static_cast<int>(std::round(renderables[i]->getHeight() * scaleToFitScreenWidth * screenScale)),
+                    static_cast<int>(std::round(x * screenScale)),
+                    static_cast<int>(std::round(y * screenScale)),
+                    static_cast<int>(std::round(width * screenScale)),
+                    static_cast<int>(std::round(height * screenScale)),
                 };
                 SDL_RenderCopy(sdl_renderer, texture, NULL, &rect);
-                continue;
             }
             
         }
 
         SDL_RenderPresent(sdl_renderer);
+    }
+
+    void setCameraPosition(std::vector<float> newPos){
+        cameraPos[0] = newPos[0];
+        cameraPos[1] = newPos[1];
     }
 
     SDL_Texture* loadTexture(const char* filename){
