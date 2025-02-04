@@ -17,8 +17,6 @@ private:
     float leftOffset = 0.0f;
     float topOffset = 0.0f;
 
-    std::vector<float> cameraPos = {0.5, 0.5};
-
     SDL_Window* window;
     SDL_Renderer* sdl_renderer;
 
@@ -77,7 +75,7 @@ public:
         return true;
     }
 
-    void render(std::vector<IRenderable*>& renderables){
+    void render(std::vector<IRenderable*>& renderables, std::vector<float> cameraPos){
 
         SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 255);
         SDL_RenderClear(sdl_renderer);
@@ -120,11 +118,6 @@ public:
         }
 
         SDL_RenderPresent(sdl_renderer);
-    }
-
-    void setCameraPosition(std::vector<float> newPos){
-        cameraPos[0] = newPos[0];
-        cameraPos[1] = newPos[1];
     }
 
     SDL_Texture* loadTexture(const char* filename){

@@ -12,13 +12,16 @@
 #include "Projectile.h"
 #include "CharacterUtils.h"
 #include "Renderer.h"
+#include "Camera.h"
 
 int main() {
 
     int windowWidth = 2*1200;
     int windowHeight = 2*800;
-
     Renderer renderer {windowWidth, windowHeight};
+
+    Input input;
+    DeltaTime deltaTime;
 
     if(!renderer.initialize()){
         return -1;
@@ -28,9 +31,15 @@ int main() {
 
     Character mainChar;
     mainChar.setTexture(renderer.loadTexture("images/dog.png"));
-    mainChar.setPosition(0.5f,0.5f);
+    mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.15f,0.15f);
     mainChar.setVelocity(0.01f);
+
+    Camera camera {
+        static_cast<int>(std::round(deltaTime.getNumUpdatesPerSecond() * 0.333f)),
+        0.0f,
+        0.0f
+    };
 
     int numberOfEnemies = 10;
     std::vector<Character*> enemies = {};
@@ -38,7 +47,7 @@ int main() {
 
         enemies.push_back(new Character());
         enemies[c]->setTexture(renderer.loadTexture("images/enemy.png"));
-        enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen(mainChar.getX(), mainChar.getY()));
+        enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
         enemies[c]->setSize(0.10f,0.10f);
         enemies[c]->setVelocity(0.003f);
 
@@ -59,9 +68,7 @@ int main() {
     healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
     std::vector<Projectile*> projectiles = {};
-    
-    Input input;
-    DeltaTime deltaTime;
+
 
     SDL_Event event;
     bool running = true;
@@ -102,6 +109,8 @@ int main() {
 
                 mainChar.update();
                 mainChar.move(input.getMovementDirection());
+
+                camera.update(mainChar.getX(), mainChar.getY());
                 
                 if(mainChar.shouldFireProjectile()){
                     int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
@@ -143,7 +152,7 @@ int main() {
                     enemies.erase(enemies.begin() + index);
                     Character* newEnemy = new Character();
                     newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
-                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(mainChar.getX(), mainChar.getY()));
+                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
                     newEnemy->setSize(0.10f,0.10f);
                     newEnemy->setVelocity(0.005f);
                     enemies.push_back(newEnemy);
@@ -171,8 +180,7 @@ int main() {
             renderables.push_back(&menu);
         }
 
-        renderer.setCameraPosition({mainChar.getX(), mainChar.getY()});
-        renderer.render(renderables);
+        renderer.render(renderables, {camera.getPositionX(), camera.getPositionY()});
 
         //running = false;
     }

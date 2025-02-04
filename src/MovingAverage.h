@@ -31,6 +31,12 @@ public:
         return sum / static_cast<float>(values.size());
     }
 
+    void fill(float value){
+        for(size_t c = 0; c < values.size(); c++){
+            values[c] = value;
+        }
+    }
+
 private:
     std::vector<float> values;
     size_t head = 0;

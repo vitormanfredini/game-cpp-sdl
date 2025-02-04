@@ -34,6 +34,10 @@ public:
         return timerLoops;
     }
 
+    float getNumUpdatesPerSecond(){
+        return fps;
+    }
+
 private:
 
     float fps = 60;
