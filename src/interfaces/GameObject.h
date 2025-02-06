@@ -1,17 +1,17 @@
 #pragma once
 #include <vector>
 
-class Transformable {
+class GameObject {
 protected:
     float x, y;
     float width, height;
 
 public:
 
-    Transformable()
+    GameObject()
         : x(0), y(0), width(0), height(0) {}
 
-    Transformable(float x, float y, float width, float height)
+    GameObject(float x, float y, float width, float height)
         : x(x), y(y), width(width), height(height) {}
 
     float getX() const { return x; }

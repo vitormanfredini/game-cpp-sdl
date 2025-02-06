@@ -7,7 +7,7 @@
 #include <SDL2/SDL_render.h>
 #include "Input.h"
 #include "interfaces/ICollidable.h"
-#include "interfaces/Transformable.h"
+#include "interfaces/GameObject.h"
 
 class Projectile: public ICollidable, public IRenderable {
 

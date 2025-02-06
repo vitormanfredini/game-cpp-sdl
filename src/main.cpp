@@ -67,8 +67,34 @@ int main() {
     healthBar.setHealth(mainChar.getHealth());
     healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
-    std::vector<Projectile*> projectiles = {};
+    std::vector<IRenderable*> groundTiles = {};
+    int columns = 8;
+    groundTiles.reserve(columns * columns);
+    float groundPadding = 0.2f;
+    float groundLeftX = -groundPadding;
+    float groundRightX = 1.0f + groundPadding;
+    float groundTopY = -groundPadding;
+    float groundBottomY = 1.0f + groundPadding;
+    float deltaX = groundRightX - groundLeftX;
+    float deltaY = groundBottomY - groundTopY;
+    float squareSize = deltaX / static_cast<float>(columns);
+    float x = 0.0f;
+    float y = 0.0f;
+    for(size_t c=0;c<groundTiles.capacity();c++){
+        IRenderable* ground = new IRenderable();
+        ground->setPosition(x, y);
+        ground->setTexture(renderer.loadTexture("images/grass.png"));
+        ground->setSize(squareSize, squareSize);
+        groundTiles.push_back(ground);
+        x += squareSize;
+        if(x >= deltaX - 0.0001){
+            x = 0.0f;
+            y += squareSize;
+        }
+    }
+    
 
+    std::vector<Projectile*> projectiles = {};
 
     SDL_Event event;
     bool running = true;
@@ -168,6 +194,9 @@ int main() {
         }
 
         renderables.clear();
+        for(size_t e=0; e<groundTiles.size(); e++){
+            renderables.push_back(groundTiles[e]);
+        }
         renderables.push_back(&mainChar);
         for(size_t e=0; e<enemies.size(); e++){
             renderables.push_back(enemies[e]);

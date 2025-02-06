@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Transformable.h"
+#include "GameObject.h"
 
 enum RenderAnchor {
   GAMEWORLD,
   UI_FULLWIDTH_TOP
 };
 
-class IRenderable : public virtual Transformable {
+class IRenderable : public virtual GameObject {
 
 protected:
 SDL_Texture* texture = nullptr;

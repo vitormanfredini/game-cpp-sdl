@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Transformable.h"
+#include "GameObject.h"
 
-class ICollidable : public virtual Transformable {
+class ICollidable : public virtual GameObject {
 
 public:
 
