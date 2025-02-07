@@ -13,6 +13,7 @@
 #include "CharacterUtils.h"
 #include "Renderer.h"
 #include "Camera.h"
+#include "Map.h"
 
 int main() {
 
@@ -67,32 +68,9 @@ int main() {
     healthBar.setHealth(mainChar.getHealth());
     healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
-    std::vector<IRenderable*> groundTiles = {};
-    int columns = 8;
-    groundTiles.reserve(columns * columns);
-    float groundPadding = 0.2f;
-    float groundLeftX = -groundPadding;
-    float groundRightX = 1.0f + groundPadding;
-    float groundTopY = -groundPadding;
-    float groundBottomY = 1.0f + groundPadding;
-    float deltaX = groundRightX - groundLeftX;
-    float deltaY = groundBottomY - groundTopY;
-    float squareSize = deltaX / static_cast<float>(columns);
-    float x = 0.0f;
-    float y = 0.0f;
-    for(size_t c=0;c<groundTiles.capacity();c++){
-        IRenderable* ground = new IRenderable();
-        ground->setPosition(x, y);
-        ground->setTexture(renderer.loadTexture("images/grass.png"));
-        ground->setSize(squareSize, squareSize);
-        groundTiles.push_back(ground);
-        x += squareSize;
-        if(x >= deltaX - 0.0001){
-            x = 0.0f;
-            y += squareSize;
-        }
-    }
-    
+    Map map;
+    map.setGroundTexture(renderer.loadTexture("images/grass.png"));
+    std::vector<IRenderable*>& groundTiles = map.getTiles();
 
     std::vector<Projectile*> projectiles = {};
 
@@ -137,6 +115,8 @@ int main() {
                 mainChar.move(input.getMovementDirection());
 
                 camera.update(mainChar.getX(), mainChar.getY());
+
+                map.updateGroundTiles(camera.getPositionX(),camera.getPositionY());
                 
                 if(mainChar.shouldFireProjectile()){
                     int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
