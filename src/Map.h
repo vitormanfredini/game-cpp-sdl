@@ -47,7 +47,6 @@ private:
     SDL_Texture* groundTexture;
 
     void addGroundTiles(int blockX, int blockY){
-        std::cout << "addGroundTiles" << ": " << blockX << " x " << blockY << std::endl;
         int tilesToAdd = groundTilesCoverScreen;
         float groundLeftX = static_cast<float>(blockX);
         float groundRightX = static_cast<float>(blockX) + 1.0f;
