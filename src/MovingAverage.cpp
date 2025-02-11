@@ -1,8 +1,13 @@
 #include "MovingAverage.h"
 #include <stddef.h>
+#include <stdexcept>
+#include <iostream>
 
 
 MovingAverage::MovingAverage(int sampleSize) {
+    if (sampleSize <= 0) {
+        throw std::invalid_argument("Sample size must be greater than zero.");
+    }
     values.resize(sampleSize);
     for(size_t c = 0; c < values.size(); c++){
         values[c] = 0;

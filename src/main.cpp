@@ -56,15 +56,6 @@ int main() {
 
     engine.setMenu(&menu);
 
-    for(size_t c=0; c<20; c++){
-        Character* newEnemy = new Character();
-        newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
-        newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
-        newEnemy->setSize(0.066f,0.066f);
-        newEnemy->setVelocity(0.003f);
-        engine.addEnemy(newEnemy);
-    }
-
     MapGenerator mapGenerator;
     mapGenerator.setGroundTexture(renderer.loadTexture("images/grass.png"));
 
@@ -77,6 +68,8 @@ int main() {
     mainChar.setVelocity(0.01f);
 
     engine.setMainChar(&mainChar);
+
+    engine.addEnemies(50);
 
     // HealthBar healthBar;
     // healthBar.setTexture(renderer.loadTexture(182,114,28));

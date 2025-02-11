@@ -25,6 +25,8 @@ private:
 
     std::unordered_map<std::string, SDL_Texture*> texturesCache;
 
+    
+
 public:
 
     Renderer(int _widthPixels, int _heightPixels) : widthPixels(_widthPixels), heightPixels(_heightPixels), window(nullptr), sdl_renderer(nullptr) {

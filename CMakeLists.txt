@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.10)
 project(SDL2Test)
 
+set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined -fno-omit-frame-pointer")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address,undefined")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+
 enable_testing()
 add_subdirectory(tests)
 add_subdirectory(src)
@@ -56,7 +61,6 @@ foreach(RESOURCE ${RESOURCE_FILES})
     list(APPEND EMBEDDED_HEADERS ${HEADER_NAME})
 endforeach()
 
-# Convert lists to comma-separated strings
 string(REPLACE ";" "\",\"" RESOURCE_NAMES_STR "${RESOURCE_NAMES}")
 string(REPLACE ";" "," RESOURCE_VARS_STR "${RESOURCE_VARS}")
 string(REPLACE ";" "," RESOURCE_LENGTHS_STR "${RESOURCE_LENGTHS}")
@@ -80,7 +84,6 @@ file(APPEND ${RESOURCE_REGISTRY_HEADER} "} // namespace ResourceRegistry\n")
 
 add_custom_target(embed_resources ALL DEPENDS ${EMBEDDED_HEADERS} ${RESOURCE_REGISTRY_HEADER})
 
-# Create executable with all source files
 add_executable(SDL2Test ${SOURCE_FILES} ${EMBEDDED_HEADERS})
 add_dependencies(SDL2Test embed_resources)
 target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARY})

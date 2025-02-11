@@ -14,6 +14,8 @@
 #include "MapGenerator.h"
 #include "CharacterUtils.h"
 #include "Menu.h"
+#include <c++/11/bits/algorithmfwd.h>
+#include <memory>
 
 class GameEngine {
 
@@ -106,6 +108,17 @@ public:
         );
     }
 
+    void addEnemies(int howMany){
+        for(int c=0;c<howMany;c++){
+            Character* newEnemy = new Character();
+            newEnemy->setTexture(renderer->loadTexture("images/enemy.png"));
+            newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+            newEnemy->setSize(0.066f,0.066f);
+            newEnemy->setVelocity(0.005f);
+            addEnemy(newEnemy);
+        }
+    }
+
 private:
     Renderer* renderer;
     Camera* camera;
@@ -148,38 +161,53 @@ private:
             projectile->update();
         }
 
-        std::vector<int> diedEnemies = {};
-
         for(size_t e=0; e<enemies.size(); e++){
             enemies[e]->moveTowards(mainChar);
             if(mainChar->isCollidingWith(enemies[e])){
                 mainChar->takeDamageFrom(enemies[e]);
             }
-            std::vector<int> diedProjectiles = {};
+            
             for(size_t p=0; p<projectiles.size(); p++){
                 if(projectiles[p]->isCollidingWith(enemies[e])){
                     enemies[e]->takeDamageFrom(projectiles[p]);
                 }
-                if(projectiles[p]->remainingHits() <= 0){
-                    diedProjectiles.push_back(p);
-                }
             }
-            for(int index : diedProjectiles){
-                projectiles.erase(projectiles.begin() + index);
+
+        }
+
+        int numberOfDeadEnemies = enemiesGarbageCollector();
+        addEnemies(numberOfDeadEnemies);
+
+        // projectilesGarbageCollector();
+
+    }
+
+    void projectilesGarbageCollector(){
+        std::vector<int> diedProjectiles = {};
+        for(size_t p=0; p<projectiles.size(); p++){
+            if(projectiles[p]->isDead()){
+                diedProjectiles.push_back(p);
             }
-            if(enemies[e]->getHealth() <= 0.0f){
+        }
+
+        for(int index : diedProjectiles){
+            delete projectiles[index];
+            projectiles.erase(projectiles.begin() + index);
+        }
+    }
+
+    int enemiesGarbageCollector(){
+        std::vector<int> diedEnemies = {};
+        for(size_t e=0; e<enemies.size(); e++){
+            if(enemies[e]->isDead()){
                 diedEnemies.push_back(e);
             }
         }
         for(int index : diedEnemies){
+            delete enemies[index];
             enemies.erase(enemies.begin() + index);
-            Character* newEnemy = new Character();
-            newEnemy->setTexture(renderer->loadTexture("images/enemy.png"));
-            newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
-            newEnemy->setSize(0.066f,0.066f);
-            newEnemy->setVelocity(0.005f);
-            enemies.push_back(newEnemy);
         }
+        return diedEnemies.size();
     }
 
 };

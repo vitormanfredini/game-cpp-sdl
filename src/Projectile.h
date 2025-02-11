@@ -27,6 +27,10 @@ public:
         return remainingHitsBeforeDisappearing;
     }
 
+    bool isDead(){
+        return remainingHitsBeforeDisappearing <= 0;
+    }
+
     void setDirection(MovementDirection newDirection){
         movementDirection = newDirection;
     }

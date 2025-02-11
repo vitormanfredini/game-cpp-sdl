@@ -33,6 +33,10 @@ public:
         return health;
     }
 
+    bool isDead(){
+        return health <= 0.0f;
+    }
+
     float getAttack(){
         return attack;
     }
