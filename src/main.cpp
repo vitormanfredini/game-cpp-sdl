@@ -13,47 +13,40 @@
 #include "CharacterUtils.h"
 #include "Renderer.h"
 #include "Camera.h"
-#include "Map.h"
+#include "MapGenerator.h"
+#include "GameEngine.h"
+
+#include <chrono>
+#include <thread>
 
 int main() {
 
-    int windowWidth = 2*1200;
-    int windowHeight = 2*800;
-    Renderer renderer {windowWidth, windowHeight};
-
-    Input input;
-    DeltaTime deltaTime;
+    Renderer renderer {
+        2*1200,
+        2*800
+    };
 
     if(!renderer.initialize()){
         return -1;
     }
 
-    std::vector<IRenderable*> renderables = {};
+    int updatesPerSecond = 120;
 
-    Character mainChar;
-    mainChar.setTexture(renderer.loadTexture("images/dog.png"));
-    mainChar.setPosition(0.0f,0.0f);
-    mainChar.setSize(0.10f,0.10f);
-    mainChar.setVelocity(0.01f);
+    Input input;
+    DeltaTime deltaTime { updatesPerSecond };
 
     Camera camera {
-        static_cast<int>(std::round(deltaTime.getNumUpdatesPerSecond() * 0.333f)),
+        static_cast<int>(std::round(static_cast<float>(updatesPerSecond) * 0.333f)),
         0.0f,
         0.0f
     };
 
-    int numberOfEnemies = 10;
-    std::vector<Character*> enemies = {};
-    for(size_t c=0; c<numberOfEnemies; c++){
-
-        enemies.push_back(new Character());
-        enemies[c]->setTexture(renderer.loadTexture("images/enemy.png"));
-        enemies[c]->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
-        enemies[c]->setSize(0.066f,0.066f);
-        enemies[c]->setVelocity(0.003f);
-
-        enemies.push_back(enemies[c]);
-    }
+    GameEngine engine {
+        &renderer,
+        &camera,
+        &deltaTime,
+        &input
+    };
 
     Menu menu;
     menu.setTexture(renderer.loadTexture("images/menu.png"));
@@ -61,39 +54,58 @@ int main() {
     menu.setSize(1.0f,1.0f);
     menu.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
-    HealthBar healthBar;
-    healthBar.setTexture(renderer.loadTexture(182,114,28));
-    healthBar.setPosition(0.0f,0.0f);
-    healthBar.setSize(1.0f,0.03f);
-    healthBar.setHealth(mainChar.getHealth());
-    healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
+    engine.setMenu(&menu);
 
-    Map map;
-    map.setGroundTexture(renderer.loadTexture("images/grass.png"));
-    std::vector<IRenderable*>& groundTiles = map.getTiles();
+    for(size_t c=0; c<20; c++){
+        Character* newEnemy = new Character();
+        newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
+        newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
+        newEnemy->setSize(0.066f,0.066f);
+        newEnemy->setVelocity(0.003f);
+        engine.addEnemy(newEnemy);
+    }
 
-    std::vector<Projectile*> projectiles = {};
+    MapGenerator mapGenerator;
+    mapGenerator.setGroundTexture(renderer.loadTexture("images/grass.png"));
+
+    engine.setMapGenerator(&mapGenerator);
+
+    Character mainChar;
+    mainChar.setTexture(renderer.loadTexture("images/dog.png"));
+    mainChar.setPosition(0.0f,0.0f);
+    mainChar.setSize(0.10f,0.10f);
+    mainChar.setVelocity(0.01f);
+
+    engine.setMainChar(&mainChar);
+
+    // HealthBar healthBar;
+    // healthBar.setTexture(renderer.loadTexture(182,114,28));
+    // healthBar.setPosition(0.0f,0.0f);
+    // healthBar.setSize(1.0f,0.03f);
+    // healthBar.setHealth(mainChar.getHealth());
+    // healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
     SDL_Event event;
-    bool running = true;
 
-    bool paused = false;
+    while (true) {
 
-    while (running) {
+        bool paused = engine.isPaused();
 
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
-                    running = false;
                     break;
                 case SDL_KEYDOWN:
                     input.handleKeyDown(event.key.keysym.sym);
                     menu.handleKeyDown(event.key.keysym.sym);
-                    if(!paused && event.key.keysym.sym==SDLK_ESCAPE){
-                        paused = true;
+                    if(event.key.keysym.sym==SDLK_ESCAPE){
+                        if(engine.isPaused()){
+                            engine.triggerQuit();
+                        }
+                        engine.setPause(true);
                     }
                     if(paused && event.key.keysym.sym==SDLK_RETURN){
-                        paused = false;
+                        engine.setPause(false);
                     }
                     break;
                 case SDL_KEYUP:
@@ -102,99 +114,13 @@ int main() {
             }
         }
 
-        deltaTime.update();
-        int updatesNeeded = deltaTime.getUpdatesNeeded();
+        engine.update();
+        engine.render();
 
-        if(!paused){
-
-            for(int update=0;update<updatesNeeded;update++){
-                
-                input.update();
-
-                mainChar.update();
-                mainChar.move(input.getMovementDirection());
-
-                camera.update(mainChar.getX(), mainChar.getY());
-
-                map.updateGroundTiles(camera.getPositionX(),camera.getPositionY());
-                
-                if(mainChar.shouldFireProjectile()){
-                    int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
-                    if(closestEnemyIndex >= 0){
-                        projectiles.push_back(
-                            mainChar.createProjectile(enemies[closestEnemyIndex], renderer.loadTexture("images/projectile.png"))
-                        );
-                    }
-                }
-
-                for(Projectile* projectile : projectiles){
-                    projectile->update();
-                }
-
-                std::vector<int> diedEnemies = {};
-
-                for(size_t e=0; e<enemies.size(); e++){
-                    enemies[e]->moveTowards(&mainChar);
-                    if(mainChar.isCollidingWith(enemies[e])){
-                        mainChar.takeDamageFrom(enemies[e]);
-                    }
-                    std::vector<int> diedProjectiles = {};
-                    for(size_t p=0; p<projectiles.size(); p++){
-                        if(projectiles[p]->isCollidingWith(enemies[e])){
-                            enemies[e]->takeDamageFrom(projectiles[p]);
-                        }
-                        if(projectiles[p]->remainingHits() <= 0){
-                            diedProjectiles.push_back(p);
-                        }
-                    }
-                    for(int index : diedProjectiles){
-                        projectiles.erase(projectiles.begin() + index);
-                    }
-                    if(enemies[e]->getHealth() <= 0.0f){
-                        diedEnemies.push_back(e);
-                    }
-                }
-                for(int index : diedEnemies){
-                    enemies.erase(enemies.begin() + index);
-                    Character* newEnemy = new Character();
-                    newEnemy->setTexture(renderer.loadTexture("images/enemy.png"));
-                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera.getPositionX(), camera.getPositionY()));
-                    newEnemy->setSize(0.066f,0.066f);
-                    newEnemy->setVelocity(0.005f);
-                    enemies.push_back(newEnemy);
-                }
-            }
-
-            healthBar.setHealth(mainChar.getHealth());
-
-            if(mainChar.getHealth() <= 0.0f){
-                paused = true;
-            }
-            
+        if(engine.shouldQuit()){
+            break;
         }
-
-        renderables.clear();
-        for(size_t e=0; e<groundTiles.size(); e++){
-            renderables.push_back(groundTiles[e]);
-        }
-        renderables.push_back(&mainChar);
-        for(size_t e=0; e<enemies.size(); e++){
-            renderables.push_back(enemies[e]);
-        }
-        for(size_t p=0; p<projectiles.size(); p++){
-            renderables.push_back(projectiles[p]);
-        }
-        renderables.push_back(&healthBar);
-        if(paused){
-            renderables.push_back(&menu);
-        }
-
-        renderer.render(renderables, {camera.getPositionX(), camera.getPositionY()});
-
-        //running = false;
     }
-
-    
 
     return 0;
 }

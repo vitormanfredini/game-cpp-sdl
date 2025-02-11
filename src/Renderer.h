@@ -5,6 +5,7 @@
 #include <SDL2/SDL_image.h>
 #include "SDLUtils.h"
 #include "interfaces/IRenderable.h"
+#include <unordered_map>
 
 class Renderer {
 
@@ -19,6 +20,10 @@ private:
 
     SDL_Window* window;
     SDL_Renderer* sdl_renderer;
+
+    std::vector<IRenderable*> renderables = {};
+
+    std::unordered_map<std::string, SDL_Texture*> texturesCache;
 
 public:
 
@@ -35,11 +40,19 @@ public:
     };
 
     ~Renderer(){
-        
+        clearTexturesCache();
         SDL_DestroyRenderer(sdl_renderer);
         SDL_DestroyWindow(window);
         IMG_Quit();
         SDL_Quit();
+    }
+
+    void clearRenderables(){
+        renderables.clear();
+    }
+
+    void addRenderable(IRenderable* renderable){
+        renderables.push_back(renderable);
     }
 
     bool initialize(){
@@ -75,13 +88,13 @@ public:
         return true;
     }
 
-    void render(std::vector<IRenderable*>& renderables, std::vector<float> cameraPos){
+    void render(float cameraPosX, float cameraPosY){
 
         SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 255);
         SDL_RenderClear(sdl_renderer);
 
-        float cameraOffsetLeft = cameraPos[0] - 0.5f;
-        float cameraOffsetTop = cameraPos[1] - 0.5f;
+        float cameraOffsetLeft = cameraPosX - 0.5f;
+        float cameraOffsetTop = cameraPosY - 0.5f;
 
         for (size_t i = 0; i < renderables.size(); ++i) {
             SDL_Texture* texture = renderables[i]->getTexture();
@@ -120,8 +133,26 @@ public:
         SDL_RenderPresent(sdl_renderer);
     }
 
-    SDL_Texture* loadTexture(const char* filename){
-        return BinaryResourceLoader::toTexture(sdl_renderer, filename);
+    SDL_Texture* loadTexture(const std::string& filename){
+
+        auto it = texturesCache.find(filename);
+        if (it != texturesCache.end()) {
+            return it->second;
+        }
+
+        SDL_Texture* texture = BinaryResourceLoader::toTexture(sdl_renderer, filename.c_str());
+        if (texture) {
+            texturesCache[filename] = texture;
+        }
+        return texture;
+
+    }
+
+    void clearTexturesCache() {
+        for (auto& pair : texturesCache) {
+            SDL_DestroyTexture(pair.second);
+        }
+        texturesCache.clear();
     }
 
     SDL_Texture* loadTexture(int r, int g, int b){

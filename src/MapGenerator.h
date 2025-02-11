@@ -7,7 +7,7 @@
 #include <random>
 #include "interfaces/IRenderable.h"
 
-class Map {
+class MapGenerator {
 
 public:
 
