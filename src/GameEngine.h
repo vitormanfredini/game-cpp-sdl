@@ -178,7 +178,7 @@ private:
         int numberOfDeadEnemies = enemiesGarbageCollector();
         addEnemies(numberOfDeadEnemies);
 
-        // projectilesGarbageCollector();
+        projectilesGarbageCollector();
 
     }
 
