@@ -1,11 +1,11 @@
 #pragma once
 
-#include "BinaryResourceLoader.h"
-#include "Renderer.h"
+#include <unordered_map>
 #include <SDL2/SDL_image.h>
+#include "BinaryResourceLoader.h"
 #include "SDLUtils.h"
 #include "interfaces/IRenderable.h"
-#include <unordered_map>
+#include "RenderProps.h"
 
 class Renderer {
 
@@ -95,41 +95,20 @@ public:
         SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 255);
         SDL_RenderClear(sdl_renderer);
 
-        float cameraOffsetLeft = cameraPosX - 0.5f;
-        float cameraOffsetTop = cameraPosY - 0.5f;
+        cameraPosX = cameraPosX - 0.5f;
+        cameraPosY = cameraPosY - 0.5f;
+
+        RenderProps props {
+            sdl_renderer,
+            cameraPosX,
+            cameraPosY,
+            topOffset,
+            leftOffset,
+            screenScale
+        };
 
         for (size_t i = 0; i < renderables.size(); ++i) {
-            SDL_Texture* texture = renderables[i]->getTexture();
-            if (texture == nullptr){
-                continue;
-            }
-
-            float x = renderables[i]->getX();
-            float y = renderables[i]->getY();
-            float width = renderables[i]->getWidth();
-            float height = renderables[i]->getHeight();
-
-            if(renderables[i]->getRenderAnchor() == RenderAnchor::GAMEWORLD){
-                x = x - cameraOffsetLeft + leftOffset;
-                y = y - cameraOffsetTop + topOffset;
-            }
-
-            if(renderables[i]->getRenderAnchor() == RenderAnchor::UI_FULLWIDTH_TOP){
-                float scaleToFitScreenWidth = renderables[i]->getWidth() / 1.0f;
-                width = width * scaleToFitScreenWidth;
-                height = height * scaleToFitScreenWidth;
-            }
-
-            if(renderables[i]->getRenderAnchor() == RenderAnchor::GAMEWORLD || renderables[i]->getRenderAnchor() == RenderAnchor::UI_FULLWIDTH_TOP){
-                SDL_Rect rect = {
-                    static_cast<int>(std::round(x * screenScale)),
-                    static_cast<int>(std::round(y * screenScale)),
-                    static_cast<int>(std::round(width * screenScale)),
-                    static_cast<int>(std::round(height * screenScale)),
-                };
-                SDL_RenderCopy(sdl_renderer, texture, NULL, &rect);
-            }
-            
+            renderables[i]->render(props);
         }
 
         SDL_RenderPresent(sdl_renderer);

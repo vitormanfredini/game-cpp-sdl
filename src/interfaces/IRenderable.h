@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
+#include "../RenderProps.h"
 
 enum RenderAnchor {
   GAMEWORLD,
@@ -26,6 +27,8 @@ public:
     void setTexture(SDL_Texture* _texture){
         texture = _texture;
     }
+
+    virtual void render(RenderProps renderProps) = 0;
 
     SDL_Texture* getTexture(){
         return texture;

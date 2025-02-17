@@ -8,6 +8,7 @@
 #include "Input.h"
 #include "interfaces/ICollidable.h"
 #include "interfaces/GameObject.h"
+#include "GameObjectRenderers/GameWorldRenderer.h"
 
 class Projectile: public ICollidable, public IRenderable {
 
@@ -51,5 +52,9 @@ public:
     float getAttack(){
         return attack;
     }
+
+    void render(RenderProps renderProps) override {
+        GameWorldRenderer::render(renderProps, this);
+    };
 
 };

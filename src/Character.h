@@ -9,6 +9,7 @@
 #include "interfaces/ICollidable.h"
 #include "interfaces/IRenderable.h"
 #include "Projectile.h"
+#include "GameObjectRenderers/GameWorldRenderer.h"
 
 class Character: public ICollidable, public IRenderable {
 
@@ -69,11 +70,17 @@ public:
     }
 
     void takeDamageFrom(Projectile* projectile){
+        if(projectile->isDead()){
+            return;
+        }
         health -= projectile->getAttack();
         projectile->takeHit();
     }
 
     void takeDamageFrom(Character* other){
+        if(other->isDead()){
+            return;
+        }
         health -= other->getAttack();
     }
 
@@ -84,6 +91,10 @@ public:
     bool shouldFireProjectile(){
         return updatesUntilNextFire == 0;
     }
+
+    void render(RenderProps renderProps) override {
+        GameWorldRenderer::render(renderProps, this);
+    };
 
     Projectile* createProjectile(Character* towardsOther, SDL_Texture* texture_projectile){
         Projectile* projectile = new Projectile();

@@ -6,6 +6,7 @@
 #include <vector>
 #include <random>
 #include "interfaces/IRenderable.h"
+#include "StaticSprite.h"
 
 class MapGenerator {
 
@@ -58,7 +59,7 @@ private:
         float x = groundLeftX;
         float y = groundTopY;
         for(size_t c=0;c<groundTilesCoverScreen;c++){
-            IRenderable* ground = new IRenderable();
+            IRenderable* ground = new StaticSprite();
             ground->setPosition(x, y);
             ground->setTexture(groundTexture);
             ground->setSize(squareSize, squareSize);

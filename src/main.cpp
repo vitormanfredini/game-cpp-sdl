@@ -71,12 +71,12 @@ int main() {
 
     engine.addEnemies(50);
 
-    // HealthBar healthBar;
-    // healthBar.setTexture(renderer.loadTexture(182,114,28));
-    // healthBar.setPosition(0.0f,0.0f);
-    // healthBar.setSize(1.0f,0.03f);
-    // healthBar.setHealth(mainChar.getHealth());
-    // healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
+    HealthBar healthBar;
+    healthBar.setTexture(renderer.loadTexture(182,114,28));
+    healthBar.setPosition(0.0f,0.0f);
+    healthBar.setSize(1.0f,0.03f);
+    healthBar.setHealth(mainChar.getHealth());
+    healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
     SDL_Event event;
 

@@ -14,7 +14,6 @@
 #include "MapGenerator.h"
 #include "CharacterUtils.h"
 #include "Menu.h"
-#include <c++/11/bits/algorithmfwd.h>
 #include <memory>
 
 class GameEngine {
@@ -81,19 +80,18 @@ public:
 
         renderer->clearRenderables();
 
-        std::vector<IRenderable*> groundTiles = mapGenerator->getTiles();
-        for(size_t e=0; e<groundTiles.size(); e++){
-            renderer->addRenderable(groundTiles[e]);
+        for(IRenderable* renderable : mapGenerator->getTiles()){
+            renderer->addRenderable(renderable);
         }
 
-        for(size_t e=0; e<enemies.size(); e++){
-            renderer->addRenderable(enemies[e]);
+        for(IRenderable* enemy : enemies){
+            renderer->addRenderable(enemy);
         }
 
         renderer->addRenderable(mainChar);
 
-        for(size_t p=0; p<projectiles.size(); p++){
-            renderer->addRenderable(projectiles[p]);
+        for(IRenderable* projectile : projectiles){
+            renderer->addRenderable(projectile);
         }
 
         // renderer->addRenderable(&healthBar);
@@ -175,10 +173,10 @@ private:
 
         }
 
+        projectilesGarbageCollector();
+
         int numberOfDeadEnemies = enemiesGarbageCollector();
         addEnemies(numberOfDeadEnemies);
-
-        projectilesGarbageCollector();
 
     }
 
