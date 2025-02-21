@@ -10,6 +10,7 @@
 #include "interfaces/IRenderable.h"
 #include "Projectile.h"
 #include "GameObjectRenderers/GameWorldRenderer.h"
+#include <memory>
 
 class Character: public ICollidable, public IRenderable {
 
@@ -96,8 +97,8 @@ public:
         GameWorldRenderer::render(renderProps, this);
     };
 
-    Projectile* createProjectile(Character* towardsOther, SDL_Texture* texture_projectile){
-        Projectile* projectile = new Projectile();
+    std::unique_ptr<Projectile> createProjectile(Character* towardsOther, SDL_Texture* texture_projectile){
+        std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>();
         projectile->setAttack(1.0f);
         projectile->setPosition(
             getX() + (getWidth() / 2.0f),

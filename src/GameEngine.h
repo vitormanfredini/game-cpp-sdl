@@ -35,10 +35,6 @@ public:
         menu = newMenu;
     }
 
-    void addEnemy(Character* newEnemy){
-        enemies.push_back(newEnemy);
-    }
-
     bool isPaused(){
         return paused;
     }
@@ -80,18 +76,18 @@ public:
 
         renderer->clearRenderables();
 
-        for(IRenderable* renderable : mapGenerator->getTiles()){
-            renderer->addRenderable(renderable);
+        for(std::unique_ptr<IRenderable>& renderable : mapGenerator->getTiles()){
+            renderer->addRenderable(renderable.get());
         }
 
-        for(IRenderable* enemy : enemies){
-            renderer->addRenderable(enemy);
+        for(std::unique_ptr<Character>& enemy : enemies){
+            renderer->addRenderable(enemy.get());
         }
 
         renderer->addRenderable(mainChar);
 
-        for(IRenderable* projectile : projectiles){
-            renderer->addRenderable(projectile);
+        for(std::unique_ptr<Projectile>& projectile : projectiles){
+            renderer->addRenderable(projectile.get());
         }
 
         // renderer->addRenderable(&healthBar);
@@ -108,12 +104,12 @@ public:
 
     void addEnemies(int howMany){
         for(int c=0;c<howMany;c++){
-            Character* newEnemy = new Character();
+            std::unique_ptr<Character> newEnemy = std::make_unique<Character>();
             newEnemy->setTexture(renderer->loadTexture("images/enemy.png"));
             newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
             newEnemy->setSize(0.066f,0.066f);
             newEnemy->setVelocity(0.005f);
-            addEnemy(newEnemy);
+            enemies.push_back(std::move(newEnemy));
         }
     }
 
@@ -124,9 +120,9 @@ private:
     Input* input;
 
     Character* mainChar;
-    std::vector<Character*> enemies = {};
+    std::vector<std::unique_ptr<Character>> enemies = {};
 
-    std::vector<Projectile*> projectiles = {};
+    std::vector<std::unique_ptr<Projectile>> projectiles = {};
 
     MapGenerator* mapGenerator;
 
@@ -150,24 +146,27 @@ private:
             int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
             if(closestEnemyIndex >= 0){
                 projectiles.push_back(
-                    mainChar->createProjectile(enemies[closestEnemyIndex], renderer->loadTexture("images/projectile.png"))
+                    mainChar->createProjectile(
+                        enemies[closestEnemyIndex].get(),
+                        renderer->loadTexture("images/projectile.png")
+                    )
                 );
             }
         }
 
-        for(Projectile* projectile : projectiles){
+        for(std::unique_ptr<Projectile>& projectile : projectiles){
             projectile->update();
         }
 
         for(size_t e=0; e<enemies.size(); e++){
             enemies[e]->moveTowards(mainChar);
-            if(mainChar->isCollidingWith(enemies[e])){
-                mainChar->takeDamageFrom(enemies[e]);
+            if(mainChar->isCollidingWith(enemies[e].get())){
+                mainChar->takeDamageFrom(enemies[e].get());
             }
             
             for(size_t p=0; p<projectiles.size(); p++){
-                if(projectiles[p]->isCollidingWith(enemies[e])){
-                    enemies[e]->takeDamageFrom(projectiles[p]);
+                if(projectiles[p]->isCollidingWith(enemies[e].get())){
+                    enemies[e]->takeDamageFrom(projectiles[p].get());
                 }
             }
 
@@ -189,7 +188,6 @@ private:
         }
 
         for(int index : diedProjectiles){
-            delete projectiles[index];
             projectiles.erase(projectiles.begin() + index);
         }
     }
@@ -202,7 +200,6 @@ private:
             }
         }
         for(int index : diedEnemies){
-            delete enemies[index];
             enemies.erase(enemies.begin() + index);
         }
         return diedEnemies.size();

@@ -11,7 +11,7 @@ class CharacterUtils {
 
 public:
 
-    static int getClosestCharacterIndex(std::vector<Character*>& chars, Character* refChar) {
+    static int getClosestCharacterIndex(std::vector<std::unique_ptr<Character>>& chars, Character* refChar) {
         if(chars.size() == 0){
             return -1;
         }
@@ -19,7 +19,7 @@ public:
         int index = 0;
         double minDistance = 0;
         for(size_t c=0;c<chars.size();c++){
-            double distance = refChar->distanceFrom(chars[c]);
+            double distance = refChar->distanceFrom(chars[c].get());
             if(index==0 || distance<minDistance){
                 index = c;
                 minDistance = distance;

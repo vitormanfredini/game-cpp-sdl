@@ -37,12 +37,12 @@ public:
         groundTexture = texture;
     }
 
-    std::vector<IRenderable*>& getTiles(){
+    std::vector<std::unique_ptr<IRenderable>>& getTiles(){
         return groundTiles;
     }
 
 private:
-    std::vector<IRenderable*> groundTiles = {};
+    std::vector<std::unique_ptr<IRenderable>> groundTiles = {};
     int groundTilesColumns = 8;
     int groundTilesCoverScreen = groundTilesColumns * groundTilesColumns;
     SDL_Texture* groundTexture;
@@ -59,11 +59,13 @@ private:
         float x = groundLeftX;
         float y = groundTopY;
         for(size_t c=0;c<groundTilesCoverScreen;c++){
-            IRenderable* ground = new StaticSprite();
+            
+            std::unique_ptr<IRenderable> ground = std::make_unique<StaticSprite>();
             ground->setPosition(x, y);
             ground->setTexture(groundTexture);
             ground->setSize(squareSize, squareSize);
-            groundTiles.push_back(ground);
+            groundTiles.push_back(std::move(ground));
+
             x += squareSize;
             if(x >= groundLeftX+deltaX - 0.0001){
                 x = groundLeftX;
