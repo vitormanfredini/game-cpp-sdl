@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(SDL2Test)
+project(SDL2Game)
 
 set(CMAKE_BUILD_TYPE Debug)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined -fno-omit-frame-pointer")
@@ -84,7 +84,7 @@ file(APPEND ${RESOURCE_REGISTRY_HEADER} "} // namespace ResourceRegistry\n")
 
 add_custom_target(embed_resources ALL DEPENDS ${EMBEDDED_HEADERS} ${RESOURCE_REGISTRY_HEADER})
 
-add_executable(SDL2Test ${SOURCE_FILES} ${EMBEDDED_HEADERS})
-add_dependencies(SDL2Test embed_resources)
-target_link_libraries(SDL2Test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARY})
-target_include_directories(SDL2Test PRIVATE ${CMAKE_BINARY_DIR})
+add_executable(SDL2Game ${SOURCE_FILES} ${EMBEDDED_HEADERS})
+add_dependencies(SDL2Game embed_resources)
+target_link_libraries(SDL2Game ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARY})
+target_include_directories(SDL2Game PRIVATE ${CMAKE_BINARY_DIR})
