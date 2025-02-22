@@ -129,15 +129,15 @@ public:
 
     }
 
+    SDL_Texture* loadTexture(int r, int g, int b){
+        return SDLUtils::textureFromRGB(sdl_renderer, r, g, b);
+    }
+
     void clearTexturesCache() {
         for (auto& pair : texturesCache) {
             SDL_DestroyTexture(pair.second);
         }
         texturesCache.clear();
-    }
-
-    SDL_Texture* loadTexture(int r, int g, int b){
-        return SDLUtils::textureFromRGB(sdl_renderer, r, g, b);
     }
 
 };

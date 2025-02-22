@@ -27,6 +27,10 @@ public:
         mainChar = newMainChar;
     }
 
+    void setHealthBar(HealthBar* newHealthBar){
+        healthBar = newHealthBar;
+    }
+
     void setMapGenerator(MapGenerator* newMapGenerator){
         mapGenerator = newMapGenerator;
     }
@@ -64,7 +68,10 @@ public:
             doUpdate();
         }
 
-        // healthBar.setHealth(mainChar.getHealth());
+        if(healthBar != nullptr){
+            healthBar->setHealth(mainChar->getHealth());
+        }
+        
 
         if(mainChar->getHealth() <= 0.0f){
             triggerQuit();
@@ -90,7 +97,9 @@ public:
             renderer->addRenderable(projectile.get());
         }
 
-        // renderer->addRenderable(&healthBar);
+        if(healthBar != nullptr){
+            renderer->addRenderable(healthBar);
+        }
 
         if(paused){
             renderer->addRenderable(menu);
@@ -114,10 +123,11 @@ public:
     }
 
 private:
-    Renderer* renderer;
-    Camera* camera;
-    DeltaTime* deltatime;
-    Input* input;
+    Renderer* renderer = nullptr;
+    Camera* camera = nullptr;
+    DeltaTime* deltatime = nullptr;
+    Input* input = nullptr;
+    HealthBar* healthBar = nullptr;
 
     Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
@@ -126,7 +136,7 @@ private:
 
     MapGenerator* mapGenerator;
 
-    Menu* menu;
+    Menu* menu = nullptr;
 
     bool paused = false;
     bool quitTrigger = false;

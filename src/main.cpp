@@ -52,7 +52,6 @@ int main() {
     menu.setTexture(renderer.loadTexture("images/menu.png"));
     menu.setPosition(0.0f,0.0f);
     menu.setSize(1.0f,1.0f);
-    menu.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
 
     engine.setMenu(&menu);
 
@@ -71,12 +70,14 @@ int main() {
 
     engine.addEnemies(50);
 
-    HealthBar healthBar;
-    healthBar.setTexture(renderer.loadTexture(182,114,28));
+    HealthBar healthBar {
+        renderer.loadTexture(200,69,49),
+        renderer.loadTexture(129,147,127)
+    };
     healthBar.setPosition(0.0f,0.0f);
     healthBar.setSize(1.0f,0.03f);
     healthBar.setHealth(mainChar.getHealth());
-    healthBar.setRenderAnchor(RenderAnchor::UI_FULLWIDTH_TOP);
+    engine.setHealthBar(&healthBar);
 
     SDL_Event event;
 

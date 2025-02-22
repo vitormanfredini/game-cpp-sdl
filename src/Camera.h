@@ -13,7 +13,7 @@ private:
 
 public:
 
-    Camera(int samples, float startX, float startY): samplesAverage(samples), averagePosX(samples), averagePosY(samples) {
+    Camera(int samplesForSmoothing, float startX, float startY): samplesAverage(samplesForSmoothing), averagePosX(samplesForSmoothing), averagePosY(samplesForSmoothing) {
         averagePosX.fill(startX);
         averagePosY.fill(startY);
     }

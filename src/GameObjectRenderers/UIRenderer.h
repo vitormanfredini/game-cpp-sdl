@@ -9,7 +9,7 @@ public:
     static void render(RenderProps props, IRenderable* renderable) {
         SDL_Texture* texture = renderable->getTexture();
         if (texture == nullptr){
-            std::cout << "no texture" << std::endl;
+            std::cerr << "no texture" << std::endl;
             return;
         }
 
@@ -17,10 +17,6 @@ public:
         float y = renderable->getY();
         float width = renderable->getWidth();
         float height = renderable->getHeight();
-
-        float scaleToFitScreenWidth = renderable->getWidth() / 1.0f;
-        width = width * scaleToFitScreenWidth;
-        height = height * scaleToFitScreenWidth;
     
         SDL_Rect rect = {
             static_cast<int>(std::round(x * props.screenScale)),
