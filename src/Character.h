@@ -35,12 +35,20 @@ public:
         return health;
     }
 
+    void setHealth(float newHealth){
+        health = newHealth;
+    }
+
     bool isDead(){
         return health <= 0.0f;
     }
 
     float getAttack(){
         return attack;
+    }
+
+    void setAttack(float newAttack){
+        attack = newAttack;
     }
 
     void setVelocity(float newVelocity) {

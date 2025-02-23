@@ -67,11 +67,20 @@ int main() {
     engine.setMainChar(&mainChar);
 
     LevelScript level1;
-    level1.addKeyframe({60, 3});
-    level1.addKeyframe({120, 5});
-    level1.addKeyframe({600, 13});
-    level1.addKeyframe({1200, 21});
-    level1.addKeyframe({1800, 35});
+    level1.addKeyframe({ 60, 3, EnemyType::Regular });
+    level1.addKeyframe({ 120, 5, EnemyType::Regular });
+    level1.addKeyframe({ 300, 5, EnemyType::Regular });
+    level1.addKeyframe({ 600, 4, EnemyType::Bigger });
+    level1.addKeyframe({ 620, 4, EnemyType::Bigger });
+    level1.addKeyframe({ 640, 5, EnemyType::Bigger });
+    level1.addKeyframe({ 900, 4, EnemyType::Bigger });
+    level1.addKeyframe({ 920, 4, EnemyType::Bigger });
+    level1.addKeyframe({ 940, 5, EnemyType::Bigger });
+    level1.addKeyframe({ 1200, 6, EnemyType::Bigger });
+    level1.addKeyframe({ 1300, 6, EnemyType::Bigger });
+    level1.addKeyframe({ 1400, 9, EnemyType::Bigger });
+    level1.addKeyframe({ 1800, 3, EnemyType::Boss });
+    level1.addKeyframe({ 2000, 5, EnemyType::Boss });
 
     engine.setLevelScript(&level1);
 

@@ -16,6 +16,7 @@
 #include "Menu.h"
 #include <memory>
 #include "LevelScript.h"
+#include "EnemyFactory.h"
 
 class GameEngine {
 
@@ -115,17 +116,6 @@ public:
         );
     }
 
-    void addEnemies(int howMany){
-        for(int c=0;c<howMany;c++){
-            std::unique_ptr<Character> newEnemy = std::make_unique<Character>();
-            newEnemy->setTexture(renderer->loadTexture("images/enemy.png"));
-            newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
-            newEnemy->setSize(0.066f,0.066f);
-            newEnemy->setVelocity(0.005f);
-            enemies.push_back(std::move(newEnemy));
-        }
-    }
-
 private:
     Renderer* renderer = nullptr;
     Camera* camera = nullptr;
@@ -141,6 +131,8 @@ private:
 
     MapGenerator* mapGenerator;
 
+    int updatesCount = 0;
+
     Menu* menu = nullptr;
 
     bool paused = false;
@@ -155,9 +147,16 @@ private:
 
         camera->update(mainChar->getX(), mainChar->getY());
 
-        std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(deltatime->getUpdatesCount());
+        std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(updatesCount);
         for(LevelScriptKeyFrame keyFrame : keyFrames){
-            addEnemies(keyFrame.enemies);
+            for(int c=0;c<keyFrame.enemies;c++){
+                std::unique_ptr<Character> newEnemy = EnemyFactory::create(
+                    renderer,
+                    keyFrame.enemyType
+                );
+                newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+                enemies.push_back(std::move(newEnemy));
+            }
         }
 
         mapGenerator->updateGroundTiles(camera->getPositionX(),camera->getPositionY());
@@ -194,8 +193,8 @@ private:
 
         projectilesGarbageCollector();
         enemiesGarbageCollector();
-        
 
+        updatesCount += 1;
     }
 
     void projectilesGarbageCollector(){

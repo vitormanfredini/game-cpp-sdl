@@ -23,8 +23,6 @@ public:
 
         double deltaTime = (double) ((timeNow - timeLast)*1000 / (double) SDL_GetPerformanceFrequency());
         updateTimer->update(deltaTime);
-
-        updatesCount += 1;
     }
 
     int getUpdatesNeeded(){
@@ -46,15 +44,10 @@ public:
         return updatesPerSecond;
     }
 
-    int getUpdatesCount(){
-        return updatesCount;
-    }
-
 private:
 
     int updatesPerSecond;
     Timer* updateTimer;
-    int updatesCount = 0;
 
     Uint64 timeNow = 0;
     Uint64 timeLast = 0;
