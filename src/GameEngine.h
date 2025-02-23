@@ -15,6 +15,7 @@
 #include "CharacterUtils.h"
 #include "Menu.h"
 #include <memory>
+#include "LevelScript.h"
 
 class GameEngine {
 
@@ -29,6 +30,10 @@ public:
 
     void setHealthBar(HealthBar* newHealthBar){
         healthBar = newHealthBar;
+    }
+
+    void setLevelScript(LevelScript* newLevelScript){
+        levelScript = newLevelScript;
     }
 
     void setMapGenerator(MapGenerator* newMapGenerator){
@@ -71,7 +76,6 @@ public:
         if(healthBar != nullptr){
             healthBar->setHealth(mainChar->getHealth());
         }
-        
 
         if(mainChar->getHealth() <= 0.0f){
             triggerQuit();
@@ -128,6 +132,7 @@ private:
     DeltaTime* deltatime = nullptr;
     Input* input = nullptr;
     HealthBar* healthBar = nullptr;
+    LevelScript* levelScript = nullptr;
 
     Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
@@ -149,6 +154,11 @@ private:
         mainChar->move(input->getMovementDirection());
 
         camera->update(mainChar->getX(), mainChar->getY());
+
+        std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(deltatime->getUpdatesCount());
+        for(LevelScriptKeyFrame keyFrame : keyFrames){
+            addEnemies(keyFrame.enemies);
+        }
 
         mapGenerator->updateGroundTiles(camera->getPositionX(),camera->getPositionY());
         
@@ -183,9 +193,8 @@ private:
         }
 
         projectilesGarbageCollector();
-
-        int numberOfDeadEnemies = enemiesGarbageCollector();
-        addEnemies(numberOfDeadEnemies);
+        enemiesGarbageCollector();
+        
 
     }
 
@@ -202,7 +211,7 @@ private:
         }
     }
 
-    int enemiesGarbageCollector(){
+    void enemiesGarbageCollector(){
         std::vector<int> diedEnemies = {};
         for(size_t e=0; e<enemies.size(); e++){
             if(enemies[e]->isDead()){
@@ -212,7 +221,6 @@ private:
         for(int index : diedEnemies){
             enemies.erase(enemies.begin() + index);
         }
-        return diedEnemies.size();
     }
 
 };

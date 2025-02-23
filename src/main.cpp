@@ -30,13 +30,11 @@ int main() {
         return -1;
     }
 
-    int updatesPerSecond = 120;
-
     Input input;
-    DeltaTime deltaTime { updatesPerSecond };
+    DeltaTime deltaTime { 60 };
 
     Camera camera {
-        static_cast<int>(std::round(static_cast<float>(updatesPerSecond) * 0.333f)),
+        20,
         0.0f,
         0.0f
     };
@@ -68,7 +66,14 @@ int main() {
 
     engine.setMainChar(&mainChar);
 
-    engine.addEnemies(50);
+    LevelScript level1;
+    level1.addKeyframe({60, 3});
+    level1.addKeyframe({120, 5});
+    level1.addKeyframe({600, 13});
+    level1.addKeyframe({1200, 21});
+    level1.addKeyframe({1800, 35});
+
+    engine.setLevelScript(&level1);
 
     HealthBar healthBar {
         renderer.loadTexture(200,69,49),
@@ -88,6 +93,7 @@ int main() {
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
                 case SDL_QUIT:
+                    engine.triggerQuit();
                     break;
                 case SDL_KEYDOWN:
                     input.handleKeyDown(event.key.keysym.sym);
