@@ -24,21 +24,21 @@ public:
         if(enemyType == EnemyType::Regular){
             newEnemy->setTexture(renderer->loadTexture("images/enemy_regular.png"));
             newEnemy->setSize(0.066f,0.066f);
-            newEnemy->setVelocity(0.006f);
+            newEnemy->setVelocity(0.003f);
             newEnemy->setCollisionAttack(0.001);
             newEnemy->setHealth(1.0f);
         }
         if(enemyType == EnemyType::Bigger){
             newEnemy->setTexture(renderer->loadTexture("images/enemy_bigger.png"));
             newEnemy->setSize(0.077f,0.077f);
-            newEnemy->setVelocity(0.005f);
+            newEnemy->setVelocity(0.0025f);
             newEnemy->setCollisionAttack(0.002);
             newEnemy->setHealth(3.0f);
         }
         if(enemyType == EnemyType::Boss){
             newEnemy->setTexture(renderer->loadTexture("images/enemy_boss.png"));
             newEnemy->setSize(0.1f,0.1f);
-            newEnemy->setVelocity(0.004f);
+            newEnemy->setVelocity(0.002f);
             newEnemy->setCollisionAttack(0.005);
             newEnemy->setHealth(15.0f);
         }

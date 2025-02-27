@@ -9,32 +9,43 @@ class Character;
 class IWeapon {
 
 public:
-    IWeapon(int updatesBetweenFires): updatesBetweenFires(updatesBetweenFires) {
-        updatesUntilFire = updatesBetweenFires;
+
+    void setFireFrequency(int frequencyInUpdates){
+        updatesBetweenFires = frequencyInUpdates;
+    }
+
+    void setAttack(float newAttack){
+        attack = newAttack;
     }
 
     void update(){
-        if(updatesUntilFire <= 1){
-            updatesUntilFire = updatesBetweenFires; 
+        countUp += 1;
+        if(countUp >= updatesBetweenFires){
+            countUp = 0; 
         }
-        updatesUntilFire -= 1;
     }
 
     std::vector<std::unique_ptr<Projectile>> fire(Character* originChar, Character* towardsChar){
         std::vector<std::unique_ptr<Projectile>> newProjectiles = {};
         if(shouldFire()){
-            newProjectiles.push_back(createProjectile(originChar, towardsChar));
+            std::unique_ptr<Projectile> newProjectile = createProjectile(originChar, towardsChar);
+            newProjectile->setAttack(attack);
+            newProjectiles.push_back(std::move(newProjectile));
         }
         return newProjectiles;
     }
 
+protected:
+    float attack = 0.0f;
+
 private:
-    int updatesBetweenFires;
-    int updatesUntilFire;
+    int updatesBetweenFires = 30;
+    int countUp = 0;
+
     virtual std::unique_ptr<Projectile> createProjectile(Character* originChar, Character* towardsChar) = 0;
 
     bool shouldFire(){
-        return updatesUntilFire == 1;
+        return countUp == (updatesBetweenFires - 1);
     }
     
 

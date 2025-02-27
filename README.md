@@ -5,7 +5,6 @@ This is a project I'm doing for studying C++ and SDL.
 TODO:
 - create everything using smart pointers and allow GameEngine to manage their lifetime
 - choose side that enemies come from in the level script
-- implement collision attack (Character already has `attack` but it's missleading/ambiguous because the projectile is the actual attack of mainChar and the `attack` is the collision atack of the enemies)
 - make enemies collide and push each other (dont let them stack on the screen)
 - load a config json for characters (for specifying base attributes for size, velocity, texture, etc) so we can have many types.
 - getMovementDirectionTowards has a limitation where diagonals get a different speed than vertical/horizontal because of the way it's calculated

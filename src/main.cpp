@@ -63,12 +63,15 @@ int main() {
     mainChar.setTexture(renderer.loadTexture("images/dog.png"));
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
-    mainChar.setVelocity(0.01f);
+    mainChar.setVelocity(0.005f);
     mainChar.setCollisionAttack(0.03f);
 
     // std::unique_ptr<FireBallThrower> weaponFireBallThrower = std::make_unique<FireBallThrower>(9, renderer.loadTexture("images/projectile.png"));
     // mainChar.addWeapon(std::move(weaponFireBallThrower));
-    std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>(13, renderer.loadTexture("images/dog.png"));
+    std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
+    weaponFireDogThrower->setProjectileTexture(renderer.loadTexture("images/projectile.png"));
+    weaponFireDogThrower->setAttack(0.5f);
+    weaponFireDogThrower->setFireFrequency(10);
     mainChar.addWeapon(std::move(weaponFireDogThrower));
 
     engine.setMainChar(&mainChar);
