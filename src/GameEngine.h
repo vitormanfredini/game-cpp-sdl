@@ -145,6 +145,10 @@ private:
         mainChar->update();
         mainChar->move(input->getMovementDirection());
 
+        for(std::unique_ptr<Projectile>& projectile : projectiles){
+            projectile->update();
+        }
+
         camera->update(mainChar->getX(), mainChar->getY());
 
         std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(updatesCount);
@@ -160,27 +164,21 @@ private:
         }
 
         mapGenerator->updateGroundTiles(camera->getPositionX(),camera->getPositionY());
-        
-        if(mainChar->shouldFireProjectile()){
-            int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
-            if(closestEnemyIndex >= 0){
-                projectiles.push_back(
-                    mainChar->createProjectile(
-                        enemies[closestEnemyIndex].get(),
-                        renderer->loadTexture("images/projectile.png")
-                    )
-                );
-            }
-        }
 
-        for(std::unique_ptr<Projectile>& projectile : projectiles){
-            projectile->update();
+        int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
+        if(closestEnemyIndex >= 0){
+            std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(enemies[closestEnemyIndex].get());
+        
+            for(std::unique_ptr<Projectile>& projectile : newProjectiles){
+                projectiles.push_back(std::move(projectile));
+            }
         }
 
         for(size_t e=0; e<enemies.size(); e++){
             enemies[e]->moveTowards(mainChar);
             if(mainChar->isCollidingWith(enemies[e].get())){
-                mainChar->takeDamageFrom(enemies[e].get());
+                mainChar->takeCollisionDamageFrom(enemies[e].get());
+                enemies[e]->takeCollisionDamageFrom(mainChar);
             }
             
             for(size_t p=0; p<projectiles.size(); p++){

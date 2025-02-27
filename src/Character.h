@@ -11,24 +11,37 @@
 #include "Projectile.h"
 #include "GameObjectRenderers/GameWorldRenderer.h"
 #include <memory>
+#include "interfaces/IWeapon.h"
 
 class Character: public ICollidable, public IRenderable {
 
 private:
     float velocity = 0.01f;
     float health = 1.0f;
-    float attack = 0.001;
+    float collisionAttack = 0.001;
 
-    int fireEveryXUpdates = 15;
-    int updatesUntilNextFire = 0;
+    std::vector<std::unique_ptr<IWeapon>> weapons = {};
 
 public:
 
+    void addWeapon(std::unique_ptr<IWeapon> weapon){
+        weapons.push_back(std::move(weapon));
+    }
+
     void update(){
-        if(updatesUntilNextFire <= 0){
-            updatesUntilNextFire = fireEveryXUpdates;
+        for(std::unique_ptr<IWeapon>& weapon : weapons){
+            weapon->update();
         }
-        updatesUntilNextFire -= 1;
+    }
+
+    std::vector<std::unique_ptr<Projectile>> fire(Character* towardsChar){
+        std::vector<std::unique_ptr<Projectile>> newProjectiles = {};
+        for(std::unique_ptr<IWeapon>& weapon : weapons){
+            for(std::unique_ptr<Projectile>& projectile : weapon->fire(this, towardsChar)){
+                newProjectiles.push_back(std::move(projectile));
+            }
+        }
+        return newProjectiles;
     }
 
     float getHealth(){
@@ -43,12 +56,12 @@ public:
         return health <= 0.0f;
     }
 
-    float getAttack(){
-        return attack;
+    float getCollisionAttack(){
+        return collisionAttack;
     }
 
-    void setAttack(float newAttack){
-        attack = newAttack;
+    void setCollisionAttack(float newCollisionAttack){
+        collisionAttack = newCollisionAttack;
     }
 
     void setVelocity(float newVelocity) {
@@ -86,37 +99,19 @@ public:
         projectile->takeHit();
     }
 
-    void takeDamageFrom(Character* other){
+    void takeCollisionDamageFrom(Character* other){
         if(other->isDead()){
             return;
         }
-        health -= other->getAttack();
+        health -= other->getCollisionAttack();
     }
 
     double distanceFrom(Character* other){
         return sqrt(pow(other->getX() - x, 2) +  pow(y - other->getY(), 2));
     }
 
-    bool shouldFireProjectile(){
-        return updatesUntilNextFire == 0;
-    }
-
     void render(RenderProps renderProps) override {
         GameWorldRenderer::render(renderProps, this);
     };
-
-    std::unique_ptr<Projectile> createProjectile(Character* towardsOther, SDL_Texture* texture_projectile){
-        std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>();
-        projectile->setAttack(1.0f);
-        projectile->setPosition(
-            getX() + (getWidth() / 2.0f),
-            getY() + (getHeight() / 2.0f)
-        );
-        projectile->setSize(0.03,0.03);
-        projectile->setTexture(texture_projectile);
-        projectile->setDirection(getMovementDirectionTowards(towardsOther));
-        projectile->setVelocity(0.01f);
-        return projectile;
-    }
 
 };
