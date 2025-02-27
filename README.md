@@ -15,6 +15,8 @@ TODO:
 - no texture is being deleted
 - healthbar render is not taking into account the screen offset, possible resizing necessary, etc
 - implement different ways that enemies can move (at an angle, sine wav adding and subtracting from movement, zig zag, chaotic/random but in your overall direction, aim and charge, etc)
+- healthbar on top of each Character
+- consider the X and Y the bottom center of the Character
 
 # Compiling and running
 
