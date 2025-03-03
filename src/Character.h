@@ -9,7 +9,7 @@
 #include "interfaces/ICollidable.h"
 #include "interfaces/IRenderable.h"
 #include "Projectile.h"
-#include "GameObjectRenderers/GameWorldRenderer.h"
+#include "GameObjectRenderers/CharacterRenderer.h"
 #include <memory>
 #include "interfaces/IWeapon.h"
 
@@ -74,9 +74,9 @@ public:
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
-        float deltaX = other->getX() + (other->getWidth() / 2) - (x + (getWidth() / 2));
+        float deltaX = other->getX() - x;
         float absDeltaX = abs(deltaX);
-        float deltaY = other->getY() + (other->getHeight() / 2) - (y + (getHeight() / 2));
+        float deltaY = other->getY() - y;
         float absDeltaY = abs(deltaY);
 
         float maxAbsDelta = absDeltaX > absDeltaY ? absDeltaX : absDeltaY;
@@ -111,7 +111,7 @@ public:
     }
 
     void render(RenderProps renderProps) override {
-        GameWorldRenderer::render(renderProps, this);
+        CharacterRenderer::render(renderProps, this);
     };
 
 };

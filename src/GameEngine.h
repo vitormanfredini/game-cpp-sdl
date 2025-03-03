@@ -168,7 +168,7 @@ private:
         int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
         if(closestEnemyIndex >= 0){
             std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(enemies[closestEnemyIndex].get());
-        
+
             for(std::unique_ptr<Projectile>& projectile : newProjectiles){
                 projectiles.push_back(std::move(projectile));
             }
@@ -176,11 +176,21 @@ private:
 
         for(size_t e=0; e<enemies.size(); e++){
             enemies[e]->moveTowards(mainChar);
+
+            for(size_t oe=0; oe<enemies.size(); oe++){
+                if(e == oe){
+                    continue;
+                }
+                if(enemies[e]->isCollidingWith(enemies[oe].get())){
+                    // enemies[e]->pushBack(enemies[oe]);
+                }
+            }
+
             if(mainChar->isCollidingWith(enemies[e].get())){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
             }
-            
+
             for(size_t p=0; p<projectiles.size(); p++){
                 if(projectiles[p]->isCollidingWith(enemies[e].get())){
                     enemies[e]->takeDamageFrom(projectiles[p].get());

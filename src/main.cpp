@@ -65,9 +65,8 @@ int main() {
     mainChar.setSize(0.10f,0.10f);
     mainChar.setVelocity(0.005f);
     mainChar.setCollisionAttack(0.03f);
+    mainChar.setCollisionBox(0.10f,0.033f);
 
-    // std::unique_ptr<FireBallThrower> weaponFireBallThrower = std::make_unique<FireBallThrower>(9, renderer.loadTexture("images/projectile.png"));
-    // mainChar.addWeapon(std::move(weaponFireBallThrower));
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
     weaponFireDogThrower->setProjectileTexture(renderer.loadTexture("images/projectile.png"));
     weaponFireDogThrower->setAttack(0.5f);

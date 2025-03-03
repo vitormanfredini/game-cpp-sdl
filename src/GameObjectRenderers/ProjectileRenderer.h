@@ -5,7 +5,7 @@
 #include "../RenderProps.h"
 #include "../interfaces/IRenderable.h"
 
-class GameWorldRenderer {
+class ProjectileRenderer {
 public:
 
     static void render(RenderProps props, IRenderable* renderable) {
@@ -20,8 +20,8 @@ public:
         float width = renderable->getWidth();
         float height = renderable->getHeight();
 
-        x = x - props.cameraPosX + props.leftOffset;
-        y = y - props.cameraPosY + props.topOffset;
+        x = x - props.cameraPosX + props.leftOffset - (width / 2);
+        y = y - props.cameraPosY + props.topOffset - (height / 2);
 
         SDL_Rect rect = {
             static_cast<int>(std::round(x * props.screenScale)),

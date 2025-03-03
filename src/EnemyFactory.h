@@ -26,6 +26,7 @@ public:
             newEnemy->setSize(0.066f,0.066f);
             newEnemy->setVelocity(0.003f);
             newEnemy->setCollisionAttack(0.001);
+            newEnemy->setCollisionBox(0.066f,0.022f);
             newEnemy->setHealth(1.0f);
         }
         if(enemyType == EnemyType::Bigger){
@@ -33,6 +34,7 @@ public:
             newEnemy->setSize(0.077f,0.077f);
             newEnemy->setVelocity(0.0025f);
             newEnemy->setCollisionAttack(0.002);
+            newEnemy->setCollisionBox(0.077f,0.025f);
             newEnemy->setHealth(3.0f);
         }
         if(enemyType == EnemyType::Boss){
@@ -40,6 +42,7 @@ public:
             newEnemy->setSize(0.1f,0.1f);
             newEnemy->setVelocity(0.002f);
             newEnemy->setCollisionAttack(0.005);
+            newEnemy->setCollisionBox(0.1f,0.033f);
             newEnemy->setHealth(15.0f);
         }
 
