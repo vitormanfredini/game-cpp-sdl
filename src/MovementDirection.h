@@ -12,6 +12,10 @@ struct MovementDirection {
         return MovementDirection(-horizontal, -vertical);
     }
 
+    MovementDirection operator-(const MovementDirection& other) const {
+      return MovementDirection(horizontal - other.horizontal, vertical - other.vertical);
+    }
+
     MovementDirection operator*(float scalar) const {
         return MovementDirection(horizontal * scalar, vertical * scalar);
     }

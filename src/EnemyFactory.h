@@ -28,6 +28,7 @@ public:
             newEnemy->setCollisionAttack(0.001);
             newEnemy->setCollisionBox(0.066f,0.022f);
             newEnemy->setHealth(1.0f);
+            newEnemy->setWeight(0.666f);
         }
         if(enemyType == EnemyType::Bigger){
             newEnemy->setTexture(renderer->loadTexture("images/enemy_bigger.png"));
@@ -36,6 +37,7 @@ public:
             newEnemy->setCollisionAttack(0.002);
             newEnemy->setCollisionBox(0.077f,0.025f);
             newEnemy->setHealth(3.0f);
+            newEnemy->setWeight(0.85f);
         }
         if(enemyType == EnemyType::Boss){
             newEnemy->setTexture(renderer->loadTexture("images/enemy_boss.png"));
@@ -44,6 +46,7 @@ public:
             newEnemy->setCollisionAttack(0.005);
             newEnemy->setCollisionBox(0.1f,0.033f);
             newEnemy->setHealth(15.0f);
+            newEnemy->setWeight(2.5f);
         }
 
         return newEnemy;

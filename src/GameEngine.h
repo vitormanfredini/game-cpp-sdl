@@ -182,8 +182,7 @@ private:
                     continue;
                 }
                 if(enemies[e]->isCollidingWith(enemies[oe].get())){
-                    // enemies[e]->push(enemies[oe]);
-                    // enemies[oe]->push(enemies[e]);
+                    enemies[e]->getPushedBy(enemies[oe].get());
                 }
             }
 

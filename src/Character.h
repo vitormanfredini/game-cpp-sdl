@@ -20,6 +20,7 @@ private:
     float velocity = 0.01f;
     float health = 1.0f;
     float collisionAttack = 0.001;
+    float weight = 1.0f;
 
     std::vector<std::unique_ptr<IWeapon>> weapons = {};
 
@@ -45,12 +46,26 @@ public:
         return newProjectiles;
     }
 
+    void getPushedBy(Character* other){
+        MovementDirection movementDirection = getMovementDirectionTowards(other).normalized();
+        float weightRatio = other->getWeight() / getWeight();
+        move(-movementDirection * weightRatio);
+    }
+
     float getHealth(){
         return health;
     }
 
     void setHealth(float newHealth){
         health = newHealth;
+    }
+
+    float getWeight(){
+        return weight;
+    }
+
+    void setWeight(float newWeight){
+        weight = newWeight;
     }
 
     bool isDead(){
@@ -108,7 +123,7 @@ public:
     }
 
     double distanceFrom(Character* other){
-        return sqrt(pow(other->getX() - x, 2) +  pow(y - other->getY(), 2));
+        return sqrt(pow(x - other->getX(), 2) +  pow(y - other->getY(), 2));
     }
 
     void render(RenderProps renderProps) override {
