@@ -13,6 +13,8 @@ TODO:
 - healthbar render is not taking into account the screen offset, possible resizing necessary, etc
 - implement different ways that enemies can move (at an angle, sine wav adding and subtracting from movement, zig zag, chaotic/random but in your overall direction, aim and charge, etc)
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
+- make health slowly recover
+
 
 # Compiling and running
 
