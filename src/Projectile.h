@@ -9,6 +9,7 @@
 #include "interfaces/ICollidable.h"
 #include "interfaces/GameObject.h"
 #include "GameObjectRenderers/ProjectileRenderer.h"
+#include "MovementDirection.h"
 
 class Projectile: public ICollidable, public IRenderable {
 

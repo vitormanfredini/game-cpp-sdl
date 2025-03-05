@@ -12,6 +12,7 @@
 #include "GameObjectRenderers/CharacterRenderer.h"
 #include <memory>
 #include "interfaces/IWeapon.h"
+#include "MovementDirection.h"
 
 class Character: public ICollidable, public IRenderable {
 
@@ -88,7 +89,7 @@ public:
     }
 
     void moveTowards(Character* other){
-        move(getMovementDirectionTowards(other));
+        move(getMovementDirectionTowards(other).normalized());
     }
 
     void takeDamageFrom(Projectile* projectile){

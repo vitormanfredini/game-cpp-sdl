@@ -4,11 +4,7 @@
 #include <iostream>
 #include <SDL2/SDL_keycode.h>
 #include "MovingAverage.h"
-
-struct MovementDirection {
-    float horizontal;
-    float vertical;
-};
+#include "MovementDirection.h"
 
 class Input {
 

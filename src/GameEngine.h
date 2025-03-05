@@ -143,7 +143,7 @@ private:
         input->update();
 
         mainChar->update();
-        mainChar->move(input->getMovementDirection());
+        mainChar->move(input->getMovementDirection().normalized());
 
         for(std::unique_ptr<Projectile>& projectile : projectiles){
             projectile->update();
@@ -182,7 +182,8 @@ private:
                     continue;
                 }
                 if(enemies[e]->isCollidingWith(enemies[oe].get())){
-                    // enemies[e]->pushBack(enemies[oe]);
+                    // enemies[e]->push(enemies[oe]);
+                    // enemies[oe]->push(enemies[e]);
                 }
             }
 
