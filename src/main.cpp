@@ -19,6 +19,7 @@
 
 #include <chrono>
 #include <thread>
+#include "TextureManager.h"
 
 int main() {
 
@@ -27,7 +28,7 @@ int main() {
         2*800
     };
 
-    if(!renderer.initialize()){
+    if(!renderer.initializedCorrectly()){
         return -1;
     }
 
@@ -40,27 +41,30 @@ int main() {
         0.0f
     };
 
+    TextureManager textureManager {renderer.getSDLRenderer()};
+
     GameEngine engine {
         &renderer,
         &camera,
         &deltaTime,
-        &input
+        &input,
+        &textureManager
     };
 
     Menu menu;
-    menu.setTexture(renderer.loadTexture("images/menu.png"));
+    menu.setTexture(textureManager.loadTexture("images/menu.png"));
     menu.setPosition(0.0f,0.0f);
     menu.setSize(1.0f,1.0f);
 
     engine.setMenu(&menu);
 
     MapGenerator mapGenerator;
-    mapGenerator.setGroundTexture(renderer.loadTexture("images/grass.png"));
+    mapGenerator.setGroundTexture(textureManager.loadTexture("images/grass.png"));
 
     engine.setMapGenerator(&mapGenerator);
 
     Character mainChar;
-    mainChar.setTexture(renderer.loadTexture("images/dog.png"));
+    mainChar.setTexture(textureManager.loadTexture("images/dog.png"));
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
     mainChar.setVelocity(0.005f);
@@ -68,7 +72,7 @@ int main() {
     mainChar.setCollisionBox(0.10f,0.033f);
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
-    weaponFireDogThrower->setProjectileTexture(renderer.loadTexture("images/projectile.png"));
+    weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponFireDogThrower->setAttack(0.5f);
     weaponFireDogThrower->setFireFrequency(10);
     mainChar.addWeapon(std::move(weaponFireDogThrower));
@@ -94,8 +98,8 @@ int main() {
     engine.setLevelScript(&level1);
 
     HealthBar healthBar {
-        renderer.loadTexture(200,69,49),
-        renderer.loadTexture(129,147,127)
+        textureManager.loadTexture(200,69,49),
+        textureManager.loadTexture(129,147,127)
     };
     healthBar.setPosition(0.0f,0.0f);
     healthBar.setSize(1.0f,0.03f);
