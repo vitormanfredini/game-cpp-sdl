@@ -35,6 +35,8 @@ public:
         return newProjectiles;
     }
 
+    virtual std::unique_ptr<IWeapon> clone() const = 0;
+
 protected:
     float attack = 0.0f;
 

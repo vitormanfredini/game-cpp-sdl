@@ -130,4 +130,29 @@ public:
         CharacterRenderer::render(renderProps, this);
     };
 
+    std::unique_ptr<Character> clone() {
+        auto copy = std::make_unique<Character>();
+
+        copy->x = x;
+        copy->y = y;
+        copy->width = width;
+        copy->height = height;
+        copy->velocity = velocity;
+        copy->health = health;
+        copy->collisionAttack = collisionAttack;
+        copy->weight = weight;
+        copy->collisionBoxWidth = collisionBoxWidth;
+        copy->collisionBoxHeight = collisionBoxHeight;
+        copy->texture = texture;
+
+        copy->weapons.clear();
+        for (const auto& weapon : weapons) {
+            if (weapon) {
+                copy->weapons.push_back(weapon->clone());
+            }
+        }
+
+        return copy;
+    }
+
 };

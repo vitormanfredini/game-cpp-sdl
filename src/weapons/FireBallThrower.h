@@ -33,4 +33,8 @@ public:
         texture = newTexture;
     }
 
+    std::unique_ptr<IWeapon> clone() const override {
+        return std::make_unique<FireBallThrower>(*this);
+    }
+
 };

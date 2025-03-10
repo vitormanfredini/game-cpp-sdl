@@ -21,7 +21,7 @@
 class GameEngine {
 
 public:
-    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager) {
+    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), enemyFactory(textureManager) {
         //
     }
 
@@ -124,6 +124,7 @@ private:
     HealthBar* healthBar = nullptr;
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
+    EnemyFactory enemyFactory;
 
     Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
@@ -155,10 +156,7 @@ private:
         std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(updatesCount);
         for(LevelScriptKeyFrame keyFrame : keyFrames){
             for(int c=0;c<keyFrame.enemies;c++){
-                std::unique_ptr<Character> newEnemy = EnemyFactory::create(
-                    textureManager,
-                    keyFrame.enemyType
-                );
+                std::unique_ptr<Character> newEnemy = enemyFactory.create(keyFrame.enemyType);
                 newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
                 enemies.push_back(std::move(newEnemy));
             }
