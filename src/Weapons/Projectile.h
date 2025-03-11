@@ -1,17 +1,10 @@
 #pragma once
 
-#include "resource_registry.h"
 #include <string.h>
 #include <iostream>
-#include "BinaryResourceLoader.h"
-#include <SDL2/SDL_render.h>
-#include "Input.h"
-#include "interfaces/ICollidable.h"
-#include "interfaces/GameObject.h"
-#include "GameObjectRenderers/ProjectileRenderer.h"
-#include "MovementDirection.h"
+#include "../MovementDirection.h"
 
-class Projectile: public ICollidable, public IRenderable {
+class Projectile: public GameObject {
 
 private:
     float velocity = 0.0f;
@@ -53,9 +46,5 @@ public:
     float getAttack(){
         return attack;
     }
-
-    void render(RenderProps renderProps) override {
-        ProjectileRenderer::render(renderProps, this);
-    };
 
 };

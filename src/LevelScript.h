@@ -4,12 +4,12 @@
 #include <vector>
 #include <stddef.h>
 #include "Timer.h"
-#include "EnemyType.h"
+#include "CharacterType.h"
 
 struct LevelScriptKeyFrame {
     int frame;
     int enemies;
-    EnemyType enemyType;
+    CharacterType characterType;
 };
 
 class LevelScript {

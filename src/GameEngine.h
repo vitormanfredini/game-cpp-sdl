@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include "interfaces/IRenderable.h"
 #include "Renderer.h"
 #include "Camera.h"
 #include "DeltaTime.h"
@@ -16,12 +15,12 @@
 #include "Menu.h"
 #include <memory>
 #include "LevelScript.h"
-#include "EnemyFactory.h"
+#include "CharacterFactory.h"
 
 class GameEngine {
 
 public:
-    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), enemyFactory(textureManager) {
+    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), characterFactory(textureManager) {
         //
     }
 
@@ -29,7 +28,7 @@ public:
         mainChar = newMainChar;
     }
 
-    void setHealthBar(HealthBar* newHealthBar){
+    void setHealthBar(GameObject* newHealthBar){
         healthBar = newHealthBar;
     }
 
@@ -74,10 +73,6 @@ public:
             doUpdate();
         }
 
-        if(healthBar != nullptr){
-            healthBar->setHealth(mainChar->getHealth());
-        }
-
         if(mainChar->getHealth() <= 0.0f){
             triggerQuit();
         }
@@ -88,7 +83,7 @@ public:
 
         renderer->clearRenderables();
 
-        for(std::unique_ptr<IRenderable>& renderable : mapGenerator->getTiles()){
+        for(std::unique_ptr<GameObject>& renderable : mapGenerator->getTiles()){
             renderer->addRenderable(renderable.get());
         }
 
@@ -121,10 +116,10 @@ private:
     Camera* camera = nullptr;
     DeltaTime* deltatime = nullptr;
     Input* input = nullptr;
-    HealthBar* healthBar = nullptr;
+    GameObject* healthBar = nullptr;
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
-    EnemyFactory enemyFactory;
+    CharacterFactory characterFactory;
 
     Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
@@ -156,7 +151,7 @@ private:
         std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(updatesCount);
         for(LevelScriptKeyFrame keyFrame : keyFrames){
             for(int c=0;c<keyFrame.enemies;c++){
-                std::unique_ptr<Character> newEnemy = enemyFactory.create(keyFrame.enemyType);
+                std::unique_ptr<Character> newEnemy = characterFactory.create(keyFrame.characterType);
                 newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
                 enemies.push_back(std::move(newEnemy));
             }
@@ -180,18 +175,18 @@ private:
                 if(e == oe){
                     continue;
                 }
-                if(enemies[e]->isCollidingWith(enemies[oe].get())){
+                if(enemies[e]->checkCollision(*enemies[oe])){
                     enemies[e]->getPushedBy(enemies[oe].get());
                 }
             }
 
-            if(mainChar->isCollidingWith(enemies[e].get())){
+            if(mainChar->checkCollision(*enemies[e])){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
             }
 
             for(size_t p=0; p<projectiles.size(); p++){
-                if(projectiles[p]->isCollidingWith(enemies[e].get())){
+                if(projectiles[p]->checkCollision(*enemies[e])){
                     enemies[e]->takeDamageFrom(projectiles[p].get());
                 }
             }

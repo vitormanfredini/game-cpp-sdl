@@ -4,7 +4,6 @@
 #include <SDL2/SDL_image.h>
 #include "BinaryResourceLoader.h"
 #include "SDLUtils.h"
-#include "interfaces/IRenderable.h"
 #include "RenderProps.h"
 
 class Renderer {
@@ -36,7 +35,7 @@ public:
         renderables.clear();
     }
 
-    void addRenderable(IRenderable* renderable){
+    void addRenderable(GameObject* renderable){
         renderables.push_back(renderable);
     }
 
@@ -84,7 +83,7 @@ private:
     SDL_Window* window = nullptr;
     SDL_Renderer* sdl_renderer = nullptr;
 
-    std::vector<IRenderable*> renderables = {};
+    std::vector<GameObject*> renderables = {};
 
     void initializeSDL(){
 

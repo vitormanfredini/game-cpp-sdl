@@ -8,18 +8,19 @@
 #include "Input.h"
 #include "DeltaTime.h"
 #include "Menu.h"
-#include "HealthBar.h"
-#include "Projectile.h"
+#include "Weapons/Projectile.h"
 #include "CharacterUtils.h"
 #include "Renderer.h"
 #include "Camera.h"
 #include "MapGenerator.h"
 #include "GameEngine.h"
-#include "weapons/FireBallThrower.h"
-
+#include "Weapons/FireBallThrower.h"
+#include "GameObject/SpriteRenderer.h"
 #include <chrono>
 #include <thread>
 #include "TextureManager.h"
+#include "GameObject/BoxCollider.h"
+#include "GameObject/HealthBarRenderer.h"
 
 int main() {
 
@@ -52,9 +53,12 @@ int main() {
     };
 
     Menu menu;
-    menu.setTexture(textureManager.loadTexture("images/menu.png"));
     menu.setPosition(0.0f,0.0f);
     menu.setSize(1.0f,1.0f);
+    menu.setRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/menu.png"),
+        Alignment::UI
+    ));
 
     engine.setMenu(&menu);
 
@@ -64,12 +68,19 @@ int main() {
     engine.setMapGenerator(&mapGenerator);
 
     Character mainChar;
-    mainChar.setTexture(textureManager.loadTexture("images/dog.png"));
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
     mainChar.setVelocity(0.005f);
     mainChar.setCollisionAttack(0.03f);
-    mainChar.setCollisionBox(0.10f,0.033f);
+    mainChar.setRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/dog.png"),
+        Alignment::BottomUpCentered
+    ));
+    mainChar.setCollisionComponent(std::make_unique<BoxCollider>(
+        0.10f,
+        0.033f,
+        Alignment::Centered
+    ));
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
@@ -80,30 +91,31 @@ int main() {
     engine.setMainChar(&mainChar);
 
     LevelScript level1;
-    level1.addKeyframe({ 60, 3, EnemyType::Regular });
-    level1.addKeyframe({ 120, 5, EnemyType::Regular });
-    level1.addKeyframe({ 300, 5, EnemyType::Regular });
-    level1.addKeyframe({ 600, 4, EnemyType::Bigger });
-    level1.addKeyframe({ 620, 4, EnemyType::Bigger });
-    level1.addKeyframe({ 640, 5, EnemyType::Bigger });
-    level1.addKeyframe({ 900, 4, EnemyType::Bigger });
-    level1.addKeyframe({ 920, 4, EnemyType::Bigger });
-    level1.addKeyframe({ 940, 5, EnemyType::Bigger });
-    level1.addKeyframe({ 1200, 6, EnemyType::Bigger });
-    level1.addKeyframe({ 1300, 6, EnemyType::Bigger });
-    level1.addKeyframe({ 1400, 9, EnemyType::Bigger });
-    level1.addKeyframe({ 1800, 3, EnemyType::Boss });
-    level1.addKeyframe({ 2000, 5, EnemyType::Boss });
+    level1.addKeyframe({ 60, 3, CharacterType::Regular });
+    level1.addKeyframe({ 120, 5, CharacterType::Regular });
+    level1.addKeyframe({ 300, 5, CharacterType::Regular });
+    level1.addKeyframe({ 600, 4, CharacterType::Bigger });
+    level1.addKeyframe({ 620, 4, CharacterType::Bigger });
+    level1.addKeyframe({ 640, 5, CharacterType::Bigger });
+    level1.addKeyframe({ 900, 4, CharacterType::Bigger });
+    level1.addKeyframe({ 920, 4, CharacterType::Bigger });
+    level1.addKeyframe({ 940, 5, CharacterType::Bigger });
+    level1.addKeyframe({ 1200, 6, CharacterType::Bigger });
+    level1.addKeyframe({ 1300, 6, CharacterType::Bigger });
+    level1.addKeyframe({ 1400, 9, CharacterType::Bigger });
+    level1.addKeyframe({ 1800, 3, CharacterType::Boss });
+    level1.addKeyframe({ 2000, 5, CharacterType::Boss });
 
     engine.setLevelScript(&level1);
 
-    HealthBar healthBar {
-        textureManager.loadTexture(200,69,49),
-        textureManager.loadTexture(129,147,127)
-    };
+    GameObject healthBar {};
     healthBar.setPosition(0.0f,0.0f);
     healthBar.setSize(1.0f,0.03f);
-    healthBar.setHealth(mainChar.getHealth());
+    healthBar.setRenderComponent(std::make_unique<HealthBarRenderer>(
+        textureManager.loadTexture(129,147,127),
+        textureManager.loadTexture(200,69,49),
+        &mainChar.getHealth()
+    ));
     engine.setHealthBar(&healthBar);
 
     SDL_Event event;

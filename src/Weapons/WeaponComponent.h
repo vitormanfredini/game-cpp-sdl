@@ -1,12 +1,11 @@
 #pragma once
 
-#include "../Projectile.h"
-// #include "../Character.h"
+#include "Projectile.h"
 #include <memory>
 
 class Character;
 
-class IWeapon {
+class WeaponComponent {
 
 public:
 
@@ -35,7 +34,7 @@ public:
         return newProjectiles;
     }
 
-    virtual std::unique_ptr<IWeapon> clone() const = 0;
+    virtual std::unique_ptr<WeaponComponent> clone() const = 0;
 
 protected:
     float attack = 0.0f;

@@ -14,7 +14,8 @@ TODO:
 - implement different ways that enemies can move (at an angle, sine wav adding and subtracting from movement, zig zag, chaotic/random but in your overall direction, aim and charge, etc)
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - make health slowly recover
-
+- make a weapon factory with prototype pattern
+- use prototype pattern in FireBallThrower class
 
 # Compiling and running
 

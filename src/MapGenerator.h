@@ -5,8 +5,8 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include "interfaces/IRenderable.h"
-#include "StaticSprite.h"
+#include "GameObject/Alignment.h"
+#include "GameObject/SpriteRenderer.h"
 
 class MapGenerator {
 
@@ -37,12 +37,12 @@ public:
         groundTexture = texture;
     }
 
-    std::vector<std::unique_ptr<IRenderable>>& getTiles(){
+    std::vector<std::unique_ptr<GameObject>>& getTiles(){
         return groundTiles;
     }
 
 private:
-    std::vector<std::unique_ptr<IRenderable>> groundTiles = {};
+    std::vector<std::unique_ptr<GameObject>> groundTiles = {};
     int groundTilesColumns = 8;
     int groundTilesCoverScreen = groundTilesColumns * groundTilesColumns;
     SDL_Texture* groundTexture;
@@ -60,9 +60,9 @@ private:
         float y = groundTopY;
         for(size_t c=0;c<groundTilesCoverScreen;c++){
             
-            std::unique_ptr<IRenderable> ground = std::make_unique<StaticSprite>();
+            std::unique_ptr<GameObject> ground = std::make_unique<GameObject>();
             ground->setPosition(x, y);
-            ground->setTexture(groundTexture);
+            ground->setRenderComponent(std::make_unique<SpriteRenderer>(groundTexture, Alignment::BottomLeft));
             ground->setSize(squareSize, squareSize);
             groundTiles.push_back(std::move(ground));
 

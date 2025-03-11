@@ -6,9 +6,9 @@
 #include "BinaryResourceLoader.h"
 #include <SDL2/SDL_render.h>
 #include "Input.h"
-#include "GameObjectRenderers/UIRenderer.h"
+// #include "GameObjectRenderers/UIRenderer.h"
 
-class Menu: public IRenderable {
+class Menu: public GameObject {
 
 public:
 
@@ -31,8 +31,8 @@ public:
         }
     }
 
-    void render(RenderProps renderProps) override {
-        UIRenderer::render(renderProps, this);
-    };
+    // void render(RenderProps renderProps) override {
+    //     UIRenderer::render(renderProps, this);
+    // };
 
 };

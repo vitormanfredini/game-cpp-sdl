@@ -4,7 +4,7 @@
 #include <SDL2/SDL_image.h>
 #include "BinaryResourceLoader.h"
 #include "SDLUtils.h"
-#include "interfaces/IRenderable.h"
+#include "GameObject/GameObject.h"
 #include "RenderProps.h"
 #include <string> 
 

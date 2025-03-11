@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../Projectile.h"
-#include "../interfaces/IWeapon.h"
+#include "Projectile.h"
+#include "WeaponComponent.h"
 #include <memory>
 
-class FireBallThrower: public IWeapon {
+class FireBallThrower: public WeaponComponent {
 
 protected:
     SDL_Texture* texture;
@@ -17,8 +17,15 @@ protected:
             originChar->getY()
         );
         projectile->setSize(0.03,0.03);
-        projectile->setCollisionBox(0.03,0.03);
-        projectile->setTexture(texture);
+        projectile->setRenderComponent(std::make_unique<SpriteRenderer>(
+            texture,
+            Alignment::Centered
+        ));
+        projectile->setCollisionComponent(std::make_unique<BoxCollider>(
+            0.03,
+            0.03,
+            Alignment::Centered
+        ));
         projectile->setDirection(originChar->getMovementDirectionTowards(towardsChar).normalized());
         projectile->setVelocity(0.005f);
         return projectile;
@@ -33,7 +40,7 @@ public:
         texture = newTexture;
     }
 
-    std::unique_ptr<IWeapon> clone() const override {
+    std::unique_ptr<WeaponComponent> clone() const override {
         return std::make_unique<FireBallThrower>(*this);
     }
 
