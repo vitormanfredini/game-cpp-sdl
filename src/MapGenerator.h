@@ -62,7 +62,7 @@ private:
             
             std::unique_ptr<GameObject> ground = std::make_unique<GameObject>();
             ground->setPosition(x, y);
-            ground->setRenderComponent(std::make_unique<SpriteRenderer>(groundTexture, Alignment::BottomLeft));
+            ground->addRenderComponent(std::make_unique<SpriteRenderer>(groundTexture, Alignment::BottomLeft));
             ground->setSize(squareSize, squareSize);
             groundTiles.push_back(std::move(ground));
 

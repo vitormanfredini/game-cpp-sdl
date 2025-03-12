@@ -9,15 +9,20 @@
 #include <memory>
 #include "MovementDirection.h"
 #include "GameObject/GameObject.h"
+#include "GameObject/CharacterHealthBarRenderer.h"
+#include "GameObject/UiHealthBarRenderer.h"
 #include "Weapons/WeaponComponent.h"
 
 class Character: public GameObject {
 
 private:
     float velocity = 0.01f;
-    float health = 1.0f;
     float collisionAttack = 0.001;
     float weight = 1.0f;
+
+    float initialHealth = 1.0f;
+    float health = initialHealth;
+    float healthPercentage = 1.0f;
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
 
@@ -49,12 +54,18 @@ public:
         move(-movementDirection * weightRatio);
     }
 
-    float& getHealth(){
-        return health;
+    void setInitialHealth(float newInitialHealth){
+        initialHealth = newInitialHealth;
+        setHealth(newInitialHealth);
     }
 
     void setHealth(float newHealth){
         health = newHealth;
+        healthPercentage = health / initialHealth;
+    }
+
+    float& getHealthPercentage(){
+        return healthPercentage;
     }
 
     float getWeight(){
@@ -108,7 +119,7 @@ public:
         if(projectile->isDead()){
             return;
         }
-        health -= projectile->getAttack();
+        setHealth(health - projectile->getAttack());
         projectile->takeHit();
     }
 
@@ -116,7 +127,7 @@ public:
         if(other->isDead()){
             return;
         }
-        health -= other->getCollisionAttack();
+        setHealth(health - other->getCollisionAttack());
     }
 
     double distanceFrom(Character* other){
@@ -132,13 +143,24 @@ public:
         copy->height = height;
         copy->velocity = velocity;
         copy->health = health;
+        copy->initialHealth = initialHealth;
         copy->collisionAttack = collisionAttack;
         copy->weight = weight;
 
-        copy->weight = weight;
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
 
-        if (renderComponent) {
-            copy->setRenderComponent(renderComponent->clone());
+            auto* characterHealthBar = dynamic_cast<CharacterHealthBarRenderer*>(clonedRenderComponent.get());
+            if (characterHealthBar) {
+                characterHealthBar->setHealthPercentagePointer(&copy->getHealthPercentage());
+            }
+
+            auto* uiHealthBar = dynamic_cast<UiHealthBarRenderer*>(clonedRenderComponent.get());
+            if (uiHealthBar) {
+                uiHealthBar->setHealthPercentagePointer(&copy->getHealthPercentage());
+            }
+
+            copy->addRenderComponent(std::move(clonedRenderComponent));
         }
     
         if (collisionComponent) {

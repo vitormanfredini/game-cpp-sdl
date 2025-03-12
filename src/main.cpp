@@ -20,7 +20,7 @@
 #include <thread>
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
-#include "GameObject/HealthBarRenderer.h"
+#include "GameObject/UiHealthBarRenderer.h"
 
 int main() {
 
@@ -55,7 +55,7 @@ int main() {
     Menu menu;
     menu.setPosition(0.0f,0.0f);
     menu.setSize(1.0f,1.0f);
-    menu.setRenderComponent(std::make_unique<SpriteRenderer>(
+    menu.addRenderComponent(std::make_unique<SpriteRenderer>(
         textureManager.loadTexture("images/menu.png"),
         Alignment::UI
     ));
@@ -71,8 +71,9 @@ int main() {
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
     mainChar.setVelocity(0.005f);
+    mainChar.setInitialHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
-    mainChar.setRenderComponent(std::make_unique<SpriteRenderer>(
+    mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(
         textureManager.loadTexture("images/dog.png"),
         Alignment::BottomUpCentered
     ));
@@ -111,10 +112,10 @@ int main() {
     GameObject healthBar {};
     healthBar.setPosition(0.0f,0.0f);
     healthBar.setSize(1.0f,0.03f);
-    healthBar.setRenderComponent(std::make_unique<HealthBarRenderer>(
+    healthBar.addRenderComponent(std::make_unique<UiHealthBarRenderer>(
         textureManager.loadTexture(129,147,127),
         textureManager.loadTexture(200,69,49),
-        &mainChar.getHealth()
+        &mainChar.getHealthPercentage()
     ));
     engine.setHealthBar(&healthBar);
 

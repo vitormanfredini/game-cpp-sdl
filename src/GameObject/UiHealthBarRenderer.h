@@ -6,14 +6,14 @@
 #include "RenderComponent.h"
 #include "Alignment.h"
 
-class HealthBarRenderer : public RenderComponent {
+class UiHealthBarRenderer : public RenderComponent {
 private:
     SDL_Texture* backgroundTexture;
     SDL_Texture* foregroundTexture;
-    float* health;
+    float* healthPercentagePtr;
 
 public:
-    HealthBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTexture, float* healthPtr) : backgroundTexture(backgroundTexture), foregroundTexture(foregroundTexture), health(healthPtr) {}
+UiHealthBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTexture, float* healthPercentagePtr) : backgroundTexture(backgroundTexture), foregroundTexture(foregroundTexture), healthPercentagePtr(healthPercentagePtr) {}
 
     void render(GameObject& gameObject, RenderProps props) override {
 
@@ -33,15 +33,19 @@ public:
         rect = {
             static_cast<int>(std::round(x * props.screenScale)),
             static_cast<int>(std::round(y * props.screenScale)),
-            static_cast<int>(std::round((*health) * width * props.screenScale)),
+            static_cast<int>(std::round((*healthPercentagePtr) * width * props.screenScale)),
             static_cast<int>(std::round(height * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, foregroundTexture, NULL, &rect);
 
     }
 
+    void setHealthPercentagePointer(float* newHealthPercentagePtr) {  
+        healthPercentagePtr = newHealthPercentagePtr;
+    }
+
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<HealthBarRenderer>(backgroundTexture, foregroundTexture, health);
+        return std::make_unique<UiHealthBarRenderer>(backgroundTexture, foregroundTexture, healthPercentagePtr);
     }
 
 };

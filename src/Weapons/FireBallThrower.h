@@ -17,7 +17,7 @@ protected:
             originChar->getY()
         );
         projectile->setSize(0.03,0.03);
-        projectile->setRenderComponent(std::make_unique<SpriteRenderer>(
+        projectile->addRenderComponent(std::make_unique<SpriteRenderer>(
             texture,
             Alignment::Centered
         ));

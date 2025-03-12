@@ -73,7 +73,7 @@ public:
             doUpdate();
         }
 
-        if(mainChar->getHealth() <= 0.0f){
+        if(mainChar->isDead()){
             triggerQuit();
         }
         
@@ -169,6 +169,8 @@ private:
         }
 
         for(size_t e=0; e<enemies.size(); e++){
+            enemies[e]->update();
+
             enemies[e]->moveTowards(mainChar);
 
             for(size_t oe=0; oe<enemies.size(); oe++){

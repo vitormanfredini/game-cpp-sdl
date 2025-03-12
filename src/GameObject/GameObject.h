@@ -8,7 +8,7 @@
 class GameObject {
 protected:
 
-    std::unique_ptr<RenderComponent> renderComponent;
+    std::vector<std::unique_ptr<RenderComponent>> renderComponents;
     std::unique_ptr<CollisionComponent> collisionComponent;
 
 public:
@@ -22,8 +22,8 @@ public:
     GameObject(float x, float y, float width, float height)
         : x(x), y(y), width(width), height(height) {}
 
-    void setRenderComponent(std::unique_ptr<RenderComponent> render) {
-        renderComponent = std::move(render);
+    void addRenderComponent(std::unique_ptr<RenderComponent> render) {
+        renderComponents.push_back(std::move(render));
     }
 
     void setCollisionComponent(std::unique_ptr<CollisionComponent> collision) {
@@ -31,7 +31,9 @@ public:
     }
 
     void render(RenderProps renderProps) {
-        if (renderComponent) renderComponent->render(*this, renderProps);
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            renderComponent->render(*this, renderProps);
+        }
     }
 
     bool checkCollision(GameObject& other) {
