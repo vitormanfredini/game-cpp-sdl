@@ -94,18 +94,18 @@ int main() {
     LevelScript level1;
     level1.addKeyframe({ 60, 3, CharacterType::Regular });
     level1.addKeyframe({ 120, 5, CharacterType::Regular });
-    level1.addKeyframe({ 300, 5, CharacterType::Regular });
-    level1.addKeyframe({ 600, 4, CharacterType::Bigger });
-    level1.addKeyframe({ 620, 4, CharacterType::Bigger });
-    level1.addKeyframe({ 640, 5, CharacterType::Bigger });
-    level1.addKeyframe({ 900, 4, CharacterType::Bigger });
-    level1.addKeyframe({ 920, 4, CharacterType::Bigger });
-    level1.addKeyframe({ 940, 5, CharacterType::Bigger });
-    level1.addKeyframe({ 1200, 6, CharacterType::Bigger });
-    level1.addKeyframe({ 1300, 6, CharacterType::Bigger });
-    level1.addKeyframe({ 1400, 9, CharacterType::Bigger });
-    level1.addKeyframe({ 1800, 3, CharacterType::Boss });
-    level1.addKeyframe({ 2000, 5, CharacterType::Boss });
+    level1.addKeyframe({ 300, 15, CharacterType::Regular });
+    level1.addKeyframe({ 600, 14, CharacterType::Bigger });
+    level1.addKeyframe({ 620, 14, CharacterType::Bigger });
+    level1.addKeyframe({ 640, 15, CharacterType::Bigger });
+    level1.addKeyframe({ 900, 14, CharacterType::Bigger });
+    level1.addKeyframe({ 920, 14, CharacterType::Bigger });
+    level1.addKeyframe({ 940, 15, CharacterType::Bigger });
+    level1.addKeyframe({ 1200, 16, CharacterType::Bigger });
+    level1.addKeyframe({ 1300, 16, CharacterType::Bigger });
+    level1.addKeyframe({ 1400, 19, CharacterType::Bigger });
+    level1.addKeyframe({ 1800, 13, CharacterType::Boss });
+    level1.addKeyframe({ 2000, 15, CharacterType::Boss });
 
     engine.setLevelScript(&level1);
 
@@ -115,7 +115,7 @@ int main() {
     healthBar.addRenderComponent(std::make_unique<UiHealthBarRenderer>(
         textureManager.loadTexture(129,147,127),
         textureManager.loadTexture(200,69,49),
-        &mainChar.getHealthPercentage()
+        &mainChar
     ));
     engine.setHealthBar(&healthBar);
 

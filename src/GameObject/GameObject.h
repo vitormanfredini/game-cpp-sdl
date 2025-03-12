@@ -22,6 +22,8 @@ public:
     GameObject(float x, float y, float width, float height)
         : x(x), y(y), width(width), height(height) {}
 
+    virtual ~GameObject() = default;
+
     void addRenderComponent(std::unique_ptr<RenderComponent> render) {
         renderComponents.push_back(std::move(render));
     }

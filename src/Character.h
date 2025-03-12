@@ -9,9 +9,10 @@
 #include <memory>
 #include "MovementDirection.h"
 #include "GameObject/GameObject.h"
-#include "GameObject/CharacterHealthBarRenderer.h"
-#include "GameObject/UiHealthBarRenderer.h"
 #include "Weapons/WeaponComponent.h"
+
+class CharacterHealthBarRenderer;
+class UiHealthBarRenderer;
 
 class Character: public GameObject {
 
@@ -61,11 +62,10 @@ public:
 
     void setHealth(float newHealth){
         health = newHealth;
-        healthPercentage = health / initialHealth;
     }
 
-    float& getHealthPercentage(){
-        return healthPercentage;
+    float getHealthPercentage(){
+        return health / initialHealth;
     }
 
     float getWeight(){
@@ -149,17 +149,6 @@ public:
 
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
             std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
-
-            auto* characterHealthBar = dynamic_cast<CharacterHealthBarRenderer*>(clonedRenderComponent.get());
-            if (characterHealthBar) {
-                characterHealthBar->setHealthPercentagePointer(&copy->getHealthPercentage());
-            }
-
-            auto* uiHealthBar = dynamic_cast<UiHealthBarRenderer*>(clonedRenderComponent.get());
-            if (uiHealthBar) {
-                uiHealthBar->setHealthPercentagePointer(&copy->getHealthPercentage());
-            }
-
             copy->addRenderComponent(std::move(clonedRenderComponent));
         }
     

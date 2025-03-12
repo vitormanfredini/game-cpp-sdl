@@ -34,8 +34,7 @@ CharacterFactory(TextureManager* textureManager){
         ));
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),
-            textureManager->loadTexture(200,69,49),
-            &prototypes[CharacterType::Regular]->getHealthPercentage()
+            textureManager->loadTexture(200,69,49)
         ));
 
         prototypes[CharacterType::Regular]->setCollisionComponent(std::make_unique<BoxCollider>(
@@ -56,8 +55,7 @@ CharacterFactory(TextureManager* textureManager){
         ));
         prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),
-            textureManager->loadTexture(200,69,49),
-            &prototypes[CharacterType::Bigger]->getHealthPercentage()
+            textureManager->loadTexture(200,69,49)
         ));
         prototypes[CharacterType::Bigger]->setCollisionComponent(std::make_unique<BoxCollider>(
             0.077f,
@@ -77,8 +75,7 @@ CharacterFactory(TextureManager* textureManager){
         ));
         prototypes[CharacterType::Boss]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),
-            textureManager->loadTexture(200,69,49),
-            &prototypes[CharacterType::Boss]->getHealthPercentage()
+            textureManager->loadTexture(200,69,49)
         ));
         prototypes[CharacterType::Boss]->setCollisionComponent(std::make_unique<BoxCollider>(
             0.1f,
