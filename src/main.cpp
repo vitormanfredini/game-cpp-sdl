@@ -62,8 +62,7 @@ int main() {
 
     engine.setMenu(&menu);
 
-    MapGenerator mapGenerator;
-    mapGenerator.setGroundTexture(textureManager.loadTexture("images/grass.png"));
+    MapGenerator mapGenerator {&textureManager};
 
     engine.setMapGenerator(&mapGenerator);
 
