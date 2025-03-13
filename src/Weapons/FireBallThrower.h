@@ -32,9 +32,7 @@ protected:
     }
 
 public:
-    FireBallThrower() {
-        //
-    }
+    FireBallThrower() { }
 
     void setProjectileTexture(SDL_Texture* newTexture){
         texture = newTexture;

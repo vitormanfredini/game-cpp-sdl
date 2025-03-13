@@ -5,7 +5,7 @@
 #include "../RenderProps.h"
 #include "RenderComponent.h"
 #include "Alignment.h"
-#include "../Character.h"
+#include "Character/Character.h"
 
 class CharacterHealthBarRenderer : public RenderComponent {
 private:

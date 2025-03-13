@@ -2,7 +2,7 @@
 
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "../RenderProps.h"
+#include "RenderProps.h"
 #include "RenderComponent.h"
 #include "Alignment.h"
 

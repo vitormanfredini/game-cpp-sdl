@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
-#include "../RenderProps.h"
+#include "RenderProps.h"
 
 class RenderComponent {
     public:

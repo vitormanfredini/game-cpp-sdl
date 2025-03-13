@@ -4,7 +4,7 @@
 #include <vector>
 #include <stddef.h>
 #include "Timer.h"
-#include "CharacterType.h"
+#include "GameObject/Character/CharacterType.h"
 
 struct LevelScriptKeyFrame {
     int frame;

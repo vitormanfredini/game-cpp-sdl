@@ -4,7 +4,6 @@ This is a project I'm doing for studying C++ and SDL.
 
 TODO:
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
-- load a config json for characters (for specifying base attributes for size, velocity, texture, etc) so we can have many types.
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen
 - separate .h and .cpp files
@@ -15,6 +14,8 @@ TODO:
 - make health slowly recover
 - make a weapon factory with prototype pattern
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
+- render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
+- load map from an image or some other external source
 
 # Compiling and running
 

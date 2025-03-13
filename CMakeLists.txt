@@ -87,4 +87,7 @@ add_custom_target(embed_resources ALL DEPENDS ${EMBEDDED_HEADERS} ${RESOURCE_REG
 add_executable(SDL2Game ${SOURCE_FILES} ${EMBEDDED_HEADERS})
 add_dependencies(SDL2Game embed_resources)
 target_link_libraries(SDL2Game ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARY})
-target_include_directories(SDL2Game PRIVATE ${CMAKE_BINARY_DIR})
+target_include_directories(SDL2Game
+    PRIVATE ${CMAKE_SOURCE_DIR}/src
+    PRIVATE ${CMAKE_BINARY_DIR}
+)

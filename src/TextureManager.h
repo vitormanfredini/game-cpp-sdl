@@ -12,9 +12,7 @@ class TextureManager {
 
 public:
 
-    TextureManager(SDL_Renderer* sdl_renderer): sdl_renderer(sdl_renderer) {
-        //
-    };
+    TextureManager(SDL_Renderer* sdl_renderer): sdl_renderer(sdl_renderer) { };
 
     ~TextureManager(){
         clearTexturesCache();

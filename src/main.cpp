@@ -1,23 +1,22 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 #include "SDLUtils.h"
 #include "BinaryResourceLoader.h"
-#include "Character.h"
 #include "Input.h"
 #include "DeltaTime.h"
 #include "Menu.h"
 #include "Weapons/Projectile.h"
-#include "CharacterUtils.h"
+#include "GameObject/Character/Character.h"
 #include "Renderer.h"
 #include "Camera.h"
 #include "MapGenerator.h"
 #include "GameEngine.h"
 #include "Weapons/FireBallThrower.h"
 #include "GameObject/SpriteRenderer.h"
-#include <chrono>
-#include <thread>
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/UiHealthBarRenderer.h"

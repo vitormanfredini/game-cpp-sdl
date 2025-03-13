@@ -21,7 +21,7 @@ class CharacterFactory {
 
 public:
 
-CharacterFactory(TextureManager* textureManager){
+    CharacterFactory(TextureManager* textureManager){
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
         prototypes[CharacterType::Regular]->setSize(0.066f,0.066f);
         prototypes[CharacterType::Regular]->setVelocity(0.003f);

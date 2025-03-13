@@ -9,20 +9,18 @@
 #include "Camera.h"
 #include "DeltaTime.h"
 #include "Input.h"
-#include "Character.h"
+#include "GameObject/Character/Character.h"
+#include "GameObject/Character/CharacterUtils.h"
+#include "GameObject/Character/CharacterFactory.h"
 #include "MapGenerator.h"
-#include "CharacterUtils.h"
 #include "Menu.h"
 #include <memory>
 #include "LevelScript.h"
-#include "CharacterFactory.h"
 
 class GameEngine {
 
 public:
-    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), characterFactory(textureManager) {
-        //
-    }
+    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), characterFactory(textureManager) { }
 
     void setMainChar(Character* newMainChar){
         mainChar = newMainChar;

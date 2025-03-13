@@ -2,7 +2,7 @@
 
 #include <string.h>
 #include <iostream>
-#include "../MovementDirection.h"
+#include "MovementDirection.h"
 
 class Projectile: public GameObject {
 

@@ -2,7 +2,7 @@
 #include <vector>
 #include <memory>
 #include "CollisionComponent.h"
-#include "../RenderProps.h"
+#include "RenderProps.h"
 #include "RenderComponent.h"
 
 class GameObject {
