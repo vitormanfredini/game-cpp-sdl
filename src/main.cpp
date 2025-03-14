@@ -13,13 +13,14 @@
 #include "GameObject/Character/Character.h"
 #include "Renderer.h"
 #include "Camera.h"
-#include "MapGenerator.h"
+#include "Maps/MapComponent.h"
 #include "GameEngine.h"
 #include "Weapons/FireBallThrower.h"
 #include "GameObject/SpriteRenderer.h"
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/UiHealthBarRenderer.h"
+#include "Maps/RandomMap.h"
 
 int main() {
 
@@ -61,9 +62,9 @@ int main() {
 
     engine.setMenu(&menu);
 
-    MapGenerator mapGenerator {&textureManager};
+    RandomMap randomMap {&textureManager};
 
-    engine.setMapGenerator(&mapGenerator);
+    engine.setMapComponent(&randomMap);
 
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);

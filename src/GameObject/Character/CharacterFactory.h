@@ -16,6 +16,7 @@
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/CharacterHealthBarRenderer.h"
+#include "GameObject/SpriteRenderer.h"
 
 class CharacterFactory {
 

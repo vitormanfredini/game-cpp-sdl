@@ -12,7 +12,7 @@
 #include "GameObject/Character/Character.h"
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
-#include "MapGenerator.h"
+#include "Maps/MapComponent.h"
 #include "Menu.h"
 #include <memory>
 #include "LevelScript.h"
@@ -34,8 +34,8 @@ public:
         levelScript = newLevelScript;
     }
 
-    void setMapGenerator(MapGenerator* newMapGenerator){
-        mapGenerator = newMapGenerator;
+    void setMapComponent(MapComponent* newMapComponent){
+        mapComponent = newMapComponent;
     }
 
     void setMenu(Menu* newMenu){
@@ -81,7 +81,7 @@ public:
 
         renderer->clearRenderables();
 
-        for(std::unique_ptr<GameObject>& renderable : mapGenerator->getTiles()){
+        for(std::unique_ptr<GameObject>& renderable : mapComponent->getTiles()){
             renderer->addRenderable(renderable.get());
         }
 
@@ -124,7 +124,7 @@ private:
 
     std::vector<std::unique_ptr<Projectile>> projectiles = {};
 
-    MapGenerator* mapGenerator;
+    MapComponent* mapComponent;
 
     int updatesCount = 0;
 
@@ -155,7 +155,7 @@ private:
             }
         }
 
-        mapGenerator->updateGroundTiles(camera->getPositionX(),camera->getPositionY());
+        mapComponent->update(camera->getPositionX(),camera->getPositionY());
 
         int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
         if(closestEnemyIndex >= 0){

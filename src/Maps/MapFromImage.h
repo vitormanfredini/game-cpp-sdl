@@ -1,20 +1,20 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <iostream>
 #include <vector>
-#include <random>
 #include "GameObject/Alignment.h"
 #include "GameObject/SpriteRenderer.h"
 #include "MapTileType.h"
 #include "TextureManager.h"
+#include "MapComponent.h"
 
-class MapGenerator {
+class MapFromImage : public MapComponent {
 
 public:
 
-    MapGenerator(TextureManager* textureManager) {
+    MapFromImage(TextureManager* textureManager, std::string mapImageFile) {
+
+        imagePixels = BinaryResourceLoader::toRGBAPixelData("maps/test.png");
+
         renderComponentsPrototypes[MapTileType::Ground] = std::make_unique<SpriteRenderer>(
             textureManager->loadTexture("images/grass.png"),
             Alignment::BottomLeft
@@ -31,7 +31,7 @@ public:
         );
     }
 
-    void updateGroundTiles(float cameraPosX, float cameraPosY) {
+    void update(float cameraPosX, float cameraPosY) {
 
         int currentBlockX = std::floor(cameraPosX);
         int currentBlockY = std::floor(cameraPosY);
@@ -57,6 +57,7 @@ public:
     }
 
 private:
+    std::vector<std::vector<RGBAPixel>> imagePixels;
     std::vector<std::unique_ptr<GameObject>> groundTiles = {};
     int groundTilesColumns = 8;
     int groundTilesCoverOneBlock = groundTilesColumns * groundTilesColumns;

@@ -3,6 +3,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <vector>
+
+struct RGBAPixel {
+    int r;
+    int g;
+    int b;
+    int a;
+};
 
 class SDLUtils {
 
@@ -35,6 +43,56 @@ public:
         SDL_FreeSurface(surface);
 
         return texture;
+    }
+
+    static std::vector<std::vector<RGBAPixel>> getRGBAPixelDataFromSurface(SDL_Surface* surface){
+        SDL_LockSurface(surface);
+
+        std::vector<std::vector<RGBAPixel>> pixelData;
+
+        Uint8* pixels = (Uint8*)surface->pixels;
+        int bpp = surface->format->BytesPerPixel;
+
+        for (int x = 0; x < surface->w; x++) {
+            pixelData.push_back({});
+            for (int y = 0; y < surface->h; y++) {
+                Uint8 r, g, b, a;
+                Uint32 pixel = 0;
+
+                // Get pixel address
+                Uint8* p = pixels + y * surface->pitch + x * bpp;
+
+                switch (bpp) {
+                    case 1: // 8-bit
+                        pixel = *p;
+                        break;
+                    case 2: // 16-bit
+                        pixel = *(Uint16*)p;
+                        break;
+                    case 3: // 24-bit
+                        if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
+                            pixel = p[0] << 16 | p[1] << 8 | p[2];
+                        else
+                            pixel = p[2] << 16 | p[1] << 8 | p[0];
+                        break;
+                    case 4: // 32-bit
+                        pixel = *(Uint32*)p;
+                        break;
+                }
+
+                SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
+
+                pixelData[x].push_back({(int)r, (int)g, (int)b, (int)a});
+
+                // std::cout << "Pixel at (" << x << ", " << y << ") - "
+                //         << "R: " << (int)r << ", G: " << (int)g
+                //         << ", B: " << (int)b << ", A: " << (int)a << std::endl;
+            }
+        }
+
+        SDL_UnlockSurface(surface);
+
+        return pixelData;
     }
 
 };

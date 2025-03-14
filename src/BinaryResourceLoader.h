@@ -51,4 +51,28 @@ public:
         return texture;
     }
 
+    static std::vector<std::vector<RGBAPixel>> toRGBAPixelData(const char* filename) {
+        BinaryResource mapTestImage = BinaryResourceLoader::getBinaryResource(filename);
+
+        SDL_RWops* rw = SDL_RWFromMem(mapTestImage.data, mapTestImage.length);
+        if (!rw) {
+            std::cerr << "toRGBAPixelData error for file: " << filename << std::endl;
+            std::cerr << "SDL_RWFromMem failed: " << SDL_GetError() << std::endl;
+            return {{}};
+        }
+
+        SDL_Surface* surface = IMG_Load_RW(rw, 1);
+        if (!surface) {
+            std::cerr << "toRGBAPixelData error for file: " << filename << std::endl;
+            std::cerr << "IMG_Load_RW failed: " << IMG_GetError() << std::endl;
+            return {{}};
+        }
+
+        std::vector<std::vector<RGBAPixel>> pixels = SDLUtils::getRGBAPixelDataFromSurface(surface);
+
+        SDL_FreeSurface(surface);
+
+        return pixels;
+    }
+
 };

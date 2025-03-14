@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- keep doing MapFromImage (and maybe move some generic functions to MapComponent)
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen
@@ -15,7 +16,6 @@ TODO:
 - make a weapon factory with prototype pattern
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
 - render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
-- load map from an image or some other external source
 
 # Compiling and running
 
