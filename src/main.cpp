@@ -20,6 +20,7 @@
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/UiHealthBarRenderer.h"
+#include "Maps/MapFromImage.h"
 #include "Maps/RandomMap.h"
 
 int main() {
@@ -62,9 +63,10 @@ int main() {
 
     engine.setMenu(&menu);
 
-    RandomMap randomMap {&textureManager};
+    // RandomMap randomMap {&textureManager, 8};
+    MapFromImage mapFromImage {&textureManager, "maps/01.png", 10};
 
-    engine.setMapComponent(&randomMap);
+    engine.setMapComponent(&mapFromImage);
 
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);

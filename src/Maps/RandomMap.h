@@ -11,7 +11,9 @@ class RandomMap : public MapComponent {
 
 public:
 
-    RandomMap(TextureManager* textureManager) {
+    RandomMap(TextureManager* textureManager, int resolution) {
+        groundTilesColumns = resolution;
+        
         renderComponentsPrototypes[MapTileType::Ground] = std::make_unique<SpriteRenderer>(
             textureManager->loadTexture("images/grass.png"),
             Alignment::BottomLeft
@@ -28,35 +30,7 @@ public:
         );
     }
 
-    void update(float cameraPosX, float cameraPosY) {
-
-        int currentBlockX = std::floor(cameraPosX);
-        int currentBlockY = std::floor(cameraPosY);
-        
-        for(int x=currentBlockX-1; x < currentBlockX+2; x++){
-            for(int y=currentBlockY-1; y < currentBlockY+2; y++){
-                bool blockAlreadyHasGround = false;
-                for(int t=0;t<groundTiles.size();t=t+groundTilesCoverOneBlock){
-                    if(std::round(groundTiles[t]->getX()) == x && std::round(groundTiles[t]->getY()) == y){
-                        blockAlreadyHasGround = true;
-                        break;
-                    }
-                }
-                if(blockAlreadyHasGround == false){
-                    addGroundTiles(x, y);
-                }
-            }
-        }
-    }
-
-    std::vector<std::unique_ptr<GameObject>>& getTiles(){
-        return groundTiles;
-    }
-
 private:
-    std::vector<std::unique_ptr<GameObject>> groundTiles = {};
-    int groundTilesColumns = 8;
-    int groundTilesCoverOneBlock = groundTilesColumns * groundTilesColumns;
 
     std::unordered_map<MapTileType, std::unique_ptr<RenderComponent>> renderComponentsPrototypes;
 
@@ -70,7 +44,7 @@ private:
         float squareSize = deltaX / static_cast<float>(groundTilesColumns);
         float x = groundLeftX;
         float y = groundTopY;
-        for(size_t c=0;c<groundTilesCoverOneBlock;c++){
+        for(size_t c=0;c<getNumTilesCoverOneBlock();c++){
 
             std::unique_ptr<GameObject> tile = std::make_unique<GameObject>();
             tile->addRenderComponent(renderComponentsPrototypes[decideTileType(blockX, blockY, x, y)]->clone());
