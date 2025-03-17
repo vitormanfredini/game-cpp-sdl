@@ -17,6 +17,7 @@
 #include "GameObject/BoxCollider.h"
 #include "GameObject/CharacterHealthBarRenderer.h"
 #include "GameObject/SpriteRenderer.h"
+#include "GameObject/StraightMover.h"
 
 class CharacterFactory {
 
@@ -37,12 +38,12 @@ public:
             textureManager->loadTexture(87, 45, 53),
             textureManager->loadTexture(200,69,49)
         ));
-
         prototypes[CharacterType::Regular]->setCollisionComponent(std::make_unique<BoxCollider>(
             0.066f,
             0.022f,
             Alignment::Centered
         ));
+        prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<StraightMover>());
 
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
@@ -63,6 +64,7 @@ public:
             0.025f,
             Alignment::Centered
         ));
+        prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<StraightMover>());
 
         prototypes[CharacterType::Boss] = std::make_unique<Character>();
         prototypes[CharacterType::Boss]->setSize(0.1f,0.1f);
@@ -83,6 +85,7 @@ public:
             0.033f,
             Alignment::Centered
         ));
+        prototypes[CharacterType::Boss]->setMovementComponent(std::make_unique<StraightMover>());
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {

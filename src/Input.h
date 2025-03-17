@@ -77,7 +77,7 @@ public:
         }
     }
 
-    MovementDirection getMovementDirection(){
+    MovementDirection getInputDirections(){
         return {
             horizontal.getAverage(),
             vertical.getAverage()

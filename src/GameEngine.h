@@ -138,7 +138,7 @@ private:
         input->update();
 
         mainChar->update();
-        mainChar->move(input->getMovementDirection().normalized());
+        mainChar->move(input->getInputDirections().normalized());
 
         for(std::unique_ptr<Projectile>& projectile : projectiles){
             projectile->update();
@@ -169,7 +169,7 @@ private:
         for(size_t e=0; e<enemies.size(); e++){
             enemies[e]->update();
 
-            enemies[e]->moveTowards(mainChar);
+            enemies[e]->moveTowards(*mainChar);
 
             for(size_t oe=0; oe<enemies.size(); oe++){
                 if(e == oe){

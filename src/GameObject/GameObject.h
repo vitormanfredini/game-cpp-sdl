@@ -4,6 +4,7 @@
 #include "CollisionComponent.h"
 #include "RenderProps.h"
 #include "RenderComponent.h"
+#include "MovementComponent.h"
 
 class GameObject {
 protected:
@@ -28,8 +29,8 @@ public:
         renderComponents.push_back(std::move(render));
     }
 
-    void setCollisionComponent(std::unique_ptr<CollisionComponent> collision) {
-        collisionComponent = std::move(collision);
+    void setCollisionComponent(std::unique_ptr<CollisionComponent> collider) {
+        collisionComponent = std::move(collider);
     }
 
     void render(RenderProps renderProps) {

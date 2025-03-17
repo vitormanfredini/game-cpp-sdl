@@ -10,6 +10,7 @@
 #include "MovementDirection.h"
 #include "GameObject/GameObject.h"
 #include "Weapons/WeaponComponent.h"
+#include "GameObject/MovementComponent.h"
 
 class CharacterHealthBarRenderer;
 class UiHealthBarRenderer;
@@ -26,6 +27,7 @@ private:
     float healthPercentage = 1.0f;
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
+    std::unique_ptr<MovementComponent> movementComponent;
 
 public:
 
@@ -92,6 +94,12 @@ public:
         velocity = newVelocity;
     }
 
+    void moveTowards(GameObject& other){
+        if (movementComponent){
+            move(movementComponent->getMovementDirection(*this, other));
+        }
+    }
+
     void move(MovementDirection directions){
         y += directions.vertical * velocity;
         x += directions.horizontal * velocity;
@@ -111,10 +119,6 @@ public:
         };
     }
 
-    void moveTowards(Character* other){
-        move(getMovementDirectionTowards(other).normalized());
-    }
-
     void takeDamageFrom(Projectile* projectile){
         if(projectile->isDead()){
             return;
@@ -132,6 +136,10 @@ public:
 
     double distanceFrom(Character* other){
         return sqrt(pow(x - other->getX(), 2) +  pow(y - other->getY(), 2));
+    }
+
+    void setMovementComponent(std::unique_ptr<MovementComponent> mover) {
+        movementComponent = std::move(mover);
     }
 
     std::unique_ptr<Character> clone() {
@@ -154,6 +162,10 @@ public:
     
         if (collisionComponent) {
             copy->setCollisionComponent(collisionComponent->clone());
+        }
+
+        if(movementComponent){
+            copy->setMovementComponent(movementComponent->clone());
         }
 
         copy->weapons.clear();
