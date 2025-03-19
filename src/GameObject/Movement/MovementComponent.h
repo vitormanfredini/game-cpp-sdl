@@ -1,8 +1,8 @@
 #pragma once
+
+#include "GameObject/GameObject.h"
 #include "MovementDirection.h"
 #include <memory>
-
-class GameObject;
 
 class MovementComponent {
 
@@ -11,4 +11,5 @@ public:
     virtual ~MovementComponent() = default;
     virtual std::unique_ptr<MovementComponent> clone() const = 0;
 
+    MovementDirection getNormalizedDirectionTowardsTarget(GameObject& self, GameObject& target);
 };

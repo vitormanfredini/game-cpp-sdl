@@ -5,7 +5,6 @@
 #include <iostream>
 #include "BinaryResourceLoader.h"
 #include <SDL2/SDL_render.h>
-#include "Input.h"
 
 #include <memory>
 #include "Character.h"
@@ -17,7 +16,8 @@
 #include "GameObject/BoxCollider.h"
 #include "GameObject/CharacterHealthBarRenderer.h"
 #include "GameObject/SpriteRenderer.h"
-#include "GameObject/StraightMover.h"
+#include "GameObject/Movement/StraightMover.h"
+#include "GameObject/Movement/AngledMover.h"
 
 class CharacterFactory {
 
@@ -47,7 +47,7 @@ public:
 
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
-        prototypes[CharacterType::Bigger]->setVelocity(0.0025f);
+        prototypes[CharacterType::Bigger]->setVelocity(0.0033f);
         prototypes[CharacterType::Bigger]->setCollisionAttack(0.002);
         prototypes[CharacterType::Bigger]->setInitialHealth(3.0f);
         prototypes[CharacterType::Bigger]->setWeight(0.85f);
@@ -64,7 +64,7 @@ public:
             0.025f,
             Alignment::Centered
         ));
-        prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45,0.333));
 
         prototypes[CharacterType::Boss] = std::make_unique<Character>();
         prototypes[CharacterType::Boss]->setSize(0.1f,0.1f);

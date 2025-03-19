@@ -29,6 +29,13 @@ struct MovementDirection {
         return (length > 0) ? *this / length : MovementDirection(0, 0);
     }
 
+    MovementDirection rotated(double angle) const {
+        return MovementDirection(
+            horizontal * std::cos(angle) - vertical * std::sin(angle),
+            vertical * std::cos(angle) + horizontal * std::sin(angle)
+        );
+    }
+
     bool isZero() const {
         return horizontal == 0.0f && vertical == 0.0f;
     }

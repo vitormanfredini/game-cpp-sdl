@@ -4,7 +4,7 @@
 #include "CollisionComponent.h"
 #include "RenderProps.h"
 #include "RenderComponent.h"
-#include "MovementComponent.h"
+#include "Movement/MovementComponent.h"
 
 class GameObject {
 protected:
@@ -54,6 +54,10 @@ public:
     float getY() const { return y; }
     float getWidth() const { return width; }
     float getHeight() const { return height; }
+
+    double distanceFrom(GameObject* other){
+        return sqrt(pow(x - other->getX(), 2) +  pow(y - other->getY(), 2));
+    }
 
     void setPosition(float newX, float newY) {
         x = newX;

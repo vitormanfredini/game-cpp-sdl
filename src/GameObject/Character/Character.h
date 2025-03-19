@@ -10,7 +10,7 @@
 #include "MovementDirection.h"
 #include "GameObject/GameObject.h"
 #include "Weapons/WeaponComponent.h"
-#include "GameObject/MovementComponent.h"
+#include "GameObject/Movement/MovementComponent.h"
 
 class CharacterHealthBarRenderer;
 class UiHealthBarRenderer;
@@ -132,10 +132,6 @@ public:
             return;
         }
         setHealth(health - other->getCollisionAttack());
-    }
-
-    double distanceFrom(Character* other){
-        return sqrt(pow(x - other->getX(), 2) +  pow(y - other->getY(), 2));
     }
 
     void setMovementComponent(std::unique_ptr<MovementComponent> mover) {
