@@ -39,6 +39,9 @@ public:
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
             weapon->update();
         }
+        if(movementComponent){
+            movementComponent->update();
+        }
     }
 
     std::vector<std::unique_ptr<Projectile>> fire(Character* towardsChar){

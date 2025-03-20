@@ -64,7 +64,7 @@ int main() {
     engine.setMenu(&menu);
 
     // RandomMap randomMap {&textureManager, 8};
-    MapFromImage mapFromImage {&textureManager, "maps/01.png", 10};
+    MapFromImage mapFromImage {&textureManager, "maps/01.png", 8};
 
     engine.setMapComponent(&mapFromImage);
 
@@ -94,11 +94,15 @@ int main() {
 
     LevelScript level1;
     level1.addKeyframe({ 60, 3, CharacterType::Regular });
+    level1.addKeyframe({ 90, 6, CharacterType::Regular });
     level1.addKeyframe({ 120, 5, CharacterType::Regular });
+    level1.addKeyframe({ 160, 10, CharacterType::Regular });
     level1.addKeyframe({ 300, 15, CharacterType::Regular });
+    level1.addKeyframe({ 420, 15, CharacterType::Regular });
     level1.addKeyframe({ 600, 14, CharacterType::Bigger });
     level1.addKeyframe({ 620, 14, CharacterType::Bigger });
     level1.addKeyframe({ 640, 15, CharacterType::Bigger });
+    level1.addKeyframe({ 750, 14, CharacterType::Bigger });
     level1.addKeyframe({ 900, 14, CharacterType::Bigger });
     level1.addKeyframe({ 920, 14, CharacterType::Bigger });
     level1.addKeyframe({ 940, 15, CharacterType::Bigger });
@@ -107,6 +111,8 @@ int main() {
     level1.addKeyframe({ 1400, 19, CharacterType::Bigger });
     level1.addKeyframe({ 1800, 13, CharacterType::Boss });
     level1.addKeyframe({ 2000, 15, CharacterType::Boss });
+    level1.addKeyframe({ 4000, 30, CharacterType::Boss });
+    level1.addKeyframe({ 6000, 30, CharacterType::Boss });
 
     engine.setLevelScript(&level1);
 

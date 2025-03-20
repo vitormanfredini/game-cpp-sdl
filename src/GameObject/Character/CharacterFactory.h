@@ -18,6 +18,7 @@
 #include "GameObject/SpriteRenderer.h"
 #include "GameObject/Movement/StraightMover.h"
 #include "GameObject/Movement/AngledMover.h"
+#include "GameObject/Movement/ZigZagMover.h"
 
 class CharacterFactory {
 
@@ -26,7 +27,7 @@ public:
     CharacterFactory(TextureManager* textureManager){
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
         prototypes[CharacterType::Regular]->setSize(0.066f,0.066f);
-        prototypes[CharacterType::Regular]->setVelocity(0.003f);
+        prototypes[CharacterType::Regular]->setVelocity(0.004f);
         prototypes[CharacterType::Regular]->setCollisionAttack(0.001);
         prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
@@ -43,7 +44,7 @@ public:
             0.022f,
             Alignment::Centered
         ));
-        prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45));
 
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
