@@ -16,6 +16,7 @@
 #include "Menu.h"
 #include <memory>
 #include "LevelScript.h"
+#include "StateManager/StateManager.h"
 
 class GameEngine {
 
@@ -109,6 +110,30 @@ public:
         );
     }
 
+    void handleKeyboardEvent(SDL_Event &event){
+        switch (event.type) {
+            case SDL_QUIT:
+                triggerQuit();
+                break;
+            case SDL_KEYDOWN:
+                input->handleKeyDown(event.key.keysym.sym);
+                menu->handleKeyDown(event.key.keysym.sym);
+                if(event.key.keysym.sym==SDLK_ESCAPE){
+                    if(isPaused()){
+                        triggerQuit();
+                    }
+                    setPause(true);
+                }
+                if(isPaused() && event.key.keysym.sym==SDLK_RETURN){
+                    setPause(false);
+                }
+                break;
+            case SDL_KEYUP:
+                input->handleKeyUp(event.key.keysym.sym);
+                break;
+        }
+    }
+
 private:
     Renderer* renderer = nullptr;
     Camera* camera = nullptr;
@@ -118,6 +143,7 @@ private:
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
+    StateManager stateManager;
 
     Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};

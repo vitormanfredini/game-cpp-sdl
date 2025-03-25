@@ -3,8 +3,9 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- integrate the state manager
 - implement transitions between tiles with different textures
-- implement different ways that enemies can move (at an angle, sine wav adding and subtracting from movement, zig zag, chaotic/random but in your overall direction, aim and charge, etc)
+- implement different ways that enemies can move: sine wav adding and subtracting from movement, chaotic/random but in your overall direction, aim and charge, etc
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen

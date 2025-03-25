@@ -130,30 +130,8 @@ int main() {
 
     while (true) {
 
-        bool paused = engine.isPaused();
-
         while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-                case SDL_QUIT:
-                    engine.triggerQuit();
-                    break;
-                case SDL_KEYDOWN:
-                    input.handleKeyDown(event.key.keysym.sym);
-                    menu.handleKeyDown(event.key.keysym.sym);
-                    if(event.key.keysym.sym==SDLK_ESCAPE){
-                        if(engine.isPaused()){
-                            engine.triggerQuit();
-                        }
-                        engine.setPause(true);
-                    }
-                    if(paused && event.key.keysym.sym==SDLK_RETURN){
-                        engine.setPause(false);
-                    }
-                    break;
-                case SDL_KEYUP:
-                    input.handleKeyUp(event.key.keysym.sym);
-                    break;
-            }
+            engine.handleKeyboardEvent(event);
         }
 
         engine.update();
