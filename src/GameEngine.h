@@ -14,6 +14,7 @@
 #include "GameObject/Character/CharacterFactory.h"
 #include "Maps/MapComponent.h"
 #include "Menu.h"
+#include "Intro.h"
 #include <memory>
 #include "LevelScript.h"
 #include "StateManager/StateManager.h"
@@ -21,7 +22,22 @@
 class GameEngine {
 
 public:
-    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), characterFactory(textureManager) { }
+    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), characterFactory(textureManager) {
+        intro.setPosition(0.0f,0.0f);
+        intro.setSize(1.0f,1.0f);
+        intro.addRenderComponent(std::make_unique<SpriteRenderer>(
+            textureManager->loadTexture("images/intro.png"),
+            Alignment::UI
+        ));
+
+        pause.setPosition(0.0f,0.0f);
+        pause.setSize(1.0f,1.0f);
+        pause.addRenderComponent(std::make_unique<SpriteRenderer>(
+            textureManager->loadTexture("images/pause.png"),
+            Alignment::UI
+        ));
+
+    }
 
     void setMainChar(Character* newMainChar){
         mainChar = newMainChar;
@@ -43,64 +59,67 @@ public:
         menu = newMenu;
     }
 
-    bool isPaused(){
-        return paused;
-    }
-
-    void triggerQuit(){
-        quitTrigger = true;
-    }
-
-    bool shouldQuit(){
-        return quitTrigger;
-    }
-
-    void setPause(bool newPaused){
-        paused = newPaused;
-    }
-
     void update(){
 
         deltatime->update();
         int updatesNeeded = deltatime->getUpdatesNeeded();
 
-        if(paused){
-            return;
+        if(stateManager.shouldUpdateIntro()){
+            if(intro.finished()){
+                stateManager.setMainState(MainState::MainMenu);
+            }
         }
 
         for(int update=0;update<updatesNeeded;update++){
-            doUpdate();
+            if(stateManager.shouldUpdateIntro()){
+                intro.update();
+            }
+            if(stateManager.shouldUpdateGameWorld()){
+                doGameWorldUpdate();
+            }
         }
 
         if(mainChar->isDead()){
-            triggerQuit();
+            stateManager.triggerQuit();
         }
-        
+
     }
 
     void render(){
 
         renderer->clearRenderables();
 
-        for(std::unique_ptr<GameObject>& renderable : mapComponent->getTiles()){
-            renderer->addRenderable(renderable.get());
+        if(stateManager.shouldRenderIntro()){
+            renderer->addRenderable(&intro);
         }
 
-        for(std::unique_ptr<Character>& enemy : enemies){
-            renderer->addRenderable(enemy.get());
+        if(stateManager.shouldRenderGameWorld()){
+            for(std::unique_ptr<GameObject>& renderable : mapComponent->getTiles()){
+                renderer->addRenderable(renderable.get());
+            }
+    
+            for(std::unique_ptr<Character>& enemy : enemies){
+                renderer->addRenderable(enemy.get());
+            }
+    
+            renderer->addRenderable(mainChar);
+    
+            for(std::unique_ptr<Projectile>& projectile : projectiles){
+                renderer->addRenderable(projectile.get());
+            }
         }
 
-        renderer->addRenderable(mainChar);
-
-        for(std::unique_ptr<Projectile>& projectile : projectiles){
-            renderer->addRenderable(projectile.get());
+        if(stateManager.shouldRenderGameplayUi()){
+            if(healthBar != nullptr){
+                renderer->addRenderable(healthBar);
+            }
         }
 
-        if(healthBar != nullptr){
-            renderer->addRenderable(healthBar);
+        if(stateManager.isPaused()){
+            renderer->addRenderable(&pause);
         }
 
-        if(paused){
+        if(stateManager.shouldRenderMainMenu()){
             renderer->addRenderable(menu);
         }
 
@@ -113,25 +132,46 @@ public:
     void handleKeyboardEvent(SDL_Event &event){
         switch (event.type) {
             case SDL_QUIT:
-                triggerQuit();
+                stateManager.triggerQuit();
                 break;
             case SDL_KEYDOWN:
-                input->handleKeyDown(event.key.keysym.sym);
-                menu->handleKeyDown(event.key.keysym.sym);
-                if(event.key.keysym.sym==SDLK_ESCAPE){
-                    if(isPaused()){
-                        triggerQuit();
+                if(stateManager.shouldUpdateGameWorld()){
+                    input->handleKeyDown(event.key.keysym.sym);
+                    if(event.key.keysym.sym==SDLK_ESCAPE){
+                        stateManager.pauseToggle();
+                        return;
                     }
-                    setPause(true);
                 }
-                if(isPaused() && event.key.keysym.sym==SDLK_RETURN){
-                    setPause(false);
+
+                if(stateManager.shouldRenderMainMenu()){
+                    if(event.key.keysym.sym == SDLK_RETURN){
+                        stateManager.setMainState(MainState::Gameplay);
+                        return;
+                    }
                 }
+                
+                if(stateManager.isPaused()){
+                    if(event.key.keysym.sym==SDLK_RETURN){
+                        stateManager.pauseToggle();
+                        return;
+                    }
+                    if(event.key.keysym.sym==SDLK_ESCAPE){
+                        stateManager.triggerQuit();
+                        return;
+                    }
+                }
+                
                 break;
             case SDL_KEYUP:
-                input->handleKeyUp(event.key.keysym.sym);
+                if(stateManager.shouldUpdateGameWorld()){
+                    input->handleKeyUp(event.key.keysym.sym);
+                }
                 break;
         }
+    }
+
+    bool shouldQuit(){
+        return stateManager.shouldQuit();
     }
 
 private:
@@ -144,6 +184,8 @@ private:
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
     StateManager stateManager;
+    Intro intro { 3*60 };
+    GameObject pause;
 
     Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
@@ -152,14 +194,11 @@ private:
 
     MapComponent* mapComponent;
 
-    int updatesCount = 0;
+    int gameWorldUpdatesCount = 0;
 
     Menu* menu = nullptr;
 
-    bool paused = false;
-    bool quitTrigger = false;
-
-    void doUpdate(){
+    void doGameWorldUpdate(){
 
         input->update();
 
@@ -172,7 +211,7 @@ private:
 
         camera->update(mainChar->getX(), mainChar->getY());
 
-        std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(updatesCount);
+        std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(gameWorldUpdatesCount);
         for(LevelScriptKeyFrame keyFrame : keyFrames){
             for(int c=0;c<keyFrame.enemies;c++){
                 std::unique_ptr<Character> newEnemy = characterFactory.create(keyFrame.characterType);
@@ -222,7 +261,7 @@ private:
         projectilesGarbageCollector();
         enemiesGarbageCollector();
 
-        updatesCount += 1;
+        gameWorldUpdatesCount += 1;
     }
 
     void projectilesGarbageCollector(){

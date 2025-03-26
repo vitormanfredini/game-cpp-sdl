@@ -9,6 +9,7 @@ private:
     MainState mainState = MainState::Intro;
     GameplayState gameplayState = GameplayState::Play;
     bool paused = false;
+    bool quitTrigger = false;
 
 public:
 
@@ -79,6 +80,14 @@ public:
 
     bool shouldRenderMainMenu(){
         return shouldUpdateMainMenu();
+    }
+
+    void triggerQuit(){
+        quitTrigger = true;
+    }
+
+    bool shouldQuit(){
+        return quitTrigger;
     }
 
 };
