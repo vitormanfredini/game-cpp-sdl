@@ -71,10 +71,17 @@ public:
         return sdl_renderer;
     }
 
+    void getVirtualMouseCoords(float* mouseX, float* mouseY){
+        int mouseScreenX, mouseScreenY;
+        SDL_GetMouseState( &mouseScreenX, &mouseScreenY );
+        *mouseX = (static_cast<float>(mouseScreenX) / screenScale) - leftOffset;
+        *mouseY = (static_cast<float>(mouseScreenY) / screenScale) - topOffset;
+    }
+
 private:
     int widthPixels;
     int heightPixels;
-    
+   
     float screenScale;
 
     float leftOffset = 0.0f;

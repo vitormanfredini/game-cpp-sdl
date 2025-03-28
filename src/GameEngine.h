@@ -18,6 +18,7 @@
 #include <memory>
 #include "LevelScript.h"
 #include "StateManager/StateManager.h"
+#include "MouseEventType.h"
 
 class GameEngine {
 
@@ -129,7 +130,10 @@ public:
         );
     }
 
-    void handleKeyboardEvent(SDL_Event &event){
+    void handleKeyboardAndMouseEvent(SDL_Event &event){
+        bool isLeftClick = event.button.button == SDL_BUTTON_LEFT;
+        bool isRightClick = event.button.button == SDL_BUTTON_RIGHT;
+
         switch (event.type) {
             case SDL_QUIT:
                 stateManager.triggerQuit();
@@ -167,6 +171,26 @@ public:
                     input->handleKeyUp(event.key.keysym.sym);
                 }
                 break;
+            case SDL_MOUSEMOTION:
+                renderer->getVirtualMouseCoords(&virtualMouseX, &virtualMouseY);
+                if(stateManager.shouldUpdateMainMenu()){
+                    menu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
+                }
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                if(isLeftClick || isRightClick){
+                    if(stateManager.shouldUpdateMainMenu()){
+                        menu->handleMouseEvent(virtualMouseX, virtualMouseY, isLeftClick ? MouseEventType::LeftClickDown : MouseEventType::RightClickDown);
+                    }
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                if(isLeftClick || isRightClick){
+                    if(stateManager.shouldUpdateMainMenu()){
+                        menu->handleMouseEvent(virtualMouseX, virtualMouseY, isLeftClick ? MouseEventType::LeftClickUp : MouseEventType::RightClickUp);
+                    }
+                }
+                break;
         }
     }
 
@@ -193,6 +217,8 @@ private:
     std::vector<std::unique_ptr<Projectile>> projectiles = {};
 
     MapComponent* mapComponent;
+
+    float virtualMouseX, virtualMouseY;
 
     int gameWorldUpdatesCount = 0;
 

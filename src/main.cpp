@@ -131,7 +131,7 @@ int main() {
     while (true) {
 
         while (SDL_PollEvent(&event)) {
-            engine.handleKeyboardEvent(event);
+            engine.handleKeyboardAndMouseEvent(event);
         }
 
         engine.update();
