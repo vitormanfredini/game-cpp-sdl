@@ -13,8 +13,8 @@
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
 #include "Maps/MapComponent.h"
-#include "Menu.h"
-#include "Intro.h"
+#include "GameObject/Ui/Menu.h"
+#include "GameObject/Ui/Intro.h"
 #include <memory>
 #include "LevelScript.h"
 #include "StateManager/StateManager.h"
@@ -23,7 +23,22 @@
 class GameEngine {
 
 public:
-    GameEngine(Renderer* renderer, Camera* camera, DeltaTime* deltatime, Input* input, TextureManager* textureManager): renderer(renderer), camera(camera), deltatime(deltatime), input(input), textureManager(textureManager), characterFactory(textureManager) {
+    GameEngine(
+        Renderer* renderer,
+        Camera* camera,
+        DeltaTime* deltatime,
+        Input* input,
+        TextureManager* textureManager,
+        StateManager* stateManager
+    ):
+    renderer(renderer),
+    camera(camera),
+    deltatime(deltatime),
+    input(input),
+    textureManager(textureManager),
+    characterFactory(textureManager),
+    stateManager(stateManager)
+    {
         intro.setPosition(0.0f,0.0f);
         intro.setSize(1.0f,1.0f);
         intro.addRenderComponent(std::make_unique<SpriteRenderer>(
@@ -60,28 +75,32 @@ public:
         menu = newMenu;
     }
 
+    void setStateManager(StateManager* newStateManager){
+        stateManager = newStateManager;
+    }
+
     void update(){
 
         deltatime->update();
         int updatesNeeded = deltatime->getUpdatesNeeded();
 
-        if(stateManager.shouldUpdateIntro()){
+        if(stateManager->shouldUpdateIntro()){
             if(intro.finished()){
-                stateManager.setMainState(MainState::MainMenu);
+                stateManager->setMainState(MainState::MainMenu);
             }
         }
 
         for(int update=0;update<updatesNeeded;update++){
-            if(stateManager.shouldUpdateIntro()){
+            if(stateManager->shouldUpdateIntro()){
                 intro.update();
             }
-            if(stateManager.shouldUpdateGameWorld()){
+            if(stateManager->shouldUpdateGameWorld()){
                 doGameWorldUpdate();
             }
         }
 
         if(mainChar->isDead()){
-            stateManager.triggerQuit();
+            stateManager->triggerQuit();
         }
 
     }
@@ -90,11 +109,11 @@ public:
 
         renderer->clearRenderables();
 
-        if(stateManager.shouldRenderIntro()){
+        if(stateManager->shouldRenderIntro()){
             renderer->addRenderable(&intro);
         }
 
-        if(stateManager.shouldRenderGameWorld()){
+        if(stateManager->shouldRenderGameWorld()){
             for(std::unique_ptr<GameObject>& renderable : mapComponent->getTiles()){
                 renderer->addRenderable(renderable.get());
             }
@@ -110,17 +129,17 @@ public:
             }
         }
 
-        if(stateManager.shouldRenderGameplayUi()){
+        if(stateManager->shouldRenderGameplayUi()){
             if(healthBar != nullptr){
                 renderer->addRenderable(healthBar);
             }
         }
 
-        if(stateManager.isPaused()){
+        if(stateManager->isPaused()){
             renderer->addRenderable(&pause);
         }
 
-        if(stateManager.shouldRenderMainMenu()){
+        if(stateManager->shouldRenderMainMenu()){
             renderer->addRenderable(menu);
         }
 
@@ -136,57 +155,57 @@ public:
 
         switch (event.type) {
             case SDL_QUIT:
-                stateManager.triggerQuit();
+                stateManager->triggerQuit();
                 break;
             case SDL_KEYDOWN:
-                if(stateManager.shouldUpdateGameWorld()){
+                if(stateManager->shouldUpdateGameWorld()){
                     input->handleKeyDown(event.key.keysym.sym);
                     if(event.key.keysym.sym==SDLK_ESCAPE){
-                        stateManager.pauseToggle();
+                        stateManager->pauseToggle();
                         return;
                     }
                 }
 
-                if(stateManager.shouldRenderMainMenu()){
-                    if(event.key.keysym.sym == SDLK_RETURN){
-                        stateManager.setMainState(MainState::Gameplay);
-                        return;
-                    }
-                }
+                // if(stateManager->shouldRenderMainMenu()){
+                //     if(event.key.keysym.sym == SDLK_RETURN){
+                //         stateManager->setMainState(MainState::Gameplay);
+                //         return;
+                //     }
+                // }
                 
-                if(stateManager.isPaused()){
+                if(stateManager->isPaused()){
                     if(event.key.keysym.sym==SDLK_RETURN){
-                        stateManager.pauseToggle();
+                        stateManager->pauseToggle();
                         return;
                     }
                     if(event.key.keysym.sym==SDLK_ESCAPE){
-                        stateManager.triggerQuit();
+                        stateManager->triggerQuit();
                         return;
                     }
                 }
                 
                 break;
             case SDL_KEYUP:
-                if(stateManager.shouldUpdateGameWorld()){
+                if(stateManager->shouldUpdateGameWorld()){
                     input->handleKeyUp(event.key.keysym.sym);
                 }
                 break;
             case SDL_MOUSEMOTION:
                 renderer->getVirtualMouseCoords(&virtualMouseX, &virtualMouseY);
-                if(stateManager.shouldUpdateMainMenu()){
+                if(stateManager->shouldUpdateMainMenu()){
                     menu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if(isLeftClick || isRightClick){
-                    if(stateManager.shouldUpdateMainMenu()){
+                    if(stateManager->shouldUpdateMainMenu()){
                         menu->handleMouseEvent(virtualMouseX, virtualMouseY, isLeftClick ? MouseEventType::LeftClickDown : MouseEventType::RightClickDown);
                     }
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
                 if(isLeftClick || isRightClick){
-                    if(stateManager.shouldUpdateMainMenu()){
+                    if(stateManager->shouldUpdateMainMenu()){
                         menu->handleMouseEvent(virtualMouseX, virtualMouseY, isLeftClick ? MouseEventType::LeftClickUp : MouseEventType::RightClickUp);
                     }
                 }
@@ -195,7 +214,7 @@ public:
     }
 
     bool shouldQuit(){
-        return stateManager.shouldQuit();
+        return stateManager->shouldQuit();
     }
 
 private:
@@ -207,7 +226,7 @@ private:
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
-    StateManager stateManager;
+    StateManager* stateManager = nullptr;
     Intro intro { 3*60 };
     GameObject pause;
 

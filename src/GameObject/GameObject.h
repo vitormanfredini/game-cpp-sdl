@@ -33,7 +33,7 @@ public:
         collisionComponent = std::move(collider);
     }
 
-    void render(RenderProps renderProps) {
+    virtual void render(RenderProps renderProps) {
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
             renderComponent->render(*this, renderProps);
         }

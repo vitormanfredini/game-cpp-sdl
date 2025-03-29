@@ -47,6 +47,8 @@ public:
                 y = y - props.cameraPosY + props.topOffset;
                 break;
             case Alignment::UI:
+                x = x + props.leftOffset;
+                y = y + props.topOffset;
                 break;
 
         }

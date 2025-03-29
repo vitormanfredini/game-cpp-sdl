@@ -8,7 +8,7 @@
 #include "BinaryResourceLoader.h"
 #include "Input.h"
 #include "DeltaTime.h"
-#include "Menu.h"
+#include "GameObject/Ui/Menu.h"
 #include "Weapons/Projectile.h"
 #include "GameObject/Character/Character.h"
 #include "Renderer.h"
@@ -45,23 +45,50 @@ int main() {
 
     TextureManager textureManager {renderer.getSDLRenderer()};
 
+    StateManager stateManager;
+
     GameEngine engine {
         &renderer,
         &camera,
         &deltaTime,
         &input,
-        &textureManager
+        &textureManager,
+        &stateManager
     };
 
-    Menu menu;
-    menu.setPosition(0.0f,0.0f);
-    menu.setSize(1.0f,1.0f);
-    menu.addRenderComponent(std::make_unique<SpriteRenderer>(
+    Menu mainMenu;
+    mainMenu.setPosition(0.0f,0.0f);
+    mainMenu.setSize(1.0f,1.0f);
+    mainMenu.addRenderComponent(std::make_unique<SpriteRenderer>(
         textureManager.loadTexture("images/menu.png"),
         Alignment::UI
     ));
 
-    engine.setMenu(&menu);
+    std::unique_ptr<Button> startButton = std::make_unique<Button>();
+    startButton->setPosition(0.33f, 0.3f);
+    startButton->setSize(0.33f, 0.166f);
+    startButton->addRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/button_start.png"),
+        Alignment::UI
+    ));
+    startButton->setCallback([&stateManager]() {
+        stateManager.setMainState(MainState::Gameplay);
+    });
+    mainMenu.addButton(std::move(startButton));
+
+    std::unique_ptr<Button> exitButton = std::make_unique<Button>();
+    exitButton->setPosition(0.33f, 0.53f);
+    exitButton->setSize(0.33f, 0.166f);
+    exitButton->addRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/button_exit.png"),
+        Alignment::UI
+    ));
+    exitButton->setCallback([&stateManager]() {
+        stateManager.triggerQuit();
+    });
+    mainMenu.addButton(std::move(exitButton));
+
+    engine.setMenu(&mainMenu);
 
     // RandomMap randomMap {&textureManager, 8};
     MapFromImage mapFromImage {&textureManager, "maps/01.png", 8};
