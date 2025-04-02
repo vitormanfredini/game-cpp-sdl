@@ -17,6 +17,7 @@
 #include "GameEngine.h"
 #include "Weapons/FireBallThrower.h"
 #include "GameObject/SpriteRenderer.h"
+#include "GameObject/ButtonRenderer.h"
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/UiHealthBarRenderer.h"
@@ -67,9 +68,8 @@ int main() {
     std::unique_ptr<Button> startButton = std::make_unique<Button>();
     startButton->setPosition(0.33f, 0.3f);
     startButton->setSize(0.33f, 0.166f);
-    startButton->addRenderComponent(std::make_unique<SpriteRenderer>(
-        textureManager.loadTexture("images/button_start.png"),
-        Alignment::UI
+    startButton->addRenderComponent(std::make_unique<ButtonRenderer>(
+        textureManager.loadTexture("images/button_start.png")
     ));
     startButton->setCallback([&stateManager]() {
         stateManager.setMainState(MainState::Gameplay);
@@ -79,9 +79,8 @@ int main() {
     std::unique_ptr<Button> exitButton = std::make_unique<Button>();
     exitButton->setPosition(0.33f, 0.53f);
     exitButton->setSize(0.33f, 0.166f);
-    exitButton->addRenderComponent(std::make_unique<SpriteRenderer>(
-        textureManager.loadTexture("images/button_exit.png"),
-        Alignment::UI
+    exitButton->addRenderComponent(std::make_unique<ButtonRenderer>(
+        textureManager.loadTexture("images/button_exit.png")
     ));
     exitButton->setCallback([&stateManager]() {
         stateManager.triggerQuit();

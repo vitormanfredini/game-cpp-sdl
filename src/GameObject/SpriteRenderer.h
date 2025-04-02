@@ -16,7 +16,7 @@ public:
 
     void render(GameObject& gameObject, RenderProps props) override {
         if (texture == nullptr) {
-            std::cerr << "no texture" << std::endl;
+            std::cerr << "SpriteRenderer: no texture" << std::endl;
             return;
         }
 

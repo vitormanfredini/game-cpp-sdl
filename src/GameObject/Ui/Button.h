@@ -4,6 +4,7 @@
 #include "MouseEventType.h"
 #include <functional>
 #include <iostream>
+#include "ButtonState.h"
 
 class Button: public GameObject {
 private:
@@ -30,6 +31,16 @@ private:
 
 public:
     Button() = default;
+
+    ButtonState getCurrentState(){
+        if(mouseDown){
+            return ButtonState::Pressed;
+        }
+        if(mouseOver){
+            return ButtonState::Hover;
+        }
+        return ButtonState::Idle;
+    }
 
     void handleMouseEvent(float mouseX, float mouseY, MouseEventType eventType){
         if(eventType == MouseEventType::Motion){
