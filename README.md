@@ -3,7 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- implement Button class (with method for detecting clicks) and make the Menu class have a buttons vector.
+- implement gems: enemies drop when they die, main char can collect it, when enough gems are collected, an upgrade menu appears.
+- implement upgrade menu
 - implement transitions between tiles with different textures
 - implement different ways that enemies can move: sine wav adding and subtracting from movement, chaotic/random but in your overall direction, aim and charge, etc
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
