@@ -21,6 +21,7 @@
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/UiHealthBarRenderer.h"
+#include "GameObject/UiGemValueBarRenderer.h"
 #include "Maps/MapFromImage.h"
 #include "Maps/RandomMap.h"
 
@@ -94,7 +95,7 @@ int main() {
 
     engine.setMapComponent(&mapFromImage);
 
-    Character mainChar;
+    MainCharacter mainChar;
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
     mainChar.setVelocity(0.005f);
@@ -151,6 +152,16 @@ int main() {
         &mainChar
     ));
     engine.setHealthBar(&healthBar);
+
+    GameObject gemValueBar {};
+    gemValueBar.setPosition(0.0f,0.03f);
+    gemValueBar.setSize(1.0f,0.03f);
+    gemValueBar.addRenderComponent(std::make_unique<UiGemValueBarRenderer>(
+        textureManager.loadTexture(129,147,127),
+        textureManager.loadTexture(69,200,49),
+        &mainChar
+    ));
+    engine.setGemValueBar(&gemValueBar);
 
     SDL_Event event;
 

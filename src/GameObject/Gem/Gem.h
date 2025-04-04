@@ -16,6 +16,10 @@ public:
     }
 
     float consume(){
+        if(consumed){
+            // consumed this gem twice
+            return 0.0f;
+        }
         consumed = true;
         return value;
     }

@@ -10,6 +10,7 @@
 #include "DeltaTime.h"
 #include "Input.h"
 #include "GameObject/Character/Character.h"
+#include "GameObject/Character/MainCharacter.h"
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
 #include "GameObject/Gem/Gem.h"
@@ -59,12 +60,16 @@ public:
 
     }
 
-    void setMainChar(Character* newMainChar){
+    void setMainChar(MainCharacter* newMainChar){
         mainChar = newMainChar;
     }
 
     void setHealthBar(GameObject* newHealthBar){
         healthBar = newHealthBar;
+    }
+
+    void setGemValueBar(GameObject* newGemValueBar){
+        gemValueBar = newGemValueBar;
     }
 
     void setLevelScript(LevelScript* newLevelScript){
@@ -140,6 +145,9 @@ public:
         if(stateManager->shouldRenderGameplayUi()){
             if(healthBar != nullptr){
                 renderer->addRenderable(healthBar);
+            }
+            if(gemValueBar != nullptr){
+                renderer->addRenderable(gemValueBar);
             }
         }
 
@@ -231,6 +239,7 @@ private:
     DeltaTime* deltatime = nullptr;
     Input* input = nullptr;
     GameObject* healthBar = nullptr;
+    GameObject* gemValueBar = nullptr;
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
@@ -239,7 +248,7 @@ private:
     Intro intro { 3*60 };
     GameObject pause;
 
-    Character* mainChar;
+    MainCharacter* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
 
     std::vector<std::unique_ptr<Projectile>> projectiles = {};
@@ -260,6 +269,12 @@ private:
 
         mainChar->update();
         mainChar->move(input->getInputDirections().normalized());
+
+        for(std::unique_ptr<Gem>& gem : gems){
+            if(mainChar->checkCollision(*gem)){
+                mainChar->consumeGem(gem.get());
+            }
+        }
 
         for(std::unique_ptr<Projectile>& projectile : projectiles){
             projectile->update();
@@ -322,6 +337,16 @@ private:
         }
         for(int index : diedProjectiles){
             projectiles.erase(projectiles.begin() + index);
+        }
+
+        std::vector<int> diedGems = {};
+        for(size_t g=0; g<gems.size(); g++){
+            if(gems[g]->isConsumed()){
+                diedGems.push_back(g);
+            }
+        }
+        for(int index : diedGems){
+            gems.erase(gems.begin() + index);
         }
 
         std::vector<int> diedEnemies = {};
