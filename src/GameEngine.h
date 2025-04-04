@@ -12,6 +12,9 @@
 #include "GameObject/Character/Character.h"
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
+#include "GameObject/Gem/Gem.h"
+#include "GameObject/Gem/GemFactory.h"
+#include "GameObject/Gem/GemType.h"
 #include "Maps/MapComponent.h"
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/Intro.h"
@@ -37,7 +40,8 @@ public:
     input(input),
     textureManager(textureManager),
     characterFactory(textureManager),
-    stateManager(stateManager)
+    stateManager(stateManager),
+    gemFactory(textureManager)
     {
         intro.setPosition(0.0f,0.0f);
         intro.setSize(1.0f,1.0f);
@@ -120,6 +124,10 @@ public:
     
             for(std::unique_ptr<Character>& enemy : enemies){
                 renderer->addRenderable(enemy.get());
+            }
+
+            for(std::unique_ptr<Gem>& gem : gems){
+                renderer->addRenderable(gem.get());
             }
     
             renderer->addRenderable(mainChar);
@@ -226,6 +234,7 @@ private:
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
+    GemFactory gemFactory;
     StateManager* stateManager = nullptr;
     Intro intro { 3*60 };
     GameObject pause;
@@ -234,6 +243,8 @@ private:
     std::vector<std::unique_ptr<Character>> enemies = {};
 
     std::vector<std::unique_ptr<Projectile>> projectiles = {};
+
+    std::vector<std::unique_ptr<Gem>> gems = {};
 
     MapComponent* mapComponent;
 
@@ -303,35 +314,31 @@ private:
 
         }
 
-        projectilesGarbageCollector();
-        enemiesGarbageCollector();
-
-        gameWorldUpdatesCount += 1;
-    }
-
-    void projectilesGarbageCollector(){
         std::vector<int> diedProjectiles = {};
         for(size_t p=0; p<projectiles.size(); p++){
             if(projectiles[p]->isDead()){
                 diedProjectiles.push_back(p);
             }
         }
-
         for(int index : diedProjectiles){
             projectiles.erase(projectiles.begin() + index);
         }
-    }
 
-    void enemiesGarbageCollector(){
         std::vector<int> diedEnemies = {};
         for(size_t e=0; e<enemies.size(); e++){
             if(enemies[e]->isDead()){
+                std::unique_ptr<Gem> newGem = gemFactory.create(GemType::Level1);
+                newGem->setPosition(enemies[e]->getX(),enemies[e]->getY());
+                gems.push_back(std::move(newGem));
+
                 diedEnemies.push_back(e);
             }
         }
         for(int index : diedEnemies){
             enemies.erase(enemies.begin() + index);
         }
+
+        gameWorldUpdatesCount += 1;
     }
 
 };
