@@ -84,6 +84,10 @@ public:
         menu = newMenu;
     }
 
+    void setSubMenu(Menu* newSubMenu){
+        subMenu = newSubMenu;
+    }
+
     void setStateManager(StateManager* newStateManager){
         stateManager = newStateManager;
     }
@@ -159,6 +163,10 @@ public:
             renderer->addRenderable(menu);
         }
 
+        if(stateManager->shouldRenderSubMenu()){
+            renderer->addRenderable(subMenu);
+        }
+
         renderer->render(
             camera->getPositionX(),
             camera->getPositionY()
@@ -178,25 +186,18 @@ public:
                     input->handleKeyDown(event.key.keysym.sym);
                     if(event.key.keysym.sym==SDLK_ESCAPE){
                         stateManager->pauseToggle();
-                        return;
+                        break;
                     }
                 }
-
-                // if(stateManager->shouldRenderMainMenu()){
-                //     if(event.key.keysym.sym == SDLK_RETURN){
-                //         stateManager->setMainState(MainState::Gameplay);
-                //         return;
-                //     }
-                // }
                 
                 if(stateManager->isPaused()){
                     if(event.key.keysym.sym==SDLK_RETURN){
                         stateManager->pauseToggle();
-                        return;
+                        break;
                     }
                     if(event.key.keysym.sym==SDLK_ESCAPE){
                         stateManager->triggerQuit();
-                        return;
+                        break;
                     }
                 }
                 
@@ -204,28 +205,40 @@ public:
             case SDL_KEYUP:
                 if(stateManager->shouldUpdateGameWorld()){
                     input->handleKeyUp(event.key.keysym.sym);
+                    break;
                 }
                 break;
             case SDL_MOUSEMOTION:
                 renderer->getVirtualMouseCoords(&virtualMouseX, &virtualMouseY);
                 if(stateManager->shouldUpdateMainMenu()){
                     menu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
+                    break;
+                }
+                if(stateManager->shouldUpdateSubmenu()){
+                    subMenu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
+                    break;
                 }
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                if(isLeftClick || isRightClick){
-                    if(stateManager->shouldUpdateMainMenu()){
-                        menu->handleMouseEvent(virtualMouseX, virtualMouseY, isLeftClick ? MouseEventType::LeftClickDown : MouseEventType::RightClickDown);
-                    }
-                }
-                break;
             case SDL_MOUSEBUTTONUP:
-                if(isLeftClick || isRightClick){
-                    if(stateManager->shouldUpdateMainMenu()){
-                        menu->handleMouseEvent(virtualMouseX, virtualMouseY, isLeftClick ? MouseEventType::LeftClickUp : MouseEventType::RightClickUp);
-                    }
+            {
+                if(!isLeftClick && !isRightClick){
+                    break;
+                }
+                MouseEventType eventType = event.type == SDL_MOUSEBUTTONDOWN ? 
+                    (isLeftClick ? MouseEventType::LeftClickDown : MouseEventType::RightClickDown)
+                    :
+                    (isLeftClick ? MouseEventType::LeftClickUp : MouseEventType::RightClickUp);
+                if(stateManager->shouldUpdateMainMenu()){
+                    menu->handleMouseEvent(virtualMouseX, virtualMouseY, eventType);
+                    break;
+                }
+                if(stateManager->shouldUpdateSubmenu()){
+                    subMenu->handleMouseEvent(virtualMouseX, virtualMouseY, eventType);
+                    break;
                 }
                 break;
+            }
         }
     }
 
@@ -262,6 +275,7 @@ private:
     int gameWorldUpdatesCount = 0;
 
     Menu* menu = nullptr;
+    Menu* subMenu = nullptr;
 
     void doGameWorldUpdate(){
 

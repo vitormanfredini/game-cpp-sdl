@@ -18,11 +18,13 @@ class MainCharacter: public Character {
 
 private:
     float currentGemValue = 0.0f;
-    int level = 0;
+    int level = 1;
     float currentLevelMax = 1.0f;
 
+    std::function<void(int)> onAdvanceLevelCallback;
+
     void recalculateCurrentLevelMax(){
-        currentLevelMax = static_cast<float>(level + 1);
+        currentLevelMax = static_cast<float>(level);
     }
 
 public:
@@ -38,11 +40,18 @@ public:
             level += 1;
             currentGemValue -= currentLevelMax;
             recalculateCurrentLevelMax();
+            if(onAdvanceLevelCallback){
+                onAdvanceLevelCallback(level);
+            }
         }
     }
 
     float getGemPercentage(){
         return currentGemValue / currentLevelMax;
+    }
+
+    void setAdvanceLevelCallback(std::function<void(int)> onAdvanceLevel) {
+        onAdvanceLevelCallback = onAdvanceLevel;
     }
 
 };

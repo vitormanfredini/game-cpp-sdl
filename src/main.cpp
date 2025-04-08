@@ -58,6 +58,54 @@ int main() {
         &stateManager
     };
 
+    Menu upgradeMenu;
+    upgradeMenu.setPosition(0.0f,0.0f);
+    upgradeMenu.setSize(1.0f,1.0f);
+    upgradeMenu.addRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/menu.png"),
+        Alignment::UI
+    ));
+
+    std::unique_ptr<Button> option1Button = std::make_unique<Button>();
+    option1Button->setPosition(0.33f, 0.2f);
+    option1Button->setSize(0.33f, 0.166f);
+    option1Button->addRenderComponent(std::make_unique<ButtonRenderer>(
+        textureManager.loadTexture("images/button_upgrademenu_option.png")
+    ));
+    option1Button->setCallback([&stateManager]() {
+        std::cout << "option 1 clicked" << std::endl;
+        stateManager.setGamePlayState(GameplayState::Play);
+    });
+    upgradeMenu.addButton(std::move(option1Button));
+
+    std::unique_ptr<Button> option2Button = std::make_unique<Button>();
+    option2Button->setPosition(0.33f, 0.4f);
+    option2Button->setSize(0.33f, 0.166f);
+    option2Button->addRenderComponent(std::make_unique<ButtonRenderer>(
+        textureManager.loadTexture("images/button_upgrademenu_option.png")
+    ));
+    option2Button->setCallback([&stateManager]() {
+        std::cout << "option 2 clicked" << std::endl;
+        stateManager.setGamePlayState(GameplayState::Play);
+    });
+    upgradeMenu.addButton(std::move(option2Button));
+
+    std::unique_ptr<Button> option3Button = std::make_unique<Button>();
+    option3Button->setPosition(0.33f, 0.6f);
+    option3Button->setSize(0.33f, 0.166f);
+    option3Button->addRenderComponent(std::make_unique<ButtonRenderer>(
+        textureManager.loadTexture("images/button_upgrademenu_option.png")
+    ));
+    option3Button->setCallback([&stateManager]() {
+        std::cout << "option 3 clicked" << std::endl;
+        stateManager.setGamePlayState(GameplayState::Play);
+    });
+    upgradeMenu.addButton(std::move(option3Button));
+
+    engine.setSubMenu(&upgradeMenu);
+
+
+
     Menu mainMenu;
     mainMenu.setPosition(0.0f,0.0f);
     mainMenu.setSize(1.0f,1.0f);
@@ -110,6 +158,9 @@ int main() {
         0.033f,
         Alignment::Centered
     ));
+    mainChar.setAdvanceLevelCallback([&stateManager](int level) {
+        stateManager.setGamePlayState(GameplayState::UpgradeMenu);
+    });
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));

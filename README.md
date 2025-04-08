@@ -3,8 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- implement gems: enemies drop when they die, main char can collect it, when enough gems are collected, an upgrade menu appears.
-- implement upgrade menu
+- make a menu factory (for calculating button positions and encapsulate things)
+- implement upgrade system (generate random items to be in the menu) and implement a vector of upgradeComponents that can take do some operation on a specific parameter (for example, a multiplier of the base number, a sum to the base point, etc). some options can be new weapons or upgrades to the weapons.
 - implement transitions between tiles with different textures
 - implement different ways that enemies can move: sine wav adding and subtracting from movement, chaotic/random but in your overall direction, aim and charge, etc
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
