@@ -33,10 +33,11 @@ public:
 
     void consumeGem(Gem* gem){
         currentGemValue += gem->consume();
+
         if(currentGemValue > currentLevelMax){
+            level += 1;
             currentGemValue -= currentLevelMax;
             recalculateCurrentLevelMax();
-            level += 1;
         }
     }
 
