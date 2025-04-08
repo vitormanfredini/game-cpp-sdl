@@ -158,8 +158,9 @@ int main() {
         0.033f,
         Alignment::Centered
     ));
-    mainChar.setAdvanceLevelCallback([&stateManager](int level) {
+    mainChar.setAdvanceLevelCallback([&stateManager,&input](int level) {
         stateManager.setGamePlayState(GameplayState::UpgradeMenu);
+        input.reset();
     });
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();

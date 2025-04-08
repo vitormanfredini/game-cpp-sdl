@@ -39,6 +39,16 @@ public:
         
     }
 
+    void reset(){
+        up = false;
+        down = false;
+        left = false;
+        right = false;
+
+        vertical.fill(0.0f);
+        horizontal.fill(0.0f);
+    }
+
     void handleKeyDown(SDL_Keycode keyCode){
         switch (keyCode) {
             case SDLK_UP:
