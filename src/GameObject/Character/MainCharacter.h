@@ -18,15 +18,30 @@ class MainCharacter: public Character {
 
 private:
     float currentGemValue = 0.0f;
+    int level = 0;
+    float currentLevelMax = 1.0f;
+
+    void recalculateCurrentLevelMax(){
+        currentLevelMax = static_cast<float>(level + 1);
+    }
 
 public:
 
-    void consumeGem(Gem* gem){
-        currentGemValue += gem->consume();
+    MainCharacter(){
+        recalculateCurrentLevelMax();
     }
 
-    float getGemValue(){
-        return currentGemValue;
+    void consumeGem(Gem* gem){
+        currentGemValue += gem->consume();
+        if(currentGemValue > currentLevelMax){
+            currentGemValue -= currentLevelMax;
+            recalculateCurrentLevelMax();
+            level += 1;
+        }
+    }
+
+    float getGemPercentage(){
+        return currentGemValue / currentLevelMax;
     }
 
 };

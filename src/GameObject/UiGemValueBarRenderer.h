@@ -14,13 +14,13 @@ private:
     MainCharacter* characterPtr;
 
 public:
-UiGemValueBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTexture, MainCharacter* characterPtr) : backgroundTexture(backgroundTexture), foregroundTexture(foregroundTexture), characterPtr(characterPtr) {}
+    UiGemValueBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTexture, MainCharacter* characterPtr) : backgroundTexture(backgroundTexture), foregroundTexture(foregroundTexture), characterPtr(characterPtr) {}
 
     void render(GameObject& gameObject, RenderProps props) override {
 
         if (!characterPtr) return;
 
-        float gemValue = characterPtr->getGemValue();
+        float gemPercentage = characterPtr->getGemPercentage();
 
         float x = gameObject.x;
         float y = gameObject.y;
@@ -38,7 +38,7 @@ UiGemValueBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTex
         rect = {
             static_cast<int>(std::round(x * props.screenScale)),
             static_cast<int>(std::round(y * props.screenScale)),
-            static_cast<int>(std::round(gemValue * width * props.screenScale)),
+            static_cast<int>(std::round(gemPercentage * width * props.screenScale)),
             static_cast<int>(std::round(height * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, foregroundTexture, NULL, &rect);
