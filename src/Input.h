@@ -36,7 +36,7 @@ public:
         }else{
             horizontal.addValue(0.0f);
         }
-        
+
     }
 
     void reset(){

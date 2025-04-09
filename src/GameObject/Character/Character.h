@@ -11,6 +11,7 @@
 #include "GameObject/GameObject.h"
 #include "Weapons/WeaponComponent.h"
 #include "GameObject/Movement/MovementComponent.h"
+#include "GameObject/UpgradeComponent.h"
 
 class CharacterHealthBarRenderer;
 class UiHealthBarRenderer;
@@ -28,11 +29,16 @@ private:
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
+    std::vector<std::unique_ptr<UpgradeComponent>> upgradeComponents = {};
 
 public:
 
     void addWeapon(std::unique_ptr<WeaponComponent> weapon){
         weapons.push_back(std::move(weapon));
+    }
+
+    void addUpgrade(std::unique_ptr<UpgradeComponent> upgradeComponent){
+        upgradeComponents.push_back(std::move(upgradeComponent));
     }
 
     void update(){
@@ -171,6 +177,13 @@ public:
         for (const auto& weapon : weapons) {
             if (weapon) {
                 copy->weapons.push_back(weapon->clone());
+            }
+        }
+
+        copy->upgradeComponents.clear();
+        for (const auto& upgradeComponent : upgradeComponents) {
+            if (upgradeComponent) {
+                copy->upgradeComponents.push_back(upgradeComponent->clone());
             }
         }
 
