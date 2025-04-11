@@ -3,6 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- make a Stat class that can hold the initial value and current value for that Stat. (maxHealth, regenerateHealthRate, regenerateHealthUpdates)
+- move MainChar settings to CharacterFactory
 - make a menu factory (for calculating button positions and encapsulate things)
 - implement upgrade system (generate random items to be in the menu) and implement a vector of upgradeComponents that can take do some operation on a specific parameter (for example, a multiplier of the base number, a sum to the base point, etc). some options can be new weapons or upgrades to the weapons.
 - implement transitions between tiles with different textures

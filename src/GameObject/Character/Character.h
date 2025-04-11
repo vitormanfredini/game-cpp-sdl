@@ -12,6 +12,7 @@
 #include "Weapons/WeaponComponent.h"
 #include "GameObject/Movement/MovementComponent.h"
 #include "GameObject/UpgradeComponent.h"
+#include "StatComponent.h"
 
 class CharacterHealthBarRenderer;
 class UiHealthBarRenderer;
@@ -23,25 +24,53 @@ private:
     float collisionAttack = 0.001;
     float weight = 1.0f;
 
-    float initialHealth = 1.0f;
-    float health = initialHealth;
-    float healthPercentage = 1.0f;
+    std::unordered_map<StatType, std::unique_ptr<StatComponent>> stats;
+    float health = 1.0f;
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
     std::vector<std::unique_ptr<UpgradeComponent>> upgradeComponents = {};
 
+    bool triggerUpgradeReprocess = false;
+
+    void reprocessUpgrades(){
+
+        for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
+            if (stats.find(upgrade->getType()) == stats.end()) {
+                continue;
+            }
+            stats[upgrade->getType()]->setValue(stats[upgrade->getType()]->getInitialValue());
+        }
+
+        for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
+            if (stats.find(upgrade->getType()) == stats.end()) {
+                continue;
+            }
+            stats[upgrade->getType()]->add(upgrade->getValue());
+        }
+    }
+
 public:
+
+    Character(){
+        stats[StatType::MaxHealth] = std::make_unique<StatComponent> (1.0f);
+    }
 
     void addWeapon(std::unique_ptr<WeaponComponent> weapon){
         weapons.push_back(std::move(weapon));
     }
 
-    void addUpgrade(std::unique_ptr<UpgradeComponent> upgradeComponent){
+    void addUpgradeComponent(std::unique_ptr<UpgradeComponent> upgradeComponent){
         upgradeComponents.push_back(std::move(upgradeComponent));
+        triggerUpgradeReprocess = true;
     }
 
     void update(){
+        if(triggerUpgradeReprocess){
+            triggerUpgradeReprocess = false;
+            reprocessUpgrades();
+        }
+
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
             weapon->update();
         }
@@ -66,17 +95,17 @@ public:
         move(-movementDirection * weightRatio);
     }
 
-    void setInitialHealth(float newInitialHealth){
-        initialHealth = newInitialHealth;
-        setHealth(newInitialHealth);
+    void setInitialMaxHealth(float newInitialMaxHealth){
+        stats[StatType::MaxHealth]->setInitialValue(newInitialMaxHealth);
+        stats[StatType::MaxHealth]->setValue(newInitialMaxHealth);
     }
 
-    void setHealth(float newHealth){
-        health = newHealth;
+    void setInitialHealth(float newInitialHealth){
+        health = newInitialHealth;
     }
 
     float getHealthPercentage(){
-        return health / initialHealth;
+        return health / stats[StatType::MaxHealth]->getValue();
     }
 
     float getWeight(){
@@ -132,7 +161,7 @@ public:
         if(projectile->isDead()){
             return;
         }
-        setHealth(health - projectile->getAttack());
+        health -= projectile->getAttack();
         projectile->takeHit();
     }
 
@@ -140,7 +169,7 @@ public:
         if(other->isDead()){
             return;
         }
-        setHealth(health - other->getCollisionAttack());
+        health -= other->getCollisionAttack();
     }
 
     void setMovementComponent(std::unique_ptr<MovementComponent> mover) {
@@ -156,13 +185,16 @@ public:
         copy->height = height;
         copy->velocity = velocity;
         copy->health = health;
-        copy->initialHealth = initialHealth;
         copy->collisionAttack = collisionAttack;
         copy->weight = weight;
 
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
             std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
             copy->addRenderComponent(std::move(clonedRenderComponent));
+        }
+
+        for (const auto &stat : stats) {
+            copy->stats[stat.first] = std::move(stat.second->clone());
         }
     
         if (collisionComponent) {

@@ -1,16 +1,16 @@
 #pragma once
-#include "UpgradeType.h"
+#include "StatType.h"
 #include <memory>
 
 class UpgradeComponent {
 private:
     float value;
-    UpgradeType type;
+    StatType type;
 public:
-    UpgradeComponent(UpgradeType type, float value): type(type), value(value) {
+    UpgradeComponent(StatType type, float value): type(type), value(value) {
         //
     }
-    virtual UpgradeType getType(){
+    virtual StatType getType(){
         return type;
     };
     virtual float getValue(){

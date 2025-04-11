@@ -29,6 +29,7 @@ public:
         prototypes[CharacterType::Regular]->setSize(0.066f,0.066f);
         prototypes[CharacterType::Regular]->setVelocity(0.004f);
         prototypes[CharacterType::Regular]->setCollisionAttack(0.001);
+        prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<SpriteRenderer>(
@@ -50,6 +51,7 @@ public:
         prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
         prototypes[CharacterType::Bigger]->setVelocity(0.0033f);
         prototypes[CharacterType::Bigger]->setCollisionAttack(0.002);
+        prototypes[CharacterType::Bigger]->setInitialMaxHealth(3.0f);
         prototypes[CharacterType::Bigger]->setInitialHealth(3.0f);
         prototypes[CharacterType::Bigger]->setWeight(0.85f);
         prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<SpriteRenderer>(
@@ -71,6 +73,7 @@ public:
         prototypes[CharacterType::Boss]->setSize(0.1f,0.1f);
         prototypes[CharacterType::Boss]->setVelocity(0.002f);
         prototypes[CharacterType::Boss]->setCollisionAttack(0.005);
+        prototypes[CharacterType::Boss]->setInitialMaxHealth(15.0f);
         prototypes[CharacterType::Boss]->setInitialHealth(15.0f);
         prototypes[CharacterType::Boss]->setWeight(2.5f);
         prototypes[CharacterType::Boss]->addRenderComponent(std::make_unique<SpriteRenderer>(

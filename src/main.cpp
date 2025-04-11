@@ -58,6 +58,34 @@ int main() {
         &stateManager
     };
 
+    MainCharacter mainChar;
+    mainChar.setPosition(0.0f,0.0f);
+    mainChar.setSize(0.10f,0.10f);
+    mainChar.setVelocity(0.005f);
+    mainChar.setInitialMaxHealth(1.0f);
+    mainChar.setCollisionAttack(0.03f);
+    mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/dog.png"),
+        Alignment::BottomUpCentered
+    ));
+    mainChar.setCollisionComponent(std::make_unique<BoxCollider>(
+        0.10f,
+        0.033f,
+        Alignment::Centered
+    ));
+    mainChar.setAdvanceLevelCallback([&stateManager,&input](int level) {
+        stateManager.setGamePlayState(GameplayState::UpgradeMenu);
+        input.reset();
+    });
+
+    std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
+    weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
+    weaponFireDogThrower->setAttack(0.5f);
+    weaponFireDogThrower->setFireFrequency(10);
+    mainChar.addWeapon(std::move(weaponFireDogThrower));
+
+    engine.setMainChar(&mainChar);
+
     Menu upgradeMenu;
     upgradeMenu.setPosition(0.0f,0.0f);
     upgradeMenu.setSize(1.0f,1.0f);
@@ -72,8 +100,8 @@ int main() {
     option1Button->addRenderComponent(std::make_unique<ButtonRenderer>(
         textureManager.loadTexture("images/button_upgrademenu_option.png")
     ));
-    option1Button->setCallback([&stateManager]() {
-        std::cout << "option 1 clicked" << std::endl;
+    option1Button->setCallback([&stateManager, &mainChar]() {
+        mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 0.05));
         stateManager.setGamePlayState(GameplayState::Play);
     });
     upgradeMenu.addButton(std::move(option1Button));
@@ -84,8 +112,8 @@ int main() {
     option2Button->addRenderComponent(std::make_unique<ButtonRenderer>(
         textureManager.loadTexture("images/button_upgrademenu_option.png")
     ));
-    option2Button->setCallback([&stateManager]() {
-        std::cout << "option 2 clicked" << std::endl;
+    option2Button->setCallback([&stateManager, &mainChar]() {
+        mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::BaseSpeed, 0.1));
         stateManager.setGamePlayState(GameplayState::Play);
     });
     upgradeMenu.addButton(std::move(option2Button));
@@ -96,8 +124,8 @@ int main() {
     option3Button->addRenderComponent(std::make_unique<ButtonRenderer>(
         textureManager.loadTexture("images/button_upgrademenu_option.png")
     ));
-    option3Button->setCallback([&stateManager]() {
-        std::cout << "option 3 clicked" << std::endl;
+    option3Button->setCallback([&stateManager, &mainChar]() {
+        mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::RegenerateHealthFrequencyInUpdates, 0.3));
         stateManager.setGamePlayState(GameplayState::Play);
     });
     upgradeMenu.addButton(std::move(option3Button));
@@ -142,34 +170,6 @@ int main() {
     MapFromImage mapFromImage {&textureManager, "maps/01.png", 8};
 
     engine.setMapComponent(&mapFromImage);
-
-    MainCharacter mainChar;
-    mainChar.setPosition(0.0f,0.0f);
-    mainChar.setSize(0.10f,0.10f);
-    mainChar.setVelocity(0.005f);
-    mainChar.setInitialHealth(1.0f);
-    mainChar.setCollisionAttack(0.03f);
-    mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(
-        textureManager.loadTexture("images/dog.png"),
-        Alignment::BottomUpCentered
-    ));
-    mainChar.setCollisionComponent(std::make_unique<BoxCollider>(
-        0.10f,
-        0.033f,
-        Alignment::Centered
-    ));
-    mainChar.setAdvanceLevelCallback([&stateManager,&input](int level) {
-        stateManager.setGamePlayState(GameplayState::UpgradeMenu);
-        input.reset();
-    });
-
-    std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
-    weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
-    weaponFireDogThrower->setAttack(0.5f);
-    weaponFireDogThrower->setFireFrequency(10);
-    mainChar.addWeapon(std::move(weaponFireDogThrower));
-
-    engine.setMainChar(&mainChar);
 
     LevelScript level1;
     level1.addKeyframe({ 60, 3, CharacterType::Regular });
