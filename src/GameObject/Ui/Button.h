@@ -72,4 +72,25 @@ public:
     void setCallback(std::function<void()> onClick) {
         onClickCallback = onClick;
     }
+
+    std::unique_ptr<Button> clone() {
+        std::unique_ptr<Button> copy = std::make_unique<Button>();
+        copy->x = x;
+        copy->y = y;
+        copy->width = width;
+        copy->height = height;
+        copy->onClickCallback = onClickCallback;
+
+        // copy->onClickCallback = [copyPtr = copy.get()]() {
+        //     // Now this lambda uses copyPtr, which correctly refers to the cloned button.
+        //     copyPtr->performClickAction();
+        // };
+
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
+            copy->addRenderComponent(std::move(clonedRenderComponent));
+        }
+
+        return copy;
+    };
 };

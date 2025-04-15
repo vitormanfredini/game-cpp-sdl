@@ -28,4 +28,24 @@ public:
         }
     }
 
+    std::unique_ptr<Menu> clone() {
+        std::unique_ptr<Menu> copy = std::make_unique<Menu>();
+        copy->x = x;
+        copy->y = y;
+        copy->width = width;
+        copy->height = height;
+
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
+            copy->addRenderComponent(std::move(clonedRenderComponent));
+        }
+
+        for(std::unique_ptr<Button>& button : buttons){
+            std::unique_ptr<Button> clonedButton = button->clone();
+            copy->addButton(std::move(clonedButton));
+        }
+
+        return copy;
+    };
+
 };

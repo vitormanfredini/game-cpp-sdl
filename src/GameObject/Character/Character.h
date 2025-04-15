@@ -31,8 +31,6 @@ private:
     std::unique_ptr<MovementComponent> movementComponent;
     std::vector<std::unique_ptr<UpgradeComponent>> upgradeComponents = {};
 
-    bool triggerUpgradeReprocess = false;
-
     void reprocessUpgrades(){
 
         for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
@@ -62,15 +60,10 @@ public:
 
     void addUpgradeComponent(std::unique_ptr<UpgradeComponent> upgradeComponent){
         upgradeComponents.push_back(std::move(upgradeComponent));
-        triggerUpgradeReprocess = true;
+        reprocessUpgrades();
     }
 
     void update(){
-        if(triggerUpgradeReprocess){
-            triggerUpgradeReprocess = false;
-            reprocessUpgrades();
-        }
-
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
             weapon->update();
         }

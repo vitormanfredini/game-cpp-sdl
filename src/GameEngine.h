@@ -18,6 +18,7 @@
 #include "GameObject/Gem/GemType.h"
 #include "Maps/MapComponent.h"
 #include "GameObject/Ui/Menu.h"
+#include "GameObject/Ui/MenuFactory.h"
 #include "GameObject/Ui/Intro.h"
 #include <memory>
 #include "LevelScript.h"
@@ -33,7 +34,8 @@ public:
         DeltaTime* deltatime,
         Input* input,
         TextureManager* textureManager,
-        StateManager* stateManager
+        StateManager* stateManager,
+        MenuFactory* menuFactory
     ):
     renderer(renderer),
     camera(camera),
@@ -42,8 +44,11 @@ public:
     textureManager(textureManager),
     characterFactory(textureManager),
     stateManager(stateManager),
-    gemFactory(textureManager)
+    gemFactory(textureManager),
+    menuFactory(menuFactory)
     {
+        menu = std::move(menuFactory->createMainMenu());
+
         intro.setPosition(0.0f,0.0f);
         intro.setSize(1.0f,1.0f);
         intro.addRenderComponent(std::make_unique<SpriteRenderer>(
@@ -78,14 +83,6 @@ public:
 
     void setMapComponent(MapComponent* newMapComponent){
         mapComponent = newMapComponent;
-    }
-
-    void setMenu(Menu* newMenu){
-        menu = newMenu;
-    }
-
-    void setSubMenu(Menu* newSubMenu){
-        subMenu = newSubMenu;
     }
 
     void setStateManager(StateManager* newStateManager){
@@ -160,17 +157,23 @@ public:
         }
 
         if(stateManager->shouldRenderMainMenu()){
-            renderer->addRenderable(menu);
+            renderer->addRenderable(menu.get());
         }
 
-        if(stateManager->shouldRenderSubMenu()){
-            renderer->addRenderable(subMenu);
+        if(stateManager->shouldRenderUpgradeMenu()){
+            renderer->addRenderable(upgradeMenu.get());
         }
 
         renderer->render(
             camera->getPositionX(),
             camera->getPositionY()
         );
+    }
+
+    void advanceLevel(int level){
+        upgradeMenu = std::move(menuFactory->createUpgradeMenu(level));
+        stateManager->setGamePlayState(GameplayState::UpgradeMenu);
+        input->reset();
     }
 
     void handleKeyboardAndMouseEvent(SDL_Event &event){
@@ -214,8 +217,8 @@ public:
                     menu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
                     break;
                 }
-                if(stateManager->shouldUpdateSubmenu()){
-                    subMenu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
+                if(stateManager->shouldUpdateUpgradeMenu()){
+                    upgradeMenu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
                     break;
                 }
                 break;
@@ -233,8 +236,8 @@ public:
                     menu->handleMouseEvent(virtualMouseX, virtualMouseY, eventType);
                     break;
                 }
-                if(stateManager->shouldUpdateSubmenu()){
-                    subMenu->handleMouseEvent(virtualMouseX, virtualMouseY, eventType);
+                if(stateManager->shouldUpdateUpgradeMenu()){
+                    upgradeMenu->handleMouseEvent(virtualMouseX, virtualMouseY, eventType);
                     break;
                 }
                 break;
@@ -257,6 +260,7 @@ private:
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
     GemFactory gemFactory;
+    MenuFactory* menuFactory = nullptr;
     StateManager* stateManager = nullptr;
     Intro intro { 3*60 };
     GameObject pause;
@@ -274,8 +278,8 @@ private:
 
     int gameWorldUpdatesCount = 0;
 
-    Menu* menu = nullptr;
-    Menu* subMenu = nullptr;
+    std::unique_ptr<Menu> menu = nullptr;
+    std::unique_ptr<Menu> upgradeMenu = nullptr;
 
     void doGameWorldUpdate(){
 

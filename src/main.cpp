@@ -24,6 +24,7 @@
 #include "GameObject/UiGemValueBarRenderer.h"
 #include "Maps/MapFromImage.h"
 #include "Maps/RandomMap.h"
+#include "GameObject/Ui/MenuFactory.h"
 
 int main() {
 
@@ -49,13 +50,16 @@ int main() {
 
     StateManager stateManager;
 
+    MenuFactory menuFactory(std::make_unique<UpgradeFactory>(), &textureManager, &stateManager);
+
     GameEngine engine {
         &renderer,
         &camera,
         &deltaTime,
         &input,
         &textureManager,
-        &stateManager
+        &stateManager,
+        &menuFactory
     };
 
     MainCharacter mainChar;
@@ -73,9 +77,9 @@ int main() {
         0.033f,
         Alignment::Centered
     ));
-    mainChar.setAdvanceLevelCallback([&stateManager,&input](int level) {
-        stateManager.setGamePlayState(GameplayState::UpgradeMenu);
-        input.reset();
+    mainChar.setAdvanceLevelCallback([&engine](int level) {
+        std::cout << "mainChar is now level " << level << std::endl;
+        engine.advanceLevel(level);
     });
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
@@ -85,86 +89,6 @@ int main() {
     mainChar.addWeapon(std::move(weaponFireDogThrower));
 
     engine.setMainChar(&mainChar);
-
-    Menu upgradeMenu;
-    upgradeMenu.setPosition(0.0f,0.0f);
-    upgradeMenu.setSize(1.0f,1.0f);
-    upgradeMenu.addRenderComponent(std::make_unique<SpriteRenderer>(
-        textureManager.loadTexture("images/menu.png"),
-        Alignment::UI
-    ));
-
-    std::unique_ptr<Button> option1Button = std::make_unique<Button>();
-    option1Button->setPosition(0.33f, 0.2f);
-    option1Button->setSize(0.33f, 0.166f);
-    option1Button->addRenderComponent(std::make_unique<ButtonRenderer>(
-        textureManager.loadTexture("images/button_upgrademenu_option.png")
-    ));
-    option1Button->setCallback([&stateManager, &mainChar]() {
-        mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 0.05));
-        stateManager.setGamePlayState(GameplayState::Play);
-    });
-    upgradeMenu.addButton(std::move(option1Button));
-
-    std::unique_ptr<Button> option2Button = std::make_unique<Button>();
-    option2Button->setPosition(0.33f, 0.4f);
-    option2Button->setSize(0.33f, 0.166f);
-    option2Button->addRenderComponent(std::make_unique<ButtonRenderer>(
-        textureManager.loadTexture("images/button_upgrademenu_option.png")
-    ));
-    option2Button->setCallback([&stateManager, &mainChar]() {
-        mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::BaseSpeed, 0.1));
-        stateManager.setGamePlayState(GameplayState::Play);
-    });
-    upgradeMenu.addButton(std::move(option2Button));
-
-    std::unique_ptr<Button> option3Button = std::make_unique<Button>();
-    option3Button->setPosition(0.33f, 0.6f);
-    option3Button->setSize(0.33f, 0.166f);
-    option3Button->addRenderComponent(std::make_unique<ButtonRenderer>(
-        textureManager.loadTexture("images/button_upgrademenu_option.png")
-    ));
-    option3Button->setCallback([&stateManager, &mainChar]() {
-        mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::RegenerateHealthFrequencyInUpdates, 0.3));
-        stateManager.setGamePlayState(GameplayState::Play);
-    });
-    upgradeMenu.addButton(std::move(option3Button));
-
-    engine.setSubMenu(&upgradeMenu);
-
-
-
-    Menu mainMenu;
-    mainMenu.setPosition(0.0f,0.0f);
-    mainMenu.setSize(1.0f,1.0f);
-    mainMenu.addRenderComponent(std::make_unique<SpriteRenderer>(
-        textureManager.loadTexture("images/menu.png"),
-        Alignment::UI
-    ));
-
-    std::unique_ptr<Button> startButton = std::make_unique<Button>();
-    startButton->setPosition(0.33f, 0.3f);
-    startButton->setSize(0.33f, 0.166f);
-    startButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-        textureManager.loadTexture("images/button_start.png")
-    ));
-    startButton->setCallback([&stateManager]() {
-        stateManager.setMainState(MainState::Gameplay);
-    });
-    mainMenu.addButton(std::move(startButton));
-
-    std::unique_ptr<Button> exitButton = std::make_unique<Button>();
-    exitButton->setPosition(0.33f, 0.53f);
-    exitButton->setSize(0.33f, 0.166f);
-    exitButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-        textureManager.loadTexture("images/button_exit.png")
-    ));
-    exitButton->setCallback([&stateManager]() {
-        stateManager.triggerQuit();
-    });
-    mainMenu.addButton(std::move(exitButton));
-
-    engine.setMenu(&mainMenu);
 
     // RandomMap randomMap {&textureManager, 8};
     MapFromImage mapFromImage {&textureManager, "maps/01.png", 8};

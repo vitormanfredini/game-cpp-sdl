@@ -82,15 +82,15 @@ public:
         return shouldUpdateMainMenu();
     }
 
-    bool shouldUpdateSubmenu(){
+    bool shouldUpdateUpgradeMenu(){
         if(mainState != MainState::Gameplay){
             return false;
         }
         return gameplayState == GameplayState::UpgradeMenu;
     }
 
-    bool shouldRenderSubMenu(){
-        return shouldUpdateSubmenu();
+    bool shouldRenderUpgradeMenu(){
+        return shouldUpdateUpgradeMenu();
     }
 
     void triggerQuit(){
