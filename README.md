@@ -11,7 +11,7 @@ ITEM:
 mais rápido por um tempo limitado
 
 TODO:
-- make a Menu factory to create upgrade menus and also manage the upgrades factory
+- make upgrades apply when user clicks the upgrade menu button
 - make a Stat class that can hold the initial value and current value for that Stat. (maxHealth, regenerateHealthRate, regenerateHealthUpdates)
 - move MainChar settings to CharacterFactory
 - implement upgrade system (generate random items to be in the menu) and implement a vector of upgradeComponents that can take do some operation on a specific parameter (for example, a multiplier of the base number, a sum to the base point, etc). some options can be new weapons or upgrades to the weapons.
