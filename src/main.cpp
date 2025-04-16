@@ -79,7 +79,7 @@ int main() {
     ));
     mainChar.setAdvanceLevelCallback([&engine](int level) {
         std::cout << "mainChar is now level " << level << std::endl;
-        engine.advanceLevel(level);
+        engine.advanceLevel();
     });
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();

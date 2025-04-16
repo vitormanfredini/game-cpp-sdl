@@ -7,6 +7,7 @@
 #include <random>
 #include <algorithm>
 #include <random>
+#include "GameObject/Character/Character.h"
 #include "GameObject/UpgradeFactory.h"
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/MenuType.h"
@@ -72,7 +73,7 @@ public:
         return prototypes[MenuType::MainMenu]->clone();
     }
 
-    std::unique_ptr<Menu> createUpgradeMenu(int level) {
+    std::unique_ptr<Menu> createUpgradeMenu(Character* character) {
         std::unique_ptr<Menu> upgradeMenu = prototypes[MenuType::UpgradeMenu]->clone();
 
         std::unique_ptr<Button> option1Button = std::make_unique<Button>();
@@ -81,9 +82,8 @@ public:
         option1Button->addRenderComponent(std::make_unique<ButtonRenderer>(
             textureManager->loadTexture("images/button_upgrademenu_option.png")
         ));
-        option1Button->setCallback([this, level]() {
-            std::cout << "level " << level << ". button 1: implement upgrade" << std::endl;
-            // mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 0.05));
+        option1Button->setCallback([this, character]() {
+            character->addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 1, 0.05));
             stateManager->setGamePlayState(GameplayState::Play);
         });
         upgradeMenu->addButton(std::move(option1Button));
@@ -94,9 +94,8 @@ public:
         option2Button->addRenderComponent(std::make_unique<ButtonRenderer>(
             textureManager->loadTexture("images/button_upgrademenu_option.png")
         ));
-        option2Button->setCallback([this, level]() {
-            std::cout << "level " << level << ". button 2: implement upgrade" << std::endl;
-            // mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 0.05));
+        option2Button->setCallback([this, character]() {
+            character->addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 1, 2.0));
             stateManager->setGamePlayState(GameplayState::Play);
         });
         upgradeMenu->addButton(std::move(option2Button));
@@ -107,9 +106,8 @@ public:
         option3Button->addRenderComponent(std::make_unique<ButtonRenderer>(
             textureManager->loadTexture("images/button_upgrademenu_option.png")
         ));
-        option3Button->setCallback([this, level]() {
-            std::cout << "level " << level << ". button 3: implement upgrade" << std::endl;
-            // mainChar.addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 0.05));
+        option3Button->setCallback([this, character]() {
+            character->addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 1, 2.0));
             stateManager->setGamePlayState(GameplayState::Play);
         });
         upgradeMenu->addButton(std::move(option3Button));
@@ -122,6 +120,5 @@ private:
     std::unique_ptr<UpgradeFactory> upgradeFactory;
     TextureManager* textureManager = nullptr;
     StateManager* stateManager = nullptr;
-
 
 };

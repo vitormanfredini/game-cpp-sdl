@@ -170,8 +170,8 @@ public:
         );
     }
 
-    void advanceLevel(int level){
-        upgradeMenu = std::move(menuFactory->createUpgradeMenu(level));
+    void advanceLevel(){
+        upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar));
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();
     }
