@@ -11,12 +11,12 @@ ITEM:
 mais rápido por um tempo limitado
 
 TODO:
-- make upgrades apply when user clicks the upgrade menu button
-- make a Stat class that can hold the initial value and current value for that Stat. (maxHealth, regenerateHealthRate, regenerateHealthUpdates)
+- use UpgradeFactory inside MenuFactory to create upgrades for options (also check what upgrades are available). maybe deal with edge case when no upgrades are available.
+- MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
+- MenuFactory: write upgrade name on option button
 - move MainChar settings to CharacterFactory
-- implement upgrade system (generate random items to be in the menu) and implement a vector of upgradeComponents that can take do some operation on a specific parameter (for example, a multiplier of the base number, a sum to the base point, etc). some options can be new weapons or upgrades to the weapons.
 - implement transitions between tiles with different textures
-- implement different ways that enemies can move: sine wav adding and subtracting from movement, chaotic/random but in your overall direction, aim and charge, etc
+- implement different ways that enemies can move: sine wav adding and subtracting from movement, aim and charge, etc
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen
