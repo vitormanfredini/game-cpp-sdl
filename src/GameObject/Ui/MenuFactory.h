@@ -41,7 +41,6 @@ public:
             textureManager->loadTexture("images/button_start.png")
         ));
         startButton->setCallback([stateManager]() {
-            std::cout << "MainMenu: startButton" << std::endl;
             stateManager->setMainState(MainState::Gameplay);
         });
         prototypes[MenuType::MainMenu]->addButton(std::move(startButton));
@@ -53,7 +52,6 @@ public:
             textureManager->loadTexture("images/button_exit.png")
         ));
         exitButton->setCallback([stateManager]() {
-            std::cout << "MainMenu: exitButton" << std::endl;
             stateManager->triggerQuit();
         });
         prototypes[MenuType::MainMenu]->addButton(std::move(exitButton));
@@ -73,44 +71,32 @@ public:
         return prototypes[MenuType::MainMenu]->clone();
     }
 
-    std::unique_ptr<Menu> createUpgradeMenu(Character* character) {
+    std::unique_ptr<Menu> createUpgradeMenu(Character* charReceivesReward) {
         std::unique_ptr<Menu> upgradeMenu = prototypes[MenuType::UpgradeMenu]->clone();
+        
+        std::vector<std::unique_ptr<UpgradeComponent>> upgradesToChoose = upgradeFactory->createRandomUpgrades(3);
 
-        std::unique_ptr<Button> option1Button = std::make_unique<Button>();
-        option1Button->setPosition(0.33f, 0.2f);
-        option1Button->setSize(0.33f, 0.166f);
-        option1Button->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->loadTexture("images/button_upgrademenu_option.png")
-        ));
-        option1Button->setCallback([this, character]() {
-            character->addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 1, 0.05));
-            stateManager->setGamePlayState(GameplayState::Play);
-        });
-        upgradeMenu->addButton(std::move(option1Button));
+        if(upgradesToChoose.size() == 0){
+            std::cout << "upgradesToChoose.size() == 0" << std::endl;
+            // provavelmente acabaram os upgrades. implementar itens no submenu para colocar no lugar
+        }
 
-        std::unique_ptr<Button> option2Button = std::make_unique<Button>();
-        option2Button->setPosition(0.33f, 0.4f);
-        option2Button->setSize(0.33f, 0.166f);
-        option2Button->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->loadTexture("images/button_upgrademenu_option.png")
-        ));
-        option2Button->setCallback([this, character]() {
-            character->addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 1, 2.0));
-            stateManager->setGamePlayState(GameplayState::Play);
-        });
-        upgradeMenu->addButton(std::move(option2Button));
-
-        std::unique_ptr<Button> option3Button = std::make_unique<Button>();
-        option3Button->setPosition(0.33f, 0.6f);
-        option3Button->setSize(0.33f, 0.166f);
-        option3Button->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->loadTexture("images/button_upgrademenu_option.png")
-        ));
-        option3Button->setCallback([this, character]() {
-            character->addUpgradeComponent(std::make_unique<UpgradeComponent>(StatType::MaxHealth, 1, 2.0));
-            stateManager->setGamePlayState(GameplayState::Play);
-        });
-        upgradeMenu->addButton(std::move(option3Button));
+        for(size_t c=0; c<upgradesToChoose.size(); c++){
+            std::unique_ptr<Button> optionButton = std::make_unique<Button>();
+            optionButton->setPosition(0.33f, 0.2f + (c * 0.2f));
+            optionButton->setSize(0.33f, 0.166f);
+            optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
+                textureManager->loadTexture("images/button_upgrademenu_option.png")
+            ));
+            std::shared_ptr<UpgradeComponent> sharedUpgrade = std::move(upgradesToChoose[c]);
+            optionButton->setCallback([this, charReceivesReward, sharedUpgrade]() {
+                upgradeFactory->playerChoseThisUpgrade(sharedUpgrade.get());
+                charReceivesReward->addUpgradeComponent(sharedUpgrade->clone());
+                stateManager->setGamePlayState(GameplayState::Play);
+            });
+            upgradeMenu->addButton(std::move(optionButton));
+        }
+        
         return upgradeMenu;
     }
     

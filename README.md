@@ -11,9 +11,9 @@ ITEM:
 mais rápido por um tempo limitado
 
 TODO:
-- use UpgradeFactory inside MenuFactory to create upgrades for options (also check what upgrades are available). maybe deal with edge case when no upgrades are available.
+- MenuFactory: write upgrade name on option button (and add support to render text on textures)
+- MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
-- MenuFactory: write upgrade name on option button
 - move MainChar settings to CharacterFactory
 - implement transitions between tiles with different textures
 - implement different ways that enemies can move: sine wav adding and subtracting from movement, aim and charge, etc

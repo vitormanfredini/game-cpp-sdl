@@ -52,6 +52,7 @@ public:
 
     Character(){
         stats[StatType::MaxHealth] = std::make_unique<StatComponent> (1.0f);
+        stats[StatType::BaseSpeed] = std::make_unique<StatComponent> (1.0f);
     }
 
     void addWeapon(std::unique_ptr<WeaponComponent> weapon){
@@ -132,8 +133,8 @@ public:
     }
 
     void move(MovementDirection directions){
-        y += directions.vertical * velocity;
-        x += directions.horizontal * velocity;
+        y += directions.vertical * velocity * stats[StatType::BaseSpeed]->getValue();
+        x += directions.horizontal * velocity * stats[StatType::BaseSpeed]->getValue();
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
