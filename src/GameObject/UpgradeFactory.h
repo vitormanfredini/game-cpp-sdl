@@ -68,10 +68,4 @@ private:
     std::unordered_map<UpgradeId,int> upgradesTimesConsumed;
     std::vector<UpgradeId> availableUpgradeIds;
 
-    std::unique_ptr<UpgradeComponent> create(UpgradeId upgradeId) {
-        upgradesTimesConsumed[upgradeId] += 1;
-        std::unique_ptr<UpgradeComponent> newUpgrade = prototypes[upgradeId][upgradesTimesConsumed[upgradeId]-1]->clone();
-        return newUpgrade;
-    }
-
 };
