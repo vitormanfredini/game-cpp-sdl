@@ -2,7 +2,7 @@
 
 enum class UpgradeId {
   MaxHealth,
-  HealthRegenFrequencyInUpdates,
-  HealthRegenAmount,
+  RegenerateHealthFasterInUpdates,
+  RegenerateHealthAmount,
   BaseSpeed
 };

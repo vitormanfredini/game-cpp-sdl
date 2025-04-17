@@ -2,7 +2,7 @@
 
 enum class StatType {
   MaxHealth,
-  RegenerateHealthFrequencyInUpdates,
+  RegenerateHealthFasterInUpdates,
   RegenerateHealthAmount,
   BaseSpeed
 };

@@ -27,6 +27,8 @@ private:
     std::unordered_map<StatType, std::unique_ptr<StatComponent>> stats;
     float health = 1.0f;
 
+    int regenerateHealthUpdateCount = 0;
+
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
     std::vector<std::unique_ptr<UpgradeComponent>> upgradeComponents = {};
@@ -53,6 +55,8 @@ public:
     Character(){
         stats[StatType::MaxHealth] = std::make_unique<StatComponent> (1.0f);
         stats[StatType::BaseSpeed] = std::make_unique<StatComponent> (1.0f);
+        stats[StatType::RegenerateHealthAmount] = std::make_unique<StatComponent> (0.01f);
+        stats[StatType::RegenerateHealthFasterInUpdates] = std::make_unique<StatComponent> (0.0f);
     }
 
     void addWeapon(std::unique_ptr<WeaponComponent> weapon){
@@ -65,9 +69,17 @@ public:
     }
 
     void update(){
+        regenerateHealthUpdateCount += 1;
+        int updatesUntilNextRegen = (120 * 4) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
+        if(regenerateHealthUpdateCount >= updatesUntilNextRegen){
+            regenerateHealthUpdateCount = 0;
+            health += stats[StatType::RegenerateHealthAmount]->getValue();
+        }
+
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
             weapon->update();
         }
+
         if(movementComponent){
             movementComponent->update();
         }

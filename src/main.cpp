@@ -78,7 +78,7 @@ int main() {
         Alignment::Centered
     ));
     mainChar.setAdvanceLevelCallback([&engine](int level) {
-        std::cout << "mainChar is now level " << level << std::endl;
+        // std::cout << "mainChar is now level " << level << std::endl;
         engine.advanceLevel();
     });
 

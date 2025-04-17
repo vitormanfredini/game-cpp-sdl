@@ -21,17 +21,21 @@ public:
         prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, StatType::MaxHealth, 2, 0.1));
         prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, StatType::MaxHealth, 3, 0.08));
 
-        
         prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, StatType::BaseSpeed, 1, 0.2));
         prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, StatType::BaseSpeed, 2, 0.1));
         prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, StatType::BaseSpeed, 3, 0.08));
 
-        availableUpgradeIds = {
-            UpgradeId::MaxHealth,
-            UpgradeId::BaseSpeed
-        };
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, StatType::RegenerateHealthAmount, 1, 0.01));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, StatType::RegenerateHealthAmount, 2, 0.01));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, StatType::RegenerateHealthAmount, 3, 0.01));
 
-        for(UpgradeId upgradeId : availableUpgradeIds){
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 1, 10.0));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 2, 10.0));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 3, 5.0));
+
+        availableUpgradeIds = {};
+        for (const auto & [ upgradeId, value ] : prototypes) {
+            availableUpgradeIds.push_back(upgradeId);
             upgradesTimesConsumed[upgradeId] = 0;
         }
 
@@ -55,6 +59,20 @@ public:
     }
 
     void playerChoseThisUpgrade(UpgradeComponent* upgrade){
+
+        if(upgrade->getId() == UpgradeId::MaxHealth){
+            std::cout << "New upgrade: MaxHealth. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
+        }
+        if(upgrade->getId() == UpgradeId::BaseSpeed){
+            std::cout << "New upgrade: BaseSpeed. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
+        }
+        if(upgrade->getId() == UpgradeId::RegenerateHealthAmount){
+            std::cout << "New upgrade: RegenerateHealthAmount. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
+        }
+        if(upgrade->getId() == UpgradeId::RegenerateHealthFasterInUpdates){
+            std::cout << "New upgrade: RegenerateHealthFasterInUpdates. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
+        }
+
         UpgradeId upgradeId = upgrade->getId();
         upgradesTimesConsumed[upgradeId] += 1;
 
