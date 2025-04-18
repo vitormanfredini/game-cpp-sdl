@@ -70,7 +70,7 @@ public:
 
     void update(){
         regenerateHealthUpdateCount += 1;
-        int updatesUntilNextRegen = (120 * 4) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
+        int updatesUntilNextRegen = (120) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
         if(regenerateHealthUpdateCount >= updatesUntilNextRegen){
             regenerateHealthUpdateCount = 0;
             health += stats[StatType::RegenerateHealthAmount]->getValue();
