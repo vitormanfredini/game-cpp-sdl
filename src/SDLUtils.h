@@ -17,13 +17,8 @@ class SDLUtils {
 public:
 
     static SDL_Texture* loadTextureFromEmbedded(SDL_Renderer* renderer, const unsigned char* data, unsigned int length) {
-        SDL_RWops* rw = SDL_RWFromConstMem(data, length);
-        if (!rw) {
-            std::cerr << "SDL_RWFromConstMem Error: " << SDL_GetError() << std::endl;
-            return nullptr;
-        }
+        SDL_Surface* surface = loadSurfaceFromEmbedded(renderer, data, length);
 
-        SDL_Surface* surface = IMG_Load_RW(rw, 1);
         if (!surface) {
             std::cerr << "IMG_Load_RW Error: " << IMG_GetError() << std::endl;
             return nullptr;
@@ -32,6 +27,16 @@ public:
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
         return texture;
+    }
+
+    static SDL_Surface* loadSurfaceFromEmbedded(SDL_Renderer* renderer, const unsigned char* data, unsigned int length) {
+        SDL_RWops* rw = SDL_RWFromConstMem(data, length);
+        if (!rw) {
+            std::cerr << "SDL_RWFromConstMem Error: " << SDL_GetError() << std::endl;
+            return nullptr;
+        }
+
+        return IMG_Load_RW(rw, 1);
     }
 
     static SDL_Texture* textureFromRGBA(SDL_Renderer *renderer, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
