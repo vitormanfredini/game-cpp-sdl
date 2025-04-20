@@ -11,6 +11,7 @@ ITEM:
 mais rápido por um tempo limitado
 
 TODO:
+- loadTextureFromText: move most of the code to SDUtils in a way that a text can be loaded to a new transparent texture or written onto an existing texture
 - MenuFactory: write upgrade name on option button (and add support to render text on textures)
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.

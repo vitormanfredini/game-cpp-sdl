@@ -46,7 +46,7 @@ int main() {
         0.0f
     };
 
-    TextureManager textureManager {renderer.getSDLRenderer()};
+    TextureManager textureManager {renderer.getSDLRenderer(), renderer.getFont()};
 
     StateManager stateManager;
 

@@ -15,6 +15,9 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(/usr/include/SDL2)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image REQUIRED)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SDL2_TTF REQUIRED IMPORTED_TARGET SDL2_ttf)
+
 set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources)
 
 file(GLOB_RECURSE SOURCE_FILES
@@ -28,7 +31,7 @@ file(GLOB_RECURSE RESOURCE_FILES
     ${RESOURCE_DIR}/*.png
     ${RESOURCE_DIR}/*.jpg
     ${RESOURCE_DIR}/*.bmp
-    ${RESOURCE_DIR}/*.html
+    ${RESOURCE_DIR}/*.ttf
 )
 
 set(RESOURCE_REGISTRY_HEADER "${CMAKE_BINARY_DIR}/resource_registry.h")
@@ -86,7 +89,11 @@ add_custom_target(embed_resources ALL DEPENDS ${EMBEDDED_HEADERS} ${RESOURCE_REG
 
 add_executable(SDL2Game ${SOURCE_FILES} ${EMBEDDED_HEADERS})
 add_dependencies(SDL2Game embed_resources)
-target_link_libraries(SDL2Game ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARY})
+target_link_libraries(SDL2Game
+    ${SDL2_LIBRARIES}
+    ${SDL2_IMAGE_LIBRARY}
+    PkgConfig::SDL2_TTF
+)
 target_include_directories(SDL2Game
     PRIVATE ${CMAKE_SOURCE_DIR}/src
     PRIVATE ${CMAKE_BINARY_DIR}

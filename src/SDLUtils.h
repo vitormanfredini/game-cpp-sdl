@@ -34,11 +34,12 @@ public:
         return texture;
     }
 
-    static SDL_Texture* textureFromRGB(SDL_Renderer *renderer, Uint8 r, Uint8 g, Uint8 b) {
+    static SDL_Texture* textureFromRGBA(SDL_Renderer *renderer, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
 
         SDL_Surface* surface = SDL_CreateRGBSurface(0,64,64,32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-        Uint32 pink = SDL_MapRGB(surface->format, r, g, b);
-        SDL_FillRect(surface, NULL, pink);
+        bool noTransparency = a == 255;
+        Uint32 color = noTransparency ? SDL_MapRGB(surface->format, r, g, b) : SDL_MapRGBA(surface->format, r, g, b, a);
+        SDL_FillRect(surface, NULL, color);
         SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
 
