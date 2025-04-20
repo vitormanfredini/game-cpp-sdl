@@ -6,6 +6,7 @@
 #include "SDLUtils.h"
 #include "GameObject/GameObject.h"
 #include "RenderProps.h"
+#include "Font/FontManager.h"
 #include <string>
 #include <sstream>
 
@@ -18,7 +19,7 @@ class TextureManager {
 
 public:
 
-    TextureManager(SDL_Renderer* sdl_renderer, TTF_Font* firaSansRegular48ptFont): sdl_renderer(sdl_renderer), firaSansRegular48ptFont(firaSansRegular48ptFont) { };
+    TextureManager(SDL_Renderer* sdl_renderer, FontManager* fontManager): sdl_renderer(sdl_renderer), fontManager(fontManager) { };
 
     ~TextureManager(){
         clearTexturesCache();
@@ -57,7 +58,7 @@ public:
         return loadTexture(r, g, b, 255);
     }
 
-    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, SDL_Color* color, TextRenderMethod method) {
+    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method) {
 
         bool copyOriginalTexture = true;
 
@@ -102,7 +103,7 @@ public:
         }
 
         // create texture with text
-        SDL_Texture* textureWithText = createTextTexture(text, color);
+        SDL_Texture* textureWithText = createTextTexture(text, fontStyle, color);
 
         int textTextureWidth, textTextureHeight;
         SDL_QueryTexture(textureWithText, nullptr, nullptr, &textTextureWidth, &textTextureHeight);
@@ -156,9 +157,41 @@ public:
         return textureToDrawOn;
     }
 
-    SDL_Texture* createTextTexture(const char* text, SDL_Color* color) {
+    void clearTexturesCache() {
+        for (auto& pair : texturesCache) {
+            SDL_DestroyTexture(pair.second);
+        }
+        texturesCache.clear();
+    }
 
-        SDL_Surface* textSurface = TTF_RenderText_Blended(firaSansRegular48ptFont, text, *color);
+private:
+    SDL_Renderer* sdl_renderer;
+    FontManager* fontManager;
+    std::unordered_map<std::string, SDL_Texture*> texturesCache;
+
+    std::string rgbaTextureName(int r, int g, int b, int a){
+        return std::to_string(r) + "_" + std::to_string(g) + "_" + std::to_string(b) + "_" + std::to_string(a);
+    }
+
+    SDL_Texture* loadFromCache(const std::string& textureName){
+        auto it = texturesCache.find(textureName);
+        if (it != texturesCache.end()) {
+            // std::cout << "loadFromCache: " << textureName << std::endl;
+            return it->second;
+        }
+
+        return nullptr;
+    }
+
+    SDL_Texture* createTextTexture(const char* text, FontStyle fontStyle, SDL_Color* color) {
+
+        TTF_Font* font = fontManager->getFont(fontStyle);
+        if(font == nullptr){
+            std::cerr << "createTextTexture(): could not load font" << std::endl;
+            return nullptr;
+        }
+
+        SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, *color);
         if (!textSurface) {
             SDL_Log("TTF_RenderText_Blended failed: %s", TTF_GetError());
             return nullptr;
@@ -175,32 +208,6 @@ public:
         SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
     
         return textTexture;
-    }
-
-    void clearTexturesCache() {
-        for (auto& pair : texturesCache) {
-            SDL_DestroyTexture(pair.second);
-        }
-        texturesCache.clear();
-    }
-
-private:
-    SDL_Renderer* sdl_renderer;
-    TTF_Font* firaSansRegular48ptFont;
-    std::unordered_map<std::string, SDL_Texture*> texturesCache;
-
-    std::string rgbaTextureName(int r, int g, int b, int a){
-        return std::to_string(r) + "_" + std::to_string(g) + "_" + std::to_string(b) + "_" + std::to_string(a);
-    }
-
-    SDL_Texture* loadFromCache(const std::string& textureName){
-        auto it = texturesCache.find(textureName);
-        if (it != texturesCache.end()) {
-            // std::cout << "loadFromCache: " << textureName << std::endl;
-            return it->second;
-        }
-
-        return nullptr;
     }
 
 };

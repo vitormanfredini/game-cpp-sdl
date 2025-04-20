@@ -25,6 +25,7 @@
 #include "Maps/MapFromImage.h"
 #include "Maps/RandomMap.h"
 #include "GameObject/Ui/MenuFactory.h"
+#include "Font/FontManager.h"
 
 int main() {
 
@@ -46,7 +47,8 @@ int main() {
         0.0f
     };
 
-    TextureManager textureManager {renderer.getSDLRenderer(), renderer.getFont()};
+    FontManager fontManager;
+    TextureManager textureManager {renderer.getSDLRenderer(), &fontManager};
 
     StateManager stateManager;
 

@@ -43,6 +43,7 @@ public:
             textureManager->drawTextOnTexture(
                 textureManager->loadTexture("images/menu_button_base.png"),
                 "start",
+                FontStyle::MainMenu,
                 &mainMenuButtonTextColor,
                 TextRenderMethod::ButtonCentered
             )
@@ -59,6 +60,7 @@ public:
             textureManager->drawTextOnTexture(
                 textureManager->loadTexture("images/menu_button_base.png"),
                 "exit",
+                FontStyle::MainMenu,
                 &mainMenuButtonTextColor,
                 TextRenderMethod::ButtonCentered
             )
@@ -99,12 +101,13 @@ public:
             std::shared_ptr<UpgradeComponent> upgradeOption = std::move(upgradesToChoose[c]);
 
             std::unique_ptr<Button> optionButton = std::make_unique<Button>();
-            optionButton->setPosition(0.33f, 0.2f + (c * 0.2f));
-            optionButton->setSize(0.33f, 0.166f);
+            optionButton->setPosition(0.166f, 0.2f + (c * 0.2f));
+            optionButton->setSize(0.66f, 0.166f);
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
                 textureManager->drawTextOnTexture(
                     textureManager->loadTexture("images/upgrademenu_button_base.png"),
                     upgradeOption->getDescription().c_str(),
+                    FontStyle::UpgradeMenu,
                     &upgradeMenuButtonTextColor,
                     TextRenderMethod::ButtonCentered
                 )
