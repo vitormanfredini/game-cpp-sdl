@@ -2,15 +2,9 @@
 
 This is a project I'm doing for studying C++ and SDL.
 
-UPGRADES:
-vida aumenta X a cada X tempos
-FEITO vida máxima
-aumentar a velocidade base
-
-ITEM:
-mais rápido por um tempo limitado
-
 TODO:
+- Refactor Gem into Item (then implement other items, including different gems)
+- Implement magnetic pull to items below a threshold
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
 - move MainChar settings to CharacterFactory
