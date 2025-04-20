@@ -55,7 +55,7 @@ public:
     Character(){
         stats[StatType::MaxHealth] = std::make_unique<StatComponent> (1.0f);
         stats[StatType::BaseSpeed] = std::make_unique<StatComponent> (1.0f);
-        stats[StatType::RegenerateHealthAmount] = std::make_unique<StatComponent> (0.01f);
+        stats[StatType::RegenerateHealthAmount] = std::make_unique<StatComponent> (0.0f);
         stats[StatType::RegenerateHealthFasterInUpdates] = std::make_unique<StatComponent> (0.0f);
     }
 
@@ -69,11 +69,15 @@ public:
     }
 
     void update(){
+
         regenerateHealthUpdateCount += 1;
-        int updatesUntilNextRegen = (120) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
+        int updatesUntilNextRegen = (240) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
         if(regenerateHealthUpdateCount >= updatesUntilNextRegen){
             regenerateHealthUpdateCount = 0;
             health += stats[StatType::RegenerateHealthAmount]->getValue();
+            if(health > stats[StatType::MaxHealth]->getValue()){
+                health = stats[StatType::MaxHealth]->getValue();
+            }
         }
 
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){

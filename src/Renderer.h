@@ -2,7 +2,6 @@
 
 #include <unordered_map>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include "BinaryResourceLoader.h"
 #include "SDLUtils.h"
 #include "RenderProps.h"
@@ -26,7 +25,6 @@ public:
     };
 
     ~Renderer(){
-        TTF_CloseFont(firaSansRegular48ptFont);
         SDL_DestroyRenderer(sdl_renderer);
         SDL_DestroyWindow(window);
         IMG_Quit();
@@ -73,10 +71,6 @@ public:
         return sdl_renderer;
     }
 
-    TTF_Font* getFont(){
-        return firaSansRegular48ptFont;
-    }
-
     void getVirtualMouseCoords(float* mouseX, float* mouseY){
         int mouseScreenX, mouseScreenY;
         SDL_GetMouseState( &mouseScreenX, &mouseScreenY );
@@ -97,8 +91,6 @@ private:
     SDL_Renderer* sdl_renderer = nullptr;
 
     std::vector<GameObject*> renderables = {};
-
-    TTF_Font* firaSansRegular48ptFont;
 
     void initializeSDL(){
 
@@ -127,29 +119,6 @@ private:
             SDL_DestroyWindow(window);
             IMG_Quit();
             SDL_Quit();
-            return;
-        }
-
-        initializeFonts();
-    }
-
-    void initializeFonts(){
-
-        TTF_Init();
-
-        BinaryResource fontBinaryResource = BinaryResourceLoader::getBinaryResource("fonts/firasansregular.ttf");
-
-        SDL_RWops* rw = SDL_RWFromConstMem(fontBinaryResource.data, (int) fontBinaryResource.length);
-        if (!rw) {
-            SDL_Log("RWFromConstMem failed: %s", SDL_GetError());
-            sdl_renderer = nullptr;
-            return;
-        }
-
-        firaSansRegular48ptFont = TTF_OpenFontRW(rw, /*freesrc=*/1, /*ptSize=*/48);
-        if (!firaSansRegular48ptFont) {
-            SDL_Log("TTF_OpenFontRW failed: %s", TTF_GetError());
-            sdl_renderer = nullptr;
             return;
         }
 

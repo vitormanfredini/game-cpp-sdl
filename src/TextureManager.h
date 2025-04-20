@@ -191,9 +191,9 @@ private:
             return nullptr;
         }
 
-        SDL_Surface* textSurface = TTF_RenderText_Blended(font, text, *color);
+        SDL_Surface* textSurface = TTF_RenderUTF8_Blended(font, text, *color);
         if (!textSurface) {
-            SDL_Log("TTF_RenderText_Blended failed: %s", TTF_GetError());
+            SDL_Log("TTF_RenderUTF8_Blended failed: %s", TTF_GetError());
             return nullptr;
         }
     
