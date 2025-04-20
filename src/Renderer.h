@@ -26,7 +26,7 @@ public:
     };
 
     ~Renderer(){
-        TTF_CloseFont(firaSansRegular24ptFont);
+        TTF_CloseFont(firaSansRegular48ptFont);
         SDL_DestroyRenderer(sdl_renderer);
         SDL_DestroyWindow(window);
         IMG_Quit();
@@ -74,7 +74,7 @@ public:
     }
 
     TTF_Font* getFont(){
-        return firaSansRegular24ptFont;
+        return firaSansRegular48ptFont;
     }
 
     void getVirtualMouseCoords(float* mouseX, float* mouseY){
@@ -98,7 +98,7 @@ private:
 
     std::vector<GameObject*> renderables = {};
 
-    TTF_Font* firaSansRegular24ptFont;
+    TTF_Font* firaSansRegular48ptFont;
 
     void initializeSDL(){
 
@@ -146,8 +146,8 @@ private:
             return;
         }
 
-        firaSansRegular24ptFont = TTF_OpenFontRW(rw, /*freesrc=*/1, /*ptSize=*/24);
-        if (!firaSansRegular24ptFont) {
+        firaSansRegular48ptFont = TTF_OpenFontRW(rw, /*freesrc=*/1, /*ptSize=*/48);
+        if (!firaSansRegular48ptFont) {
             SDL_Log("TTF_OpenFontRW failed: %s", TTF_GetError());
             sdl_renderer = nullptr;
             return;

@@ -9,11 +9,16 @@
 #include <string>
 #include <sstream>
 
+enum class TextRenderMethod {
+    Centered,
+    ButtonCentered,
+};
+
 class TextureManager {
 
 public:
 
-    TextureManager(SDL_Renderer* sdl_renderer, TTF_Font* firaSansRegular24ptFont): sdl_renderer(sdl_renderer), firaSansRegular24ptFont(firaSansRegular24ptFont) { };
+    TextureManager(SDL_Renderer* sdl_renderer, TTF_Font* firaSansRegular48ptFont): sdl_renderer(sdl_renderer), firaSansRegular48ptFont(firaSansRegular48ptFont) { };
 
     ~TextureManager(){
         clearTexturesCache();
@@ -52,7 +57,9 @@ public:
         return loadTexture(r, g, b, 255);
     }
 
-    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, bool copyOriginalTexture) {
+    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, SDL_Color* color, TextRenderMethod method) {
+
+        bool copyOriginalTexture = true;
 
         std::string textureName = "";
 
@@ -69,15 +76,17 @@ public:
 
         SDL_Texture* textureToDrawOn = originalTexture;
 
+        int originalTextureWidth, originalTextureHeight;
+        Uint32 originalFormat;
+        SDL_QueryTexture(originalTexture, &originalFormat, nullptr, &originalTextureWidth, &originalTextureHeight);
+
         if(copyOriginalTexture){
-            Uint32 fmt;
-            int access, width, height;
-            SDL_QueryTexture(originalTexture, &fmt, &access, &width, &height);
             SDL_Texture* copyTex = SDL_CreateTexture(
                 sdl_renderer,
-                fmt,
+                originalFormat,
                 SDL_TEXTUREACCESS_TARGET,
-                width, height
+                originalTextureWidth,
+                originalTextureHeight
             );
             textureToDrawOn = copyTex;
         }
@@ -93,10 +102,50 @@ public:
         }
 
         // create texture with text
-        SDL_Texture* textureWithText = createTextTexture(text);
+        SDL_Texture* textureWithText = createTextTexture(text, color);
 
-        // copy texture over copied texture
-        SDL_RenderCopy(sdl_renderer, textureWithText, nullptr, nullptr);
+        int textTextureWidth, textTextureHeight;
+        SDL_QueryTexture(textureWithText, nullptr, nullptr, &textTextureWidth, &textTextureHeight);
+
+        std::vector<SDL_Rect> renderRects = {};
+        switch (method) {
+            case TextRenderMethod::Centered: {
+                int textX = std::round(static_cast<float>(originalTextureWidth)/2 - static_cast<float>(textTextureWidth)/2);
+                int textY = std::round(static_cast<float>(originalTextureHeight)/2 - static_cast<float>(textTextureHeight)/2);
+                SDL_Rect rect = {
+                    textX,
+                    textY,
+                    textTextureWidth,
+                    textTextureHeight,
+                };
+                renderRects.push_back(rect);
+            }
+            break;
+            case TextRenderMethod::ButtonCentered: {
+                int xAllStates = std::round(static_cast<float>(originalTextureWidth)/2 - static_cast<float>(textTextureWidth)/2);
+                int yCenteredFirstState = std::round(static_cast<float>(originalTextureHeight)/6 - static_cast<float>(textTextureHeight)/2);
+                int heightEachState = std::round(static_cast<float>(originalTextureHeight)/3);
+                
+                for(int c=0;c<3;c++){
+                    int offset = c==2 ? (textTextureWidth / 40) : 0;
+                    SDL_Rect rect = {
+                        xAllStates + offset,
+                        yCenteredFirstState + (c * heightEachState) + offset,
+                        textTextureWidth,
+                        textTextureHeight,
+                    };
+                    renderRects.push_back(rect);
+                }
+            }
+            break;
+            default:
+                std::cerr << "drawTextOnTexture: unsupported TextRenderMethod" << std::endl;
+                break;
+        }
+
+        for(SDL_Rect& rect : renderRects){
+            SDL_RenderCopy(sdl_renderer, textureWithText, nullptr, &rect);
+        }
 
         SDL_SetRenderTarget(sdl_renderer, nullptr);
 
@@ -107,10 +156,9 @@ public:
         return textureToDrawOn;
     }
 
-    SDL_Texture* createTextTexture(const char* text) {
+    SDL_Texture* createTextTexture(const char* text, SDL_Color* color) {
 
-        SDL_Color red = { 255, 30, 30, 255 };
-        SDL_Surface* textSurface = TTF_RenderText_Blended(firaSansRegular24ptFont, text, red);
+        SDL_Surface* textSurface = TTF_RenderText_Blended(firaSansRegular48ptFont, text, *color);
         if (!textSurface) {
             SDL_Log("TTF_RenderText_Blended failed: %s", TTF_GetError());
             return nullptr;
@@ -138,7 +186,7 @@ public:
 
 private:
     SDL_Renderer* sdl_renderer;
-    TTF_Font* firaSansRegular24ptFont;
+    TTF_Font* firaSansRegular48ptFont;
     std::unordered_map<std::string, SDL_Texture*> texturesCache;
 
     std::string rgbaTextureName(int r, int g, int b, int a){
@@ -148,7 +196,7 @@ private:
     SDL_Texture* loadFromCache(const std::string& textureName){
         auto it = texturesCache.find(textureName);
         if (it != texturesCache.end()) {
-            std::cout << "loadFromCache: " << textureName << std::endl;
+            // std::cout << "loadFromCache: " << textureName << std::endl;
             return it->second;
         }
 

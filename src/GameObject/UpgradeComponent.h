@@ -9,8 +9,9 @@ private:
     float value;
     StatType type;
     int level;
+    std::string description;
 public:
-    UpgradeComponent(UpgradeId id, StatType type, int level, float value): id(id), type(type), level(level), value(value) {
+    UpgradeComponent(UpgradeId id, StatType type, int level, float value, std::string description): id(id), type(type), level(level), value(value), description(description) {
         //
     }
     virtual UpgradeId getId(){
@@ -25,8 +26,11 @@ public:
     virtual int getLevel(){
         return level;
     }
+    virtual std::string& getDescription(){
+        return description;
+    }
     virtual ~UpgradeComponent() = default;
     virtual std::unique_ptr<UpgradeComponent> clone() {
-        return std::make_unique<UpgradeComponent>(id, type, level, value);
+        return std::make_unique<UpgradeComponent>(id, type, level, value, description);
     };
 };

@@ -34,11 +34,18 @@ public:
             Alignment::UI
         ));
 
+        SDL_Color mainMenuButtonTextColor = { 224, 210, 128, 255 };
+
         std::unique_ptr<Button> startButton = std::make_unique<Button>();
         startButton->setPosition(0.33f, 0.3f);
         startButton->setSize(0.33f, 0.166f);
         startButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->loadTexture("images/button_start.png")
+            textureManager->drawTextOnTexture(
+                textureManager->loadTexture("images/menu_button_base.png"),
+                "start",
+                &mainMenuButtonTextColor,
+                TextRenderMethod::ButtonCentered
+            )
         ));
         startButton->setCallback([stateManager]() {
             stateManager->setMainState(MainState::Gameplay);
@@ -49,7 +56,12 @@ public:
         exitButton->setPosition(0.33f, 0.53f);
         exitButton->setSize(0.33f, 0.166f);
         exitButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->loadTexture("images/button_exit.png")
+            textureManager->drawTextOnTexture(
+                textureManager->loadTexture("images/menu_button_base.png"),
+                "exit",
+                &mainMenuButtonTextColor,
+                TextRenderMethod::ButtonCentered
+            )
         ));
         exitButton->setCallback([stateManager]() {
             stateManager->triggerQuit();
@@ -81,17 +93,26 @@ public:
             // provavelmente acabaram os upgrades. implementar itens no submenu para colocar no lugar
         }
 
+        SDL_Color upgradeMenuButtonTextColor = { 155, 198, 150, 255 };
+
         for(size_t c=0; c<upgradesToChoose.size(); c++){
+            std::shared_ptr<UpgradeComponent> upgradeOption = std::move(upgradesToChoose[c]);
+
             std::unique_ptr<Button> optionButton = std::make_unique<Button>();
             optionButton->setPosition(0.33f, 0.2f + (c * 0.2f));
             optionButton->setSize(0.33f, 0.166f);
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-                textureManager->loadTexture("images/button_upgrademenu_option.png")
+                textureManager->drawTextOnTexture(
+                    textureManager->loadTexture("images/upgrademenu_button_base.png"),
+                    upgradeOption->getDescription().c_str(),
+                    &upgradeMenuButtonTextColor,
+                    TextRenderMethod::ButtonCentered
+                )
             ));
-            std::shared_ptr<UpgradeComponent> sharedUpgrade = std::move(upgradesToChoose[c]);
-            optionButton->setCallback([this, charReceivesReward, sharedUpgrade]() {
-                upgradeFactory->playerChoseThisUpgrade(sharedUpgrade.get());
-                charReceivesReward->addUpgradeComponent(sharedUpgrade->clone());
+            
+            optionButton->setCallback([this, charReceivesReward, upgradeOption]() {
+                upgradeFactory->playerChoseThisUpgrade(upgradeOption.get());
+                charReceivesReward->addUpgradeComponent(upgradeOption->clone());
                 stateManager->setGamePlayState(GameplayState::Play);
             });
             upgradeMenu->addButton(std::move(optionButton));
