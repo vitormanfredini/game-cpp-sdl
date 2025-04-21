@@ -4,8 +4,8 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
-#include <random>
 #include "Character.h"
+#include "RandomGenerator.h"
 
 class CharacterUtils {
 
@@ -32,23 +32,19 @@ public:
     
     static const std::vector<float> getRandomPositionOutsideScreen(float cameraX, float cameraY){
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<float> dis(0.0f, 1.0f);
-
         float offsetX = cameraX - 0.5f;
         float offsetY = cameraY - 0.5f;
 
-        if(dis(gen) > 0.5){
+        if(RandomGenerator::getInstance().getRandom() > 0.5){
             return {
-                dis(gen) > 0.5 ? (offsetX + 1.1f) : (offsetX - 0.1f),
-                offsetY + dis(gen)
+                RandomGenerator::getInstance().getRandom() > 0.5 ? (offsetX + 1.1f) : (offsetX - 0.1f),
+                offsetY + RandomGenerator::getInstance().getRandom()
             };
         }
 
         return {
-            offsetX + dis(gen),
-            dis(gen) > 0.5 ? (offsetY + 1.1f) : (offsetY - 0.1f)
+            offsetX + RandomGenerator::getInstance().getRandom(),
+            RandomGenerator::getInstance().getRandom() > 0.5 ? (offsetY + 1.1f) : (offsetY - 0.1f)
         };
 
     }

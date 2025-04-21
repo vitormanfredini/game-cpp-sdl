@@ -23,7 +23,6 @@
 #include "GameObject/UiHealthBarRenderer.h"
 #include "GameObject/UiGemValueBarRenderer.h"
 #include "Maps/MapFromImage.h"
-#include "Maps/RandomMap.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
 
@@ -92,7 +91,6 @@ int main() {
 
     engine.setMainChar(&mainChar);
 
-    // RandomMap randomMap {&textureManager, 8};
     MapFromImage mapFromImage {&textureManager, "maps/01.png", 8};
 
     engine.setMapComponent(&mapFromImage);

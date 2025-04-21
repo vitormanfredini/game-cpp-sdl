@@ -9,7 +9,6 @@
 #include <vector>
 #include <random>
 #include <algorithm>
-#include <random>
 
 class UpgradeFactory {
 
@@ -60,19 +59,6 @@ public:
     }
 
     void playerChoseThisUpgrade(UpgradeComponent* upgrade){
-
-        if(upgrade->getId() == UpgradeId::MaxHealth){
-            std::cout << "New upgrade: MaxHealth. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
-        }
-        if(upgrade->getId() == UpgradeId::BaseSpeed){
-            std::cout << "New upgrade: BaseSpeed. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
-        }
-        if(upgrade->getId() == UpgradeId::RegenerateHealthAmount){
-            std::cout << "New upgrade: RegenerateHealthAmount. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
-        }
-        if(upgrade->getId() == UpgradeId::RegenerateHealthFasterInUpdates){
-            std::cout << "New upgrade: RegenerateHealthFasterInUpdates. Value: " << upgrade->getValue() << ". Level: " << upgrade->getLevel() << "." << std::endl;
-        }
 
         UpgradeId upgradeId = upgrade->getId();
         upgradesTimesConsumed[upgradeId] += 1;

@@ -2,34 +2,41 @@
 
 #include <memory>
 #include "GameObject/GameObject.h"
+#include "ItemId.h"
+#include <iostream>
 
-class Gem: public GameObject {
+class Item: public GameObject {
 
 private:
     float value = 1.0f;
     bool consumed = false;
+    ItemId itemId;
 
 public:
 
-    Gem(float value): value(value) {
+    Item(ItemId itemId, float value): itemId(itemId), value(value) {
         //
     }
 
     float consume(){
         if(consumed){
-            // consumed this gem twice
+            std::cerr << "consumed Item twice" << std::endl;
             return 0.0f;
         }
         consumed = true;
         return value;
     }
 
+    ItemId getItemId(){
+        return itemId;
+    }
+
     bool isConsumed(){
         return consumed;
     }
 
-    std::unique_ptr<Gem> clone() {
-        auto copy = std::make_unique<Gem>(value);
+    std::unique_ptr<Item> clone() {
+        auto copy = std::make_unique<Item>(itemId, value);
 
         copy->consumed = consumed;
         copy->setSize(getWidth(),getHeight());

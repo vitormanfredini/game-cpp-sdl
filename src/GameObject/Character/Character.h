@@ -74,10 +74,7 @@ public:
         int updatesUntilNextRegen = (240) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
         if(regenerateHealthUpdateCount >= updatesUntilNextRegen){
             regenerateHealthUpdateCount = 0;
-            health += stats[StatType::RegenerateHealthAmount]->getValue();
-            if(health > stats[StatType::MaxHealth]->getValue()){
-                health = stats[StatType::MaxHealth]->getValue();
-            }
+            addHealth(stats[StatType::RegenerateHealthAmount]->getValue());
         }
 
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
@@ -111,11 +108,22 @@ public:
     }
 
     void setInitialHealth(float newInitialHealth){
-        health = newInitialHealth;
+        health = 0;
+        addHealth(newInitialHealth);
     }
 
     float getHealthPercentage(){
         return health / stats[StatType::MaxHealth]->getValue();
+    }
+
+    void addHealth(float value){
+        health += value;
+        if(health > stats[StatType::MaxHealth]->getValue()){
+            health = stats[StatType::MaxHealth]->getValue();
+        }
+        if(health >= 0.0f){
+            
+        }
     }
 
     float getWeight(){
@@ -171,7 +179,7 @@ public:
         if(projectile->isDead()){
             return;
         }
-        health -= projectile->getAttack();
+        addHealth(-projectile->getAttack());
         projectile->takeHit();
     }
 
@@ -179,7 +187,7 @@ public:
         if(other->isDead()){
             return;
         }
-        health -= other->getCollisionAttack();
+        addHealth(-other->getCollisionAttack());
     }
 
     void setMovementComponent(std::unique_ptr<MovementComponent> mover) {

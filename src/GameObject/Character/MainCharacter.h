@@ -12,7 +12,7 @@
 #include "GameObject/Character/Character.h"
 #include "Weapons/WeaponComponent.h"
 #include "GameObject/Movement/MovementComponent.h"
-#include "GameObject/Gem/Gem.h"
+#include "GameObject/Item/Item.h"
 
 class MainCharacter: public Character {
 
@@ -27,15 +27,8 @@ private:
         currentLevelMax = static_cast<float>(level);
     }
 
-public:
-
-    MainCharacter(){
-        recalculateCurrentLevelMax();
-    }
-
-    void consumeGem(Gem* gem){
-        currentGemValue += gem->consume();
-
+    void consumeGemValue(float value){
+        currentGemValue += value;
         if(currentGemValue > currentLevelMax){
             level += 1;
             currentGemValue -= currentLevelMax;
@@ -44,6 +37,34 @@ public:
                 onAdvanceLevelCallback(level);
             }
         }
+    }
+
+    void consumeHealthValue(float value){
+        addHealth(value);
+    }
+
+public:
+
+    MainCharacter(){
+        recalculateCurrentLevelMax();
+    }
+
+    void consumeItem(Item* item){
+        float consumedValue = item->consume();
+        ItemId itemId = item->getItemId();
+
+        switch (itemId) {
+            case ItemId::Gem: {
+                consumeGemValue(consumedValue);
+            } break;
+            case ItemId::Health: {
+                consumeHealthValue(consumedValue);
+            } break;
+            default:
+                std::cerr << "consumeItem() unsupported itemId" << std::endl;
+                break;
+        }
+        
     }
 
     float getGemPercentage(){

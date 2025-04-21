@@ -4,9 +4,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
-#include <random>
 #include <algorithm>
-#include <random>
 #include "GameObject/Character/Character.h"
 #include "GameObject/UpgradeFactory.h"
 #include "GameObject/Ui/Menu.h"

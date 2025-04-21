@@ -4,7 +4,6 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
-#include <random>
 #include "Renderer.h"
 #include "Camera.h"
 #include "DeltaTime.h"
@@ -13,9 +12,9 @@
 #include "GameObject/Character/MainCharacter.h"
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
-#include "GameObject/Gem/Gem.h"
-#include "GameObject/Gem/GemFactory.h"
-#include "GameObject/Gem/GemType.h"
+#include "GameObject/Item/Item.h"
+#include "GameObject/Item/ItemFactory.h"
+#include "GameObject/Item/ItemId.h"
 #include "Maps/MapComponent.h"
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/MenuFactory.h"
@@ -44,7 +43,7 @@ public:
     textureManager(textureManager),
     characterFactory(textureManager),
     stateManager(stateManager),
-    gemFactory(textureManager),
+    itemFactory(textureManager),
     menuFactory(menuFactory)
     {
         menu = std::move(menuFactory->createMainMenu());
@@ -132,8 +131,8 @@ public:
                 renderer->addRenderable(enemy.get());
             }
 
-            for(std::unique_ptr<Gem>& gem : gems){
-                renderer->addRenderable(gem.get());
+            for(std::unique_ptr<Item>& item : items){
+                renderer->addRenderable(item.get());
             }
     
             renderer->addRenderable(mainChar);
@@ -259,7 +258,7 @@ private:
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
-    GemFactory gemFactory;
+    ItemFactory itemFactory;
     MenuFactory* menuFactory = nullptr;
     StateManager* stateManager = nullptr;
     Intro intro { 3*60 };
@@ -270,7 +269,7 @@ private:
 
     std::vector<std::unique_ptr<Projectile>> projectiles = {};
 
-    std::vector<std::unique_ptr<Gem>> gems = {};
+    std::vector<std::unique_ptr<Item>> items = {};
 
     MapComponent* mapComponent;
 
@@ -288,9 +287,9 @@ private:
         mainChar->update();
         mainChar->move(input->getInputDirections().normalized());
 
-        for(std::unique_ptr<Gem>& gem : gems){
-            if(mainChar->checkCollision(*gem)){
-                mainChar->consumeGem(gem.get());
+        for(std::unique_ptr<Item>& item : items){
+            if(mainChar->checkCollision(*item)){
+                mainChar->consumeItem(item.get());
             }
         }
 
@@ -357,22 +356,28 @@ private:
             projectiles.erase(projectiles.begin() + index);
         }
 
-        std::vector<int> diedGems = {};
-        for(size_t g=0; g<gems.size(); g++){
-            if(gems[g]->isConsumed()){
-                diedGems.push_back(g);
+        std::vector<int> diedItems = {};
+        for(size_t g=0; g<items.size(); g++){
+            if(items[g]->isConsumed()){
+                diedItems.push_back(g);
             }
         }
-        for(int index : diedGems){
-            gems.erase(gems.begin() + index);
+        for(int index : diedItems){
+            items.erase(items.begin() + index);
         }
 
         std::vector<int> diedEnemies = {};
         for(size_t e=0; e<enemies.size(); e++){
             if(enemies[e]->isDead()){
-                std::unique_ptr<Gem> newGem = gemFactory.create(GemType::Level1);
-                newGem->setPosition(enemies[e]->getX(),enemies[e]->getY());
-                gems.push_back(std::move(newGem));
+                if(RandomGenerator::getInstance().getRandom() > 0.5f){
+                    std::unique_ptr<Item> newGemItem = itemFactory.create(ItemId::Gem);
+                    newGemItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
+                    items.push_back(std::move(newGemItem));
+                }else{
+                    std::unique_ptr<Item> newHealthItem = itemFactory.create(ItemId::Health);
+                    newHealthItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
+                    items.push_back(std::move(newHealthItem));
+                }
 
                 diedEnemies.push_back(e);
             }
