@@ -66,7 +66,7 @@ int main() {
     MainCharacter mainChar;
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
-    mainChar.setVelocity(0.005f);
+    mainChar.setInitialBaseSpeed(0.5f);
     mainChar.setInitialMaxHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
     mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(

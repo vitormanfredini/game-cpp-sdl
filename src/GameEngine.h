@@ -288,6 +288,8 @@ private:
         mainChar->move(input->getInputDirections().normalized());
 
         for(std::unique_ptr<Item>& item : items){
+            item->update();
+            item->moveTowards(*mainChar);
             if(mainChar->checkCollision(*item)){
                 mainChar->consumeItem(item.get());
             }
@@ -369,7 +371,7 @@ private:
         std::vector<int> diedEnemies = {};
         for(size_t e=0; e<enemies.size(); e++){
             if(enemies[e]->isDead()){
-                if(RandomGenerator::getInstance().getRandom() > 0.5f){
+                if(RandomGenerator::getInstance().getRandom() > 0.1f){
                     std::unique_ptr<Item> newGemItem = itemFactory.create(ItemId::Gem);
                     newGemItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
                     items.push_back(std::move(newGemItem));

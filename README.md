@@ -3,7 +3,6 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- Implement magnetic pull to items below a threshold
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
 - move MainChar settings to CharacterFactory

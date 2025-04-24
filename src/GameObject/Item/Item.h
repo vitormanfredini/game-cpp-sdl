@@ -11,6 +11,7 @@ private:
     float value = 1.0f;
     bool consumed = false;
     ItemId itemId;
+    std::unique_ptr<MovementComponent> movementComponent;
 
 public:
 
@@ -35,6 +36,25 @@ public:
         return consumed;
     }
 
+    void update(){
+        movementComponent->update();
+    }
+
+    void setMovementComponent(std::unique_ptr<MovementComponent> mover) {
+        movementComponent = std::move(mover);
+    }
+
+    void moveTowards(GameObject& other){
+        if (movementComponent){
+            move(movementComponent->getMovementDirection(*this, other));
+        }
+    }
+
+    void move(MovementDirection directions){
+        y += directions.vertical * 0.001f;
+        x += directions.horizontal * 0.001f;
+    }
+
     std::unique_ptr<Item> clone() {
         auto copy = std::make_unique<Item>(itemId, value);
 
@@ -48,6 +68,10 @@ public:
     
         if (collisionComponent) {
             copy->setCollisionComponent(collisionComponent->clone());
+        }
+
+        if(movementComponent){
+            copy->setMovementComponent(movementComponent->clone());
         }
 
         return copy;

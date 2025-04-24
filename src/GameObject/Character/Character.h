@@ -20,7 +20,6 @@ class UiHealthBarRenderer;
 class Character: public GameObject {
 
 private:
-    float velocity = 0.01f;
     float collisionAttack = 0.001;
     float weight = 1.0f;
 
@@ -146,8 +145,9 @@ public:
         collisionAttack = newCollisionAttack;
     }
 
-    void setVelocity(float newVelocity) {
-        velocity = newVelocity;
+    void setInitialBaseSpeed(float initialBaseSpeed){
+        stats[StatType::BaseSpeed]->setInitialValue(initialBaseSpeed);
+        stats[StatType::BaseSpeed]->setValue(initialBaseSpeed);
     }
 
     void moveTowards(GameObject& other){
@@ -157,8 +157,8 @@ public:
     }
 
     void move(MovementDirection directions){
-        y += directions.vertical * velocity * stats[StatType::BaseSpeed]->getValue();
-        x += directions.horizontal * velocity * stats[StatType::BaseSpeed]->getValue();
+        y += directions.vertical * stats[StatType::BaseSpeed]->getValue() * 0.01;
+        x += directions.horizontal * stats[StatType::BaseSpeed]->getValue() * 0.01;
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
@@ -201,7 +201,6 @@ public:
         copy->y = y;
         copy->width = width;
         copy->height = height;
-        copy->velocity = velocity;
         copy->health = health;
         copy->collisionAttack = collisionAttack;
         copy->weight = weight;

@@ -27,7 +27,7 @@ public:
     CharacterFactory(TextureManager* textureManager){
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
         prototypes[CharacterType::Regular]->setSize(0.066f,0.066f);
-        prototypes[CharacterType::Regular]->setVelocity(0.004f);
+        prototypes[CharacterType::Regular]->setInitialBaseSpeed(0.4f);
         prototypes[CharacterType::Regular]->setCollisionAttack(0.001);
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
@@ -49,7 +49,7 @@ public:
 
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
-        prototypes[CharacterType::Bigger]->setVelocity(0.0033f);
+        prototypes[CharacterType::Bigger]->setInitialBaseSpeed(0.33f);
         prototypes[CharacterType::Bigger]->setCollisionAttack(0.002);
         prototypes[CharacterType::Bigger]->setInitialMaxHealth(3.0f);
         prototypes[CharacterType::Bigger]->setInitialHealth(3.0f);
@@ -71,7 +71,7 @@ public:
 
         prototypes[CharacterType::Boss] = std::make_unique<Character>();
         prototypes[CharacterType::Boss]->setSize(0.1f,0.1f);
-        prototypes[CharacterType::Boss]->setVelocity(0.002f);
+        prototypes[CharacterType::Boss]->setInitialBaseSpeed(0.2f);
         prototypes[CharacterType::Boss]->setCollisionAttack(0.005);
         prototypes[CharacterType::Boss]->setInitialMaxHealth(15.0f);
         prototypes[CharacterType::Boss]->setInitialHealth(15.0f);
