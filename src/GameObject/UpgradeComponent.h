@@ -1,36 +1,66 @@
 #pragma once
 #include "StatType.h"
+#include "StatUpgrade.h"
 #include "UpgradeId.h"
 #include <memory>
+#include <variant>
+#include <iostream>
 
 class UpgradeComponent {
+public:
+    enum class Type {
+        StatUpgrade
+        // WeaponUpgrade,
+        // Item
+    };
 private:
+    Type type;
+    std::unique_ptr<StatUpgrade> statUpgrade;
+    // std::unique_ptr<WeaponUpgrade> weaponUpgrade;
+    // std::unique_ptr<Item> item;
+
     UpgradeId id;
-    float value;
-    StatType type;
     int level;
     std::string description;
+
 public:
-    UpgradeComponent(UpgradeId id, StatType type, int level, float value, std::string description): id(id), type(type), level(level), value(value), description(description) {
-        //
+    explicit UpgradeComponent(UpgradeId id, std::unique_ptr<StatUpgrade> statUpgrade, int level, std::string description)
+        : type(Type::StatUpgrade), statUpgrade(std::move(statUpgrade)), id(id), level(level), description(description) {
+            //
+        }
+
+    UpgradeComponent(UpgradeComponent&& other) noexcept
+        : type(other.type),
+          statUpgrade(std::move(other.statUpgrade)),
+          level(other.level),
+          description(other.description)
+
+        //   weaponUpgrade(std::move(other.weaponUpgrade)),
+        //   item(std::move(other.item)) 
+          {
+
     }
-    virtual UpgradeId getId(){
+
+    Type getType() const { return type; }
+
+    StatUpgrade* getStatUpgrade() const {
+        return statUpgrade.get();
+    }
+
+    UpgradeId getId(){
         return id;
     };
-    virtual StatType getType(){
-        return type;
-    };
-    virtual float getValue(){
-        return value;
-    };
-    virtual int getLevel(){
+    int getLevel(){
         return level;
     }
-    virtual std::string& getDescription(){
+    std::string& getDescription(){
         return description;
     }
-    virtual ~UpgradeComponent() = default;
-    virtual std::unique_ptr<UpgradeComponent> clone() {
-        return std::make_unique<UpgradeComponent>(id, type, level, value, description);
+    ~UpgradeComponent() = default;
+    std::unique_ptr<UpgradeComponent> clone() {
+        if(type == Type::StatUpgrade){
+            return std::make_unique<UpgradeComponent>(id, statUpgrade->clone(), level, description);
+        }
+        std::cerr << "std::unique_ptr<UpgradeComponent> clone(): unsupported Type" << std::endl;
     };
 };

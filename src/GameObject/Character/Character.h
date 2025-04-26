@@ -3,6 +3,7 @@
 #include "resource_registry.h"
 #include <string.h>
 #include <iostream>
+#include <iomanip>
 #include "BinaryResourceLoader.h"
 #include <SDL2/SDL_render.h>
 #include "Input.h"
@@ -32,20 +33,32 @@ private:
     std::unique_ptr<MovementComponent> movementComponent;
     std::vector<std::unique_ptr<UpgradeComponent>> upgradeComponents = {};
 
-    void reprocessUpgrades(){
+    void reprocessStats(){
 
         for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
-            if (stats.find(upgrade->getType()) == stats.end()) {
+            if(upgrade->getType() != UpgradeComponent::Type::StatUpgrade){
                 continue;
             }
-            stats[upgrade->getType()]->setValue(stats[upgrade->getType()]->getInitialValue());
+
+            if (stats.find(upgrade->getStatUpgrade()->getType()) == stats.end()) {
+                continue;
+            }
+
+            stats[upgrade->getStatUpgrade()->getType()]->setValue(
+                stats[upgrade->getStatUpgrade()->getType()]->getInitialValue()
+            );
         }
 
         for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
-            if (stats.find(upgrade->getType()) == stats.end()) {
+            if(upgrade->getType() != UpgradeComponent::Type::StatUpgrade){
                 continue;
             }
-            stats[upgrade->getType()]->add(upgrade->getValue());
+
+            if (stats.find(upgrade->getStatUpgrade()->getType()) == stats.end()) {
+                continue;
+            }
+
+            stats[upgrade->getStatUpgrade()->getType()]->add(upgrade->getStatUpgrade()->getValue());
         }
     }
 
@@ -64,7 +77,7 @@ public:
 
     void addUpgradeComponent(std::unique_ptr<UpgradeComponent> upgradeComponent){
         upgradeComponents.push_back(std::move(upgradeComponent));
-        reprocessUpgrades();
+        reprocessStats();
     }
 
     void update(){

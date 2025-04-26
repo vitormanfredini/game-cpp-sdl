@@ -10,28 +10,30 @@
 #include <random>
 #include <algorithm>
 
+#include "StatUpgrade.h"
+
 class UpgradeFactory {
 
 public:
 
     UpgradeFactory(){
 
-        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, StatType::MaxHealth, 1, 0.2, "Aumenta a vida máxima em 20%"));
-        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, StatType::MaxHealth, 2, 0.1, "Aumenta a vida máxima em 10%"));
-        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, StatType::MaxHealth, 3, 0.08, "Aumenta a vida máxima em 8%"));
+        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(StatType::MaxHealth, 0.2), 1, "Aumenta a vida máxima em 20%"));
+        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(StatType::MaxHealth, 0.1), 2, "Aumenta a vida máxima em 20%"));
+        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(StatType::MaxHealth, 0.08), 3, "Aumenta a vida máxima em 20%"));
 
-        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, StatType::BaseSpeed, 1, 0.1, "Aumenta a velocidade base em 20%"));
-        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, StatType::BaseSpeed, 2, 0.06, "Aumenta a velocidade base em 10%"));
-        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, StatType::BaseSpeed, 3, 0.03, "Aumenta a velocidade base em 8%"));
+        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(StatType::BaseSpeed, 0.1), 1, "Aumenta a velocidade em 10%"));
+        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(StatType::BaseSpeed, 0.06), 2, "Aumenta a velocidade em 6%"));
+        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(StatType::BaseSpeed, 0.03), 3, "Aumenta a velocidade em 3%"));
 
-        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, StatType::RegenerateHealthAmount, 1, 0.03, "Aumenta a regeneração em 3"));
-        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, StatType::RegenerateHealthAmount, 2, 0.02, "Aumenta a regeneração em 2"));
-        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, StatType::RegenerateHealthAmount, 3, 0.01, "Aumenta a regeneração em 1"));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(StatType::RegenerateHealthAmount, 0.03), 1, "Aumenta a regeneração em 3"));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(StatType::RegenerateHealthAmount, 0.02), 2, "Aumenta a regeneração em 2"));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(StatType::RegenerateHealthAmount, 0.01), 3, "Aumenta a regeneração em 1"));
 
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 1, 30.0, "Diminui o tempo para regenerar"));
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 2, 30.0, "Diminui o tempo para regenerar"));
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 3, 20.0, "Diminui o tempo para regenerar"));
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, StatType::RegenerateHealthFasterInUpdates, 4, 20.0, "Diminui o tempo para regenerar"));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(StatType::RegenerateHealthFasterInUpdates, 30.0), 1, "Diminui o tempo para regenerar"));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(StatType::RegenerateHealthFasterInUpdates, 30.0), 2, "Diminui o tempo para regenerar"));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(StatType::RegenerateHealthFasterInUpdates, 20.0), 3, "Diminui o tempo para regenerar"));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(StatType::RegenerateHealthFasterInUpdates, 20.0), 4, "Diminui o tempo para regenerar"));
 
         availableUpgradeIds = {};
         for (const auto & [ upgradeId, value ] : prototypes) {

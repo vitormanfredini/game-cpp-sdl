@@ -3,6 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- finish implementing UpgradeComponent to support Weapons and Items
+- make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
 - move MainChar settings to CharacterFactory
@@ -15,7 +17,6 @@ TODO:
 - no texture is being unloaded. implement a way of telling the TextureManager the texture's context (menu, game world, in-game UI, etc) so we can unload them without unloading textures that are being used.
 - main char healthbar render is not taking into account the screen offset, possible resizing necessary, etc
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
-- make a weapon factory with prototype pattern
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
 - render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
 
