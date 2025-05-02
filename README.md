@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- implement time that the projectiles stay active (and use that to implement swords and upgrades to that stat)
 - enemies that move in angled trajectories should come almost straight if they are too far away, otherwise they move veeery far
 - WeaponUpgrade needs to specify which weapon (it's currently applying to the first weapon in the vector)
 - make a weapon factory with prototype pattern
