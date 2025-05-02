@@ -34,7 +34,9 @@ public:
         Input* input,
         TextureManager* textureManager,
         StateManager* stateManager,
-        MenuFactory* menuFactory
+        MenuFactory* menuFactory,
+        UpgradeFactory* upgradeFactory,
+        ItemFactory* itemFactory
     ):
     renderer(renderer),
     camera(camera),
@@ -43,8 +45,9 @@ public:
     textureManager(textureManager),
     characterFactory(textureManager),
     stateManager(stateManager),
-    itemFactory(textureManager),
-    menuFactory(menuFactory)
+    itemFactory(itemFactory),
+    menuFactory(menuFactory),
+    upgradeFactory(upgradeFactory)
     {
         menu = std::move(menuFactory->createMainMenu());
 
@@ -170,7 +173,7 @@ public:
     }
 
     void advanceLevel(){
-        upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar));
+        upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar, upgradeFactory));
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();
     }
@@ -258,8 +261,9 @@ private:
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
-    ItemFactory itemFactory;
+    ItemFactory* itemFactory;
     MenuFactory* menuFactory = nullptr;
+    UpgradeFactory* upgradeFactory = nullptr;
     StateManager* stateManager = nullptr;
     Intro intro { 3*60 };
     GameObject pause;
@@ -372,11 +376,11 @@ private:
         for(size_t e=0; e<enemies.size(); e++){
             if(enemies[e]->isDead()){
                 if(RandomGenerator::getInstance().getRandom() > 0.1f){
-                    std::unique_ptr<Item> newGemItem = itemFactory.create(ItemId::Gem);
+                    std::unique_ptr<Item> newGemItem = itemFactory->create(ItemId::Gem);
                     newGemItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
                     items.push_back(std::move(newGemItem));
                 }else{
-                    std::unique_ptr<Item> newHealthItem = itemFactory.create(ItemId::Health);
+                    std::unique_ptr<Item> newHealthItem = itemFactory->create(ItemId::Health);
                     newHealthItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
                     items.push_back(std::move(newHealthItem));
                 }

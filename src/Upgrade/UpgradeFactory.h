@@ -3,7 +3,8 @@
 #include <memory>
 #include "UpgradeComponent.h"
 #include "UpgradeId.h"
-#include "StatType.h"
+#include "UpgradeOption.h"
+#include "GameObject/Character/StatType.h"
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -16,7 +17,7 @@ class UpgradeFactory {
 
 public:
 
-    UpgradeFactory(){
+    UpgradeFactory(ItemFactory* itemFactory): itemFactory(itemFactory) {
 
         prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(StatType::MaxHealth, 0.2), 1, "Aumenta a vida máxima em 20%"));
         prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(StatType::MaxHealth, 0.1), 2, "Aumenta a vida máxima em 20%"));
@@ -35,6 +36,10 @@ public:
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(StatType::RegenerateHealthFasterInUpdates, 20.0), 3, "Diminui o tempo para regenerar"));
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(StatType::RegenerateHealthFasterInUpdates, 20.0), 4, "Diminui o tempo para regenerar"));
 
+        prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
+        prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
+        prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
+
         availableUpgradeIds = {};
         for (const auto & [ upgradeId, value ] : prototypes) {
             availableUpgradeIds.push_back(upgradeId);
@@ -43,7 +48,7 @@ public:
 
     }
 
-    std::vector<std::unique_ptr<UpgradeComponent>> createRandomUpgrades(int max){
+    std::vector<std::unique_ptr<UpgradeOption>> createRandomUpgradeOptions(int max){
         auto rng = std::default_random_engine {};
         std::shuffle(std::begin(availableUpgradeIds), std::end(availableUpgradeIds), rng);
 
@@ -52,22 +57,28 @@ public:
             limitedAvailableUpgradeIds.erase(limitedAvailableUpgradeIds.begin() + max, limitedAvailableUpgradeIds.end());
         }
 
-        std::vector<std::unique_ptr<UpgradeComponent>> randomUpgrades = {};
+        std::vector<std::unique_ptr<UpgradeOption>> options = {};
         for(UpgradeId upgradeId : limitedAvailableUpgradeIds){
-            randomUpgrades.push_back(std::move(prototypes[upgradeId][upgradesTimesConsumed[upgradeId]]->clone()));
+            options.push_back(std::make_unique<UpgradeOption>(
+                upgradeId,
+                prototypes[upgradeId][upgradesTimesConsumed[upgradeId]]->getType(),
+                prototypes[upgradeId][upgradesTimesConsumed[upgradeId]]->getDescription()
+            ));
         }
 
-        return randomUpgrades;
+        return options;
     }
 
-    void playerChoseThisUpgrade(UpgradeComponent* upgrade){
+    std::unique_ptr<UpgradeComponent> redeemUpgrade(UpgradeOption* option){
 
-        UpgradeId upgradeId = upgrade->getId();
+        UpgradeId upgradeId = option->id;
         upgradesTimesConsumed[upgradeId] += 1;
 
         if(upgradesTimesConsumed[upgradeId] >= prototypes[upgradeId].size()){
             availableUpgradeIds.erase(std::remove(availableUpgradeIds.begin(), availableUpgradeIds.end(), upgradeId), availableUpgradeIds.end());
         }
+
+        return prototypes[upgradeId][upgradesTimesConsumed[upgradeId]-1]->clone();
     }
 
 private:
@@ -75,4 +86,5 @@ private:
     std::unordered_map<UpgradeId,int> upgradesTimesConsumed;
     std::vector<UpgradeId> availableUpgradeIds;
 
+    ItemFactory* itemFactory;
 };

@@ -3,7 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- finish implementing UpgradeComponent to support Weapons and Items
+- finish implementing UpgradeComponent to support Weapons
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.

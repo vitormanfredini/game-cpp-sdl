@@ -1,5 +1,5 @@
 #pragma once
-#include "StatType.h"
+#include "GameObject/Character/StatType.h"
 #include <memory>
 
 class StatUpgrade {

@@ -1,5 +1,6 @@
 #pragma once
-#include "StatType.h"
+#include "GameObject/Character/StatType.h"
+#include "GameObject/Item/Item.h"
 #include "StatUpgrade.h"
 #include "UpgradeId.h"
 #include <memory>
@@ -9,15 +10,16 @@
 class UpgradeComponent {
 public:
     enum class Type {
-        StatUpgrade
-        // WeaponUpgrade,
-        // Item
+        Stat,
+        Weapon,
+        Item
     };
 private:
     Type type;
     std::unique_ptr<StatUpgrade> statUpgrade;
+    std::unique_ptr<Item> item;
     // std::unique_ptr<WeaponUpgrade> weaponUpgrade;
-    // std::unique_ptr<Item> item;
+    
 
     UpgradeId id;
     int level;
@@ -25,18 +27,19 @@ private:
 
 public:
     explicit UpgradeComponent(UpgradeId id, std::unique_ptr<StatUpgrade> statUpgrade, int level, std::string description)
-        : type(Type::StatUpgrade), statUpgrade(std::move(statUpgrade)), id(id), level(level), description(description) {
-            //
-        }
+        : type(Type::Stat), statUpgrade(std::move(statUpgrade)), id(id), level(level), description(description) {}
+    explicit UpgradeComponent(UpgradeId id, std::unique_ptr<Item> item, int level, std::string description)
+        : type(Type::Item), item(std::move(item)), id(id), level(1), description(description) {}
 
     UpgradeComponent(UpgradeComponent&& other) noexcept
         : type(other.type),
           statUpgrade(std::move(other.statUpgrade)),
           level(other.level),
-          description(other.description)
+          description(other.description),
+          item(std::move(other.item))
 
         //   weaponUpgrade(std::move(other.weaponUpgrade)),
-        //   item(std::move(other.item)) 
+          
           {
 
     }
@@ -45,6 +48,10 @@ public:
 
     StatUpgrade* getStatUpgrade() const {
         return statUpgrade.get();
+    }
+
+    Item* getItem() const {
+        return item.get();
     }
 
     UpgradeId getId(){
@@ -58,8 +65,11 @@ public:
     }
     ~UpgradeComponent() = default;
     std::unique_ptr<UpgradeComponent> clone() {
-        if(type == Type::StatUpgrade){
+        if(type == Type::Stat){
             return std::make_unique<UpgradeComponent>(id, statUpgrade->clone(), level, description);
+        }
+        if(type == Type::Item){
+            return std::make_unique<UpgradeComponent>(id, item->clone(), level, description);
         }
         std::cerr << "std::unique_ptr<UpgradeComponent> clone(): unsupported Type" << std::endl;
     };

@@ -51,7 +51,11 @@ int main() {
 
     StateManager stateManager;
 
-    MenuFactory menuFactory(std::make_unique<UpgradeFactory>(), &textureManager, &stateManager);
+    ItemFactory itemFactory(&textureManager);
+
+    UpgradeFactory upgradeFactory(&itemFactory);
+
+    MenuFactory menuFactory(&textureManager, &stateManager);
 
     GameEngine engine {
         &renderer,
@@ -60,7 +64,9 @@ int main() {
         &input,
         &textureManager,
         &stateManager,
-        &menuFactory
+        &menuFactory,
+        &upgradeFactory,
+        &itemFactory
     };
 
     MainCharacter mainChar;

@@ -6,7 +6,9 @@
 #include <vector>
 #include <algorithm>
 #include "GameObject/Character/Character.h"
-#include "GameObject/UpgradeFactory.h"
+#include "GameObject/Character/MainCharacter.h"
+#include "Upgrade/UpgradeFactory.h"
+#include "Upgrade/UpgradeOption.h"
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/MenuType.h"
 #include "GameObject/Ui/Button.h"
@@ -20,7 +22,7 @@ class MenuFactory {
 
 public:
 
-    MenuFactory(std::unique_ptr<UpgradeFactory> upgradeFactory, TextureManager* textureManager, StateManager* stateManager): upgradeFactory(std::move(upgradeFactory)), textureManager(textureManager), stateManager(stateManager) {
+    MenuFactory(TextureManager* textureManager, StateManager* stateManager): textureManager(textureManager), stateManager(stateManager) {
 
         // Main Menu
         prototypes[MenuType::MainMenu] = std::make_unique<Menu>();
@@ -83,20 +85,20 @@ public:
         return prototypes[MenuType::MainMenu]->clone();
     }
 
-    std::unique_ptr<Menu> createUpgradeMenu(Character* charReceivesReward) {
+    std::unique_ptr<Menu> createUpgradeMenu(MainCharacter* charReceivesReward, UpgradeFactory* upgradeFactory) {
         std::unique_ptr<Menu> upgradeMenu = prototypes[MenuType::UpgradeMenu]->clone();
         
-        std::vector<std::unique_ptr<UpgradeComponent>> upgradesToChoose = upgradeFactory->createRandomUpgrades(3);
+        std::vector<std::unique_ptr<UpgradeOption>> options = upgradeFactory->createRandomUpgradeOptions(3);
 
-        if(upgradesToChoose.size() == 0){
-            std::cout << "upgradesToChoose.size() == 0" << std::endl;
+        if(options.size() == 0){
+            std::cout << "options.size() == 0" << std::endl;
             // provavelmente acabaram os upgrades. implementar itens no submenu para colocar no lugar
         }
 
         SDL_Color upgradeMenuButtonTextColor = { 155, 198, 150, 255 };
 
-        for(size_t c=0; c<upgradesToChoose.size(); c++){
-            std::shared_ptr<UpgradeComponent> upgradeOption = std::move(upgradesToChoose[c]);
+        for(size_t c=0; c<options.size(); c++){
+            std::shared_ptr<UpgradeOption> upgradeOption = std::move(options[c]);
 
             std::unique_ptr<Button> optionButton = std::make_unique<Button>();
             optionButton->setPosition(0.166f, 0.2f + (c * 0.2f));
@@ -104,16 +106,23 @@ public:
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
                 textureManager->drawTextOnTexture(
                     textureManager->loadTexture("images/upgrademenu_button_base.png"),
-                    upgradeOption->getDescription().c_str(),
+                    upgradeOption->description.c_str(),
                     FontStyle::UpgradeMenu,
                     &upgradeMenuButtonTextColor,
                     TextRenderMethod::ButtonCentered
                 )
             ));
             
-            optionButton->setCallback([this, charReceivesReward, upgradeOption]() {
-                upgradeFactory->playerChoseThisUpgrade(upgradeOption.get());
-                charReceivesReward->addUpgradeComponent(upgradeOption->clone());
+            optionButton->setCallback([this, charReceivesReward, upgradeOption, upgradeFactory]() {
+                std::unique_ptr<UpgradeComponent> upgrade = upgradeFactory->redeemUpgrade(upgradeOption.get());
+                if(upgrade->getType() == UpgradeComponent::Type::Stat){
+                    charReceivesReward->addStatUpgrade(std::move(upgrade->getStatUpgrade()->clone()));
+                }else if(upgrade->getType() == UpgradeComponent::Type::Item){
+                    charReceivesReward->consumeItem(upgrade->getItem());
+                }else{
+                    std::cout << "optionButton->setCallback(): upgrade type not implemented" << std::endl;
+                }
+                
                 stateManager->setGamePlayState(GameplayState::Play);
             });
             upgradeMenu->addButton(std::move(optionButton));
@@ -125,7 +134,6 @@ public:
 
 private:
     std::unordered_map<MenuType,std::unique_ptr<Menu>> prototypes;
-    std::unique_ptr<UpgradeFactory> upgradeFactory;
     TextureManager* textureManager = nullptr;
     StateManager* stateManager = nullptr;
 

@@ -12,7 +12,7 @@
 #include "GameObject/GameObject.h"
 #include "Weapons/WeaponComponent.h"
 #include "GameObject/Movement/MovementComponent.h"
-#include "GameObject/UpgradeComponent.h"
+#include "Upgrade/UpgradeComponent.h"
 #include "StatComponent.h"
 
 class CharacterHealthBarRenderer;
@@ -31,34 +31,26 @@ private:
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
-    std::vector<std::unique_ptr<UpgradeComponent>> upgradeComponents = {};
+    std::vector<std::unique_ptr<StatUpgrade>> statUpgrades = {};
 
     void reprocessStats(){
 
-        for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
-            if(upgrade->getType() != UpgradeComponent::Type::StatUpgrade){
+        for(std::unique_ptr<StatUpgrade>& upgrade : statUpgrades){
+            if (stats.find(upgrade->getType()) == stats.end()) {
                 continue;
             }
 
-            if (stats.find(upgrade->getStatUpgrade()->getType()) == stats.end()) {
-                continue;
-            }
-
-            stats[upgrade->getStatUpgrade()->getType()]->setValue(
-                stats[upgrade->getStatUpgrade()->getType()]->getInitialValue()
+            stats[upgrade->getType()]->setValue(
+                stats[upgrade->getType()]->getInitialValue()
             );
         }
 
-        for(std::unique_ptr<UpgradeComponent>& upgrade : upgradeComponents){
-            if(upgrade->getType() != UpgradeComponent::Type::StatUpgrade){
+        for(std::unique_ptr<StatUpgrade>& upgrade : statUpgrades){
+            if (stats.find(upgrade->getType()) == stats.end()) {
                 continue;
             }
 
-            if (stats.find(upgrade->getStatUpgrade()->getType()) == stats.end()) {
-                continue;
-            }
-
-            stats[upgrade->getStatUpgrade()->getType()]->add(upgrade->getStatUpgrade()->getValue());
+            stats[upgrade->getType()]->add(upgrade->getValue());
         }
     }
 
@@ -75,8 +67,8 @@ public:
         weapons.push_back(std::move(weapon));
     }
 
-    void addUpgradeComponent(std::unique_ptr<UpgradeComponent> upgradeComponent){
-        upgradeComponents.push_back(std::move(upgradeComponent));
+    void addStatUpgrade(std::unique_ptr<StatUpgrade> upgrade){
+        statUpgrades.push_back(std::move(upgrade));
         reprocessStats();
     }
 
@@ -242,10 +234,10 @@ public:
             }
         }
 
-        copy->upgradeComponents.clear();
-        for (const auto& upgradeComponent : upgradeComponents) {
-            if (upgradeComponent) {
-                copy->upgradeComponents.push_back(upgradeComponent->clone());
+        copy->statUpgrades.clear();
+        for (const auto& statUpgrade : statUpgrades) {
+            if (statUpgrade) {
+                copy->statUpgrades.push_back(statUpgrade->clone());
             }
         }
 
