@@ -1,16 +1,16 @@
 #pragma once
-#include "GameObject/Character/StatType.h"
+#include "GameObject/Character/CharacterStat.h"
 #include <memory>
 
 class StatUpgrade {
 private:
     float value;
-    StatType type;
+    CharacterStat type;
 public:
-    StatUpgrade(StatType type, float value): type(type), value(value) {
+    StatUpgrade(CharacterStat type, float value): type(type), value(value) {
         //
     }
-    StatType getType(){
+    CharacterStat getType(){
         return type;
     };
     float getValue(){

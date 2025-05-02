@@ -13,6 +13,10 @@ public:
         updatesBetweenFires = frequencyInUpdates;
     }
 
+    int getFireFrequency(){
+        return updatesBetweenFires;
+    }
+
     void setAttack(float newAttack){
         attack = newAttack;
     }

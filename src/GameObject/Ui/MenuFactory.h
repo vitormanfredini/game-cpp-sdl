@@ -116,9 +116,11 @@ public:
             optionButton->setCallback([this, charReceivesReward, upgradeOption, upgradeFactory]() {
                 std::unique_ptr<UpgradeComponent> upgrade = upgradeFactory->redeemUpgrade(upgradeOption.get());
                 if(upgrade->getType() == UpgradeComponent::Type::Stat){
-                    charReceivesReward->addStatUpgrade(std::move(upgrade->getStatUpgrade()->clone()));
+                    charReceivesReward->consumeStatUpgrade(upgrade->getStatUpgrade());
                 }else if(upgrade->getType() == UpgradeComponent::Type::Item){
                     charReceivesReward->consumeItem(upgrade->getItem());
+                }else if(upgrade->getType() == UpgradeComponent::Type::Weapon){
+                    charReceivesReward->consumeWeaponUpgrade(upgrade->getWeaponUpgrade());
                 }else{
                     std::cout << "optionButton->setCallback(): upgrade type not implemented" << std::endl;
                 }

@@ -3,7 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- finish implementing UpgradeComponent to support Weapons
+- enemies that move in angled trajectories should come almost straight if they are too far away, otherwise they move veeery far
+- WeaponUpgrade needs to specify which weapon (it's currently applying to the first weapon in the vector)
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.

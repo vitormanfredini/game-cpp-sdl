@@ -6,12 +6,7 @@ private:
     float initialValue;
     float value;
 public:
-    StatComponent(float initialValue): value(initialValue), initialValue(initialValue) {
-        //
-    }
-    StatComponent(float initialValue, float value): initialValue(initialValue), value(value) {
-        //
-    }
+    StatComponent(float initialValue): value(initialValue), initialValue(initialValue) {}
     virtual float getInitialValue(){
         return initialValue;
     };
@@ -29,6 +24,8 @@ public:
     };
     virtual ~StatComponent() = default;
     virtual std::unique_ptr<StatComponent> clone() {
-        return std::make_unique<StatComponent>(initialValue, value);
+        std::unique_ptr<StatComponent> copy = std::make_unique<StatComponent>(initialValue);
+        copy->setValue(value);
+        return copy;
     };
 };

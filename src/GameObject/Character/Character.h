@@ -24,61 +24,52 @@ private:
     float collisionAttack = 0.001;
     float weight = 1.0f;
 
-    std::unordered_map<StatType, std::unique_ptr<StatComponent>> stats;
+    std::unordered_map<CharacterStat, std::unique_ptr<StatComponent>> stats;
     float health = 1.0f;
 
     int regenerateHealthUpdateCount = 0;
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
-    std::vector<std::unique_ptr<StatUpgrade>> statUpgrades = {};
-
-    void reprocessStats(){
-
-        for(std::unique_ptr<StatUpgrade>& upgrade : statUpgrades){
-            if (stats.find(upgrade->getType()) == stats.end()) {
-                continue;
-            }
-
-            stats[upgrade->getType()]->setValue(
-                stats[upgrade->getType()]->getInitialValue()
-            );
-        }
-
-        for(std::unique_ptr<StatUpgrade>& upgrade : statUpgrades){
-            if (stats.find(upgrade->getType()) == stats.end()) {
-                continue;
-            }
-
-            stats[upgrade->getType()]->add(upgrade->getValue());
-        }
-    }
 
 public:
 
     Character(){
-        stats[StatType::MaxHealth] = std::make_unique<StatComponent> (1.0f);
-        stats[StatType::BaseSpeed] = std::make_unique<StatComponent> (1.0f);
-        stats[StatType::RegenerateHealthAmount] = std::make_unique<StatComponent> (0.0f);
-        stats[StatType::RegenerateHealthFasterInUpdates] = std::make_unique<StatComponent> (0.0f);
+        stats[CharacterStat::MaxHealth] = std::make_unique<StatComponent> (1.0f);
+        stats[CharacterStat::BaseSpeed] = std::make_unique<StatComponent> (1.0f);
+        stats[CharacterStat::RegenerateHealthAmount] = std::make_unique<StatComponent> (0.0f);
+        stats[CharacterStat::RegenerateHealthFasterInUpdates] = std::make_unique<StatComponent> (0.0f);
     }
 
     void addWeapon(std::unique_ptr<WeaponComponent> weapon){
         weapons.push_back(std::move(weapon));
     }
 
-    void addStatUpgrade(std::unique_ptr<StatUpgrade> upgrade){
-        statUpgrades.push_back(std::move(upgrade));
-        reprocessStats();
+    void consumeStatUpgrade(StatUpgrade* upgrade){
+        if (stats.find(upgrade->getType()) == stats.end()) {
+            std::cerr << "addStatUpgrade(): Character doesn't have the Stat for this Upgrade" << std::endl;
+            return;
+        }
+
+        stats[upgrade->getType()]->add(upgrade->getValue());
+    }
+
+    void consumeWeaponUpgrade(WeaponUpgrade* upgrade){
+        if (weapons.size() == 0) {
+            std::cerr << "consumeWeaponUpgrade(): Character doesn't have any weapons" << std::endl;
+            return;
+        }
+
+        weapons[0]->setFireFrequency(weapons[0]->getFireFrequency() + std::round(upgrade->getValue()));
     }
 
     void update(){
 
         regenerateHealthUpdateCount += 1;
-        int updatesUntilNextRegen = (240) - std::round(stats[StatType::RegenerateHealthFasterInUpdates]->getValue());
+        int updatesUntilNextRegen = (240) - std::round(stats[CharacterStat::RegenerateHealthFasterInUpdates]->getValue());
         if(regenerateHealthUpdateCount >= updatesUntilNextRegen){
             regenerateHealthUpdateCount = 0;
-            addHealth(stats[StatType::RegenerateHealthAmount]->getValue());
+            addHealth(stats[CharacterStat::RegenerateHealthAmount]->getValue());
         }
 
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
@@ -107,8 +98,8 @@ public:
     }
 
     void setInitialMaxHealth(float newInitialMaxHealth){
-        stats[StatType::MaxHealth]->setInitialValue(newInitialMaxHealth);
-        stats[StatType::MaxHealth]->setValue(newInitialMaxHealth);
+        stats[CharacterStat::MaxHealth]->setInitialValue(newInitialMaxHealth);
+        stats[CharacterStat::MaxHealth]->setValue(newInitialMaxHealth);
     }
 
     void setInitialHealth(float newInitialHealth){
@@ -117,13 +108,13 @@ public:
     }
 
     float getHealthPercentage(){
-        return health / stats[StatType::MaxHealth]->getValue();
+        return health / stats[CharacterStat::MaxHealth]->getValue();
     }
 
     void addHealth(float value){
         health += value;
-        if(health > stats[StatType::MaxHealth]->getValue()){
-            health = stats[StatType::MaxHealth]->getValue();
+        if(health > stats[CharacterStat::MaxHealth]->getValue()){
+            health = stats[CharacterStat::MaxHealth]->getValue();
         }
         if(health >= 0.0f){
             
@@ -151,8 +142,8 @@ public:
     }
 
     void setInitialBaseSpeed(float initialBaseSpeed){
-        stats[StatType::BaseSpeed]->setInitialValue(initialBaseSpeed);
-        stats[StatType::BaseSpeed]->setValue(initialBaseSpeed);
+        stats[CharacterStat::BaseSpeed]->setInitialValue(initialBaseSpeed);
+        stats[CharacterStat::BaseSpeed]->setValue(initialBaseSpeed);
     }
 
     void moveTowards(GameObject& other){
@@ -162,8 +153,8 @@ public:
     }
 
     void move(MovementDirection directions){
-        y += directions.vertical * stats[StatType::BaseSpeed]->getValue() * 0.01;
-        x += directions.horizontal * stats[StatType::BaseSpeed]->getValue() * 0.01;
+        y += directions.vertical * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
+        x += directions.horizontal * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
@@ -231,13 +222,6 @@ public:
         for (const auto& weapon : weapons) {
             if (weapon) {
                 copy->weapons.push_back(weapon->clone());
-            }
-        }
-
-        copy->statUpgrades.clear();
-        for (const auto& statUpgrade : statUpgrades) {
-            if (statUpgrade) {
-                copy->statUpgrades.push_back(statUpgrade->clone());
             }
         }
 

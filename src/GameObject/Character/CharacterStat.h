@@ -1,6 +1,6 @@
 #pragma once
 
-enum class StatType {
+enum class CharacterStat {
   MaxHealth,
   RegenerateHealthFasterInUpdates,
   RegenerateHealthAmount,
