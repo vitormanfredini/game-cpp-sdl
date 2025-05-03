@@ -3,8 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- move Gem stuff (including the level callback) from MainCharacter to a special Component and add that to Character using composition.
 - change DeltaTime deltaTime { 60 }; to 120 and adjust velocities
-- implement time that the projectiles stay active (and use that to implement swords and upgrades to that stat)
 - enemies that move in angled trajectories should come almost straight if they are too far away, otherwise they move veeery far
 - WeaponUpgrade needs to specify which weapon (it's currently applying to the first weapon in the vector)
 - make a weapon factory with prototype pattern
@@ -22,6 +22,7 @@ TODO:
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
 - render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
+- FUTURE: keep renderables from last frame in a buffer, if rendering is faster than updates, use last and current renderables to predict where everything will be. (that allows for higher framerates without changing the update rate)
 
 # Rendering specifics
 

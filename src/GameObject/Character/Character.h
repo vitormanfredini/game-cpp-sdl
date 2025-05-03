@@ -60,7 +60,9 @@ public:
             return;
         }
 
-        weapons[0]->setFireFrequency(weapons[0]->getFireFrequency() + std::round(upgrade->getValue()));
+        for (const std::unique_ptr<WeaponComponent>& weapon : weapons) {
+            weapon->setFireFrequency(weapon->getFireFrequency() + std::round(upgrade->getValue()));
+        }
     }
 
     void update(){

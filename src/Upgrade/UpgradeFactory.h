@@ -41,8 +41,8 @@ public:
         prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
         prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
 
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -2.0f), 1, "Atirar mais rápido"));
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -2.0f), 2, "Atirar mais rápido"));
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f), 1, "Atirar mais rápido"));
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f), 2, "Atirar mais rápido"));
 
         availableUpgradeIds = {};
         for (const auto & [ upgradeId, value ] : prototypes) {

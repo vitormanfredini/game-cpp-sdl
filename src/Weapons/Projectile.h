@@ -35,6 +35,10 @@ public:
         return false;
     }
 
+    void setMaxHits(int newMaxHits){
+        remainingHitsBeforeDisappearing = newMaxHits;
+    }
+
     void setDirection(MovementDirection newDirection){
         movementDirection = newDirection;
     }

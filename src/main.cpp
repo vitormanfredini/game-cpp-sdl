@@ -16,6 +16,7 @@
 #include "Maps/MapComponent.h"
 #include "GameEngine.h"
 #include "Weapons/FireBallThrower.h"
+#include "Weapons/Sword.h"
 #include "GameObject/SpriteRenderer.h"
 #include "GameObject/ButtonRenderer.h"
 #include "TextureManager.h"
@@ -92,8 +93,16 @@ int main() {
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponFireDogThrower->setAttack(0.5f);
-    weaponFireDogThrower->setFireFrequency(10);
+    weaponFireDogThrower->setFireFrequency(20);
     mainChar.addWeapon(std::move(weaponFireDogThrower));
+
+    std::unique_ptr<Sword> weaponSword = std::make_unique<Sword>();
+    weaponSword->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
+    weaponSword->setAttack(2.0f);
+    weaponSword->setFireFrequency(80);
+    mainChar.addWeapon(std::move(weaponSword));
+
+    
 
     engine.setMainChar(&mainChar);
 
