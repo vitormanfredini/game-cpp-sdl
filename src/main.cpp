@@ -28,14 +28,18 @@
 
 int main() {
 
-    Renderer renderer {
-        2*1200,
-        2*800
-    };
+    SDL_Window* window = nullptr;
+    SDL_Renderer* sdl_renderer = nullptr;
+    int widthPixels = 1200 * 2;
+    int heightPixels = 800 * 2;
 
-    if(!renderer.initializedCorrectly()){
-        return -1;
-    }
+    SDLUtils::initializeSDL(window, sdl_renderer, widthPixels, heightPixels);
+
+    Renderer renderer {
+        sdl_renderer,
+        widthPixels,
+        heightPixels
+    };
 
     Input input;
     DeltaTime deltaTime { 60 };
@@ -48,13 +52,9 @@ int main() {
 
     FontManager fontManager;
     TextureManager textureManager {renderer.getSDLRenderer(), &fontManager};
-
     StateManager stateManager;
-
     ItemFactory itemFactory(&textureManager);
-
     UpgradeFactory upgradeFactory(&itemFactory);
-
     MenuFactory menuFactory(&textureManager, &stateManager);
 
     GameEngine engine {
@@ -160,6 +160,8 @@ int main() {
             break;
         }
     }
+
+    SDLUtils::quitSDL(window, sdl_renderer);
 
     return 0;
 }
