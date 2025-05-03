@@ -11,6 +11,7 @@ private:
     MovementDirection movementDirection;
     float attack = 0.0f;
     int remainingHitsBeforeDisappearing = 1;
+    int durationInUpdates = 10;
 
 public:
 
@@ -23,16 +24,29 @@ public:
     }
 
     bool isDead(){
-        return remainingHitsBeforeDisappearing <= 0;
+        if(durationInUpdates <= 0){
+            return true;
+        }
+
+        if(remainingHitsBeforeDisappearing <= 0){
+            return true;
+        }
+
+        return false;
     }
 
     void setDirection(MovementDirection newDirection){
         movementDirection = newDirection;
     }
 
+    void setDurationInUpdates(int newDurationInUpdates){
+        durationInUpdates = newDurationInUpdates;
+    }
+
     void update() {
         x += movementDirection.horizontal * velocity;
         y += movementDirection.vertical * velocity;
+        durationInUpdates -= 1;
     }
 
     void setVelocity(float newVelocity){

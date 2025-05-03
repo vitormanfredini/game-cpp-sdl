@@ -28,6 +28,7 @@ protected:
         ));
         projectile->setDirection(originChar->getMovementDirectionTowards(towardsChar).normalized());
         projectile->setVelocity(0.005f);
+        projectile->setDurationInUpdates(30);
         return projectile;
     }
 
