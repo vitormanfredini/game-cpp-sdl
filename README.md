@@ -3,9 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- move Gem stuff (including the level callback) from MainCharacter to a special Component and add that to Character using composition.
-- change DeltaTime deltaTime { 60 }; to 120 and adjust velocities
-- enemies that move in angled trajectories should come almost straight if they are too far away, otherwise they move veeery far
+- enemies that move in angled trajectories should come straight if they are too far away, otherwise they move veeery far
 - WeaponUpgrade needs to specify which weapon (it's currently applying to the first weapon in the vector)
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)

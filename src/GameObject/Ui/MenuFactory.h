@@ -6,7 +6,6 @@
 #include <vector>
 #include <algorithm>
 #include "GameObject/Character/Character.h"
-#include "GameObject/Character/MainCharacter.h"
 #include "Upgrade/UpgradeFactory.h"
 #include "Upgrade/UpgradeOption.h"
 #include "GameObject/Ui/Menu.h"
@@ -85,7 +84,7 @@ public:
         return prototypes[MenuType::MainMenu]->clone();
     }
 
-    std::unique_ptr<Menu> createUpgradeMenu(MainCharacter* charReceivesReward, UpgradeFactory* upgradeFactory) {
+    std::unique_ptr<Menu> createUpgradeMenu(Character* charReceivesReward, UpgradeFactory* upgradeFactory) {
         std::unique_ptr<Menu> upgradeMenu = prototypes[MenuType::UpgradeMenu]->clone();
         
         std::vector<std::unique_ptr<UpgradeOption>> options = upgradeFactory->createRandomUpgradeOptions(3);

@@ -14,6 +14,7 @@
 #include "GameObject/Movement/MovementComponent.h"
 #include "Upgrade/UpgradeComponent.h"
 #include "StatComponent.h"
+#include "LevelManager.h"
 
 class CharacterHealthBarRenderer;
 class UiHealthBarRenderer;
@@ -31,6 +32,8 @@ private:
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
+
+    std::unique_ptr<LevelManager> levelManager;
 
 public:
 
@@ -192,6 +195,36 @@ public:
         movementComponent = std::move(mover);
     }
 
+    void setLevelManager(std::unique_ptr<LevelManager> newLevelManager) {
+        levelManager = std::move(newLevelManager);
+    }
+
+    float getLevelPercentage(){
+        if(levelManager){
+            return levelManager->getLevelPercentage();
+        }
+        std::cerr << "getLevelPercentage(): Character does not have a LevelManager" << std::endl;
+        return 0.0f;
+    }
+
+    void consumeItem(Item* item){
+        float consumedValue = item->consume();
+        ItemId itemId = item->getItemId();
+
+        switch (itemId) {
+            case ItemId::Gem: {
+                levelManager->addGemValue(consumedValue);
+            } break;
+            case ItemId::Health: {
+                addHealth(consumedValue);
+            } break;
+            default:
+                std::cerr << "consumeItem() unsupported itemId" << std::endl;
+                break;
+        }
+        
+    }
+
     std::unique_ptr<Character> clone() {
         auto copy = std::make_unique<Character>();
 
@@ -218,6 +251,10 @@ public:
 
         if(movementComponent){
             copy->setMovementComponent(movementComponent->clone());
+        }
+
+        if(levelManager){
+            copy->setLevelManager(levelManager->clone());
         }
 
         copy->weapons.clear();

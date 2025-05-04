@@ -5,22 +5,21 @@
 #include "../RenderProps.h"
 #include "RenderComponent.h"
 #include "Alignment.h"
-#include "Character/MainCharacter.h"
 
 class UiGemValueBarRenderer : public RenderComponent {
 private:
     SDL_Texture* backgroundTexture;
     SDL_Texture* foregroundTexture;
-    MainCharacter* characterPtr;
+    Character* characterPtr;
 
 public:
-    UiGemValueBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTexture, MainCharacter* characterPtr) : backgroundTexture(backgroundTexture), foregroundTexture(foregroundTexture), characterPtr(characterPtr) {}
+    UiGemValueBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregroundTexture, Character* characterPtr) : backgroundTexture(backgroundTexture), foregroundTexture(foregroundTexture), characterPtr(characterPtr) {}
 
     void render(GameObject& gameObject, RenderProps props) override {
 
         if (!characterPtr) return;
 
-        float gemPercentage = characterPtr->getGemPercentage();
+        float gemPercentage = characterPtr->getLevelPercentage();
 
         float x = gameObject.x;
         float y = gameObject.y;
@@ -45,7 +44,7 @@ public:
 
     }
 
-    void setCharacterPtr(MainCharacter* newCharacterPtr){
+    void setCharacterPtr(Character* newCharacterPtr){
         characterPtr = newCharacterPtr;
     }
 

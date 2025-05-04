@@ -9,7 +9,6 @@
 #include "DeltaTime.h"
 #include "Input.h"
 #include "GameObject/Character/Character.h"
-#include "GameObject/Character/MainCharacter.h"
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
 #include "GameObject/Item/Item.h"
@@ -67,7 +66,7 @@ public:
 
     }
 
-    void setMainChar(MainCharacter* newMainChar){
+    void setMainChar(Character* newMainChar){
         mainChar = newMainChar;
     }
 
@@ -268,7 +267,7 @@ private:
     Intro intro { 3*60 };
     GameObject pause;
 
-    MainCharacter* mainChar;
+    Character* mainChar;
     std::vector<std::unique_ptr<Character>> enemies = {};
 
     std::vector<std::unique_ptr<Projectile>> projectiles = {};

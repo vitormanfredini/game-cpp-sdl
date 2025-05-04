@@ -70,7 +70,13 @@ int main() {
         &itemFactory
     };
 
-    MainCharacter mainChar;
+    std::unique_ptr<LevelManager> mainCharLevelManager = std::make_unique<LevelManager>();
+    mainCharLevelManager->setAdvanceLevelCallback([&engine](int level) {
+        std::cout << "mainChar is now level " << level << std::endl;
+        engine.advanceLevel();
+    });
+
+    Character mainChar;
     mainChar.setPosition(0.0f,0.0f);
     mainChar.setSize(0.10f,0.10f);
     mainChar.setInitialBaseSpeed(0.5f);
@@ -85,10 +91,8 @@ int main() {
         0.033f,
         Alignment::Centered
     ));
-    mainChar.setAdvanceLevelCallback([&engine](int level) {
-        // std::cout << "mainChar is now level " << level << std::endl;
-        engine.advanceLevel();
-    });
+    mainChar.setLevelManager(std::move(mainCharLevelManager));
+    
 
     std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
