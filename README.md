@@ -8,7 +8,6 @@ TODO:
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
-- move MainChar settings to CharacterFactory
 - implement transitions between tiles with different textures
 - implement different ways that enemies can move: sine wav adding and subtracting from movement, aim and charge, etc
 - choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)

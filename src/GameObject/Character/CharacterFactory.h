@@ -28,7 +28,7 @@ public:
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
         prototypes[CharacterType::Regular]->setSize(0.066f,0.066f);
         prototypes[CharacterType::Regular]->setInitialBaseSpeed(0.4f);
-        prototypes[CharacterType::Regular]->setCollisionAttack(0.001);
+        prototypes[CharacterType::Regular]->setCollisionAttack(0.005);
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
@@ -50,7 +50,7 @@ public:
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
         prototypes[CharacterType::Bigger]->setInitialBaseSpeed(0.33f);
-        prototypes[CharacterType::Bigger]->setCollisionAttack(0.002);
+        prototypes[CharacterType::Bigger]->setCollisionAttack(0.008);
         prototypes[CharacterType::Bigger]->setInitialMaxHealth(3.0f);
         prototypes[CharacterType::Bigger]->setInitialHealth(3.0f);
         prototypes[CharacterType::Bigger]->setWeight(0.85f);
@@ -72,7 +72,7 @@ public:
         prototypes[CharacterType::Boss] = std::make_unique<Character>();
         prototypes[CharacterType::Boss]->setSize(0.1f,0.1f);
         prototypes[CharacterType::Boss]->setInitialBaseSpeed(0.2f);
-        prototypes[CharacterType::Boss]->setCollisionAttack(0.005);
+        prototypes[CharacterType::Boss]->setCollisionAttack(0.015);
         prototypes[CharacterType::Boss]->setInitialMaxHealth(15.0f);
         prototypes[CharacterType::Boss]->setInitialHealth(15.0f);
         prototypes[CharacterType::Boss]->setWeight(2.5f);
