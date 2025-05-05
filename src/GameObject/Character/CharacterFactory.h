@@ -16,6 +16,7 @@
 #include "GameObject/BoxCollider.h"
 #include "GameObject/CharacterHealthBarRenderer.h"
 #include "GameObject/SpriteRenderer.h"
+#include "GameObject/HorizontalSpriteAnimationRenderer.h"
 #include "GameObject/Movement/StraightMover.h"
 #include "GameObject/Movement/AngledMover.h"
 #include "GameObject/Movement/ZigZagMover.h"
@@ -32,9 +33,10 @@ public:
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
-        prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<SpriteRenderer>(
-            textureManager->loadTexture("images/enemy_regular.png"),
-            Alignment::BottomUpCentered
+        prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            textureManager->loadTexture("images/enemy_regular_idle_animation_9parts.png"),
+            Alignment::BottomUpCentered,
+            20
         ));
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),

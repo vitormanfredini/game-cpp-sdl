@@ -84,6 +84,10 @@ public:
         if(movementComponent){
             movementComponent->update();
         }
+
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            renderComponent->update();
+        }
     }
 
     std::vector<std::unique_ptr<Projectile>> fire(Character* towardsChar){
