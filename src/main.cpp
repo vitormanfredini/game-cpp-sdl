@@ -26,6 +26,7 @@
 #include "Maps/MapFromImage.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
+#include "AudioManager.h"
 
 int main() {
 
@@ -35,6 +36,8 @@ int main() {
     int heightPixels = 800 * 2;
 
     SDLUtils::initializeSDL(window, sdl_renderer, widthPixels, heightPixels);
+
+    AudioManager audioManager;
 
     Renderer renderer {
         sdl_renderer,
@@ -67,7 +70,8 @@ int main() {
         &stateManager,
         &menuFactory,
         &upgradeFactory,
-        &itemFactory
+        &itemFactory,
+        &audioManager
     };
 
     std::unique_ptr<LevelManager> mainCharLevelManager = std::make_unique<LevelManager>();
@@ -98,12 +102,14 @@ int main() {
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponFireDogThrower->setAttack(0.5f);
     weaponFireDogThrower->setFireFrequency(20);
+    weaponFireDogThrower->setFireSound(audioManager.loadAudio("audio/pew.wav"));
     mainChar.addWeapon(std::move(weaponFireDogThrower));
 
     std::unique_ptr<Sword> weaponSword = std::make_unique<Sword>();
     weaponSword->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponSword->setAttack(2.0f);
-    weaponSword->setFireFrequency(80);
+    weaponSword->setFireFrequency(87);
+    weaponSword->setFireSound(audioManager.loadAudio("audio/fu.wav"));
     mainChar.addWeapon(std::move(weaponSword));
 
     

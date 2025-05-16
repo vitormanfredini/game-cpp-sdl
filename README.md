@@ -3,6 +3,9 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- maybe implement generic (templated) cache class? audio and texture uses same structure
+- user asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
+- HorizontalSpriteAnimationRenderer assert that the dimensions can form a series of squares
 - movement Alignment calculations to a helper function/class to avoid repeating it
 - enemies that move in angled trajectories should come straight if they are too far away, otherwise they move veeery far
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
@@ -28,6 +31,10 @@ The renderer accepts virtual values and maps them onto the screen. If the screen
 But when the screen isn't a perfect square, it scales the virtual square to the greater side and centers it, hiding both parts of the square that can't fit. So, for example, if the screen in 1200x800, then the point 0.0f,0.0f is mapped to 0,-200 (outside of the screen).
 
 # Compiling and running
+
+```bash
+sudo apt-get install libsdl2-mixer-dev
+```
 
 ```bash
 ./build.sh

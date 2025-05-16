@@ -13,6 +13,10 @@ public:
         updatesBetweenFires = frequencyInUpdates;
     }
 
+    void setFireSound(Mix_Chunk* sound){
+        fireSound = sound;
+    }
+
     int getFireFrequency(){
         return updatesBetweenFires;
     }
@@ -33,6 +37,7 @@ public:
         if(shouldFire()){
             std::unique_ptr<Projectile> newProjectile = createProjectile(originChar, towardsChar);
             newProjectile->setAttack(attack);
+            newProjectile->setSound(fireSound);
             newProjectiles.push_back(std::move(newProjectile));
         }
         return newProjectiles;
@@ -46,6 +51,7 @@ protected:
 private:
     int updatesBetweenFires = 30;
     int countUp = 0;
+    Mix_Chunk* fireSound = nullptr;
 
     virtual std::unique_ptr<Projectile> createProjectile(Character* originChar, Character* towardsChar) = 0;
 

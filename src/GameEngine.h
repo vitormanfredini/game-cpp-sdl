@@ -21,6 +21,7 @@
 #include <memory>
 #include "LevelScript.h"
 #include "StateManager/StateManager.h"
+#include "AudioManager.h"
 #include "MouseEventType.h"
 
 class GameEngine {
@@ -35,7 +36,8 @@ public:
         StateManager* stateManager,
         MenuFactory* menuFactory,
         UpgradeFactory* upgradeFactory,
-        ItemFactory* itemFactory
+        ItemFactory* itemFactory,
+        AudioManager* audioManager
     ):
     renderer(renderer),
     camera(camera),
@@ -46,7 +48,8 @@ public:
     stateManager(stateManager),
     itemFactory(itemFactory),
     menuFactory(menuFactory),
-    upgradeFactory(upgradeFactory)
+    upgradeFactory(upgradeFactory),
+    audioManager(audioManager)
     {
         menu = std::move(menuFactory->createMainMenu());
 
@@ -259,6 +262,7 @@ private:
     GameObject* gemValueBar = nullptr;
     LevelScript* levelScript = nullptr;
     TextureManager* textureManager = nullptr;
+    AudioManager* audioManager = nullptr;
     CharacterFactory characterFactory;
     ItemFactory* itemFactory;
     MenuFactory* menuFactory = nullptr;
@@ -320,6 +324,10 @@ private:
             std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(enemies[closestEnemyIndex].get());
 
             for(std::unique_ptr<Projectile>& projectile : newProjectiles){
+                Mix_Chunk* sound = projectile->getSound();
+                if(sound != nullptr){
+                    audioManager->playAudio(sound);
+                }
                 projectiles.push_back(std::move(projectile));
             }
         }

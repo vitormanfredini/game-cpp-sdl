@@ -22,7 +22,7 @@ public:
     TextureManager(SDL_Renderer* sdl_renderer, FontManager* fontManager): sdl_renderer(sdl_renderer), fontManager(fontManager) { };
 
     ~TextureManager(){
-        clearTexturesCache();
+        clearCache();
     }
 
     SDL_Texture* loadTexture(const std::string& filename){
@@ -157,7 +157,7 @@ public:
         return textureToDrawOn;
     }
 
-    void clearTexturesCache() {
+    void clearCache() {
         for (auto& pair : texturesCache) {
             SDL_DestroyTexture(pair.second);
         }

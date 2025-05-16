@@ -39,8 +39,9 @@ public:
             return image_texture;
         }
 
-        std::cerr << "Can't create texture from binary file: " << filename << std::endl;
-        std::cerr << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
+        std::cerr << "toTexture(): Can't create texture from binary file: " << filename << std::endl;
+        std::cerr << "toTexture(): SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
+        std::cerr << "toTexture(): Using a fallback pink texture." << SDL_GetError() << std::endl;
 
         SDL_Surface* surface = SDL_CreateRGBSurface(0,64,64,32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         Uint32 pink = SDL_MapRGB(surface->format, 255, 105, 180);
@@ -49,6 +50,11 @@ public:
         SDL_FreeSurface(surface);
 
         return texture;
+    }
+
+    static Mix_Chunk* toAudioChunk(const char* filename) {
+        BinaryResource binaryResource = getBinaryResource(filename);
+        return SDLUtils::loadAudioFromEmbedded(binaryResource.data, binaryResource.length);
     }
 
     static std::vector<std::vector<RGBAPixel>> toRGBAPixelData(const char* filename) {

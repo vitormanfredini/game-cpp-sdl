@@ -11,6 +11,7 @@ add_subdirectory(tests)
 add_subdirectory(src)
 
 find_package(SDL2 REQUIRED)
+# find_package(SDL2_mixer REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(/usr/include/SDL2)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image REQUIRED)
@@ -32,6 +33,7 @@ file(GLOB_RECURSE RESOURCE_FILES
     ${RESOURCE_DIR}/*.jpg
     ${RESOURCE_DIR}/*.bmp
     ${RESOURCE_DIR}/*.ttf
+    ${RESOURCE_DIR}/*.wav
 )
 
 set(RESOURCE_REGISTRY_HEADER "${CMAKE_BINARY_DIR}/resource_registry.h")
@@ -91,8 +93,10 @@ add_executable(SDL2Game ${SOURCE_FILES} ${EMBEDDED_HEADERS})
 add_dependencies(SDL2Game embed_resources)
 target_link_libraries(SDL2Game
     ${SDL2_LIBRARIES}
+    ${SDL2_MIXER_LIBRARIES}
     ${SDL2_IMAGE_LIBRARY}
     PkgConfig::SDL2_TTF
+    -lSDL2_mixer
 )
 target_include_directories(SDL2Game
     PRIVATE ${CMAKE_SOURCE_DIR}/src
