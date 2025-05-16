@@ -35,6 +35,8 @@ private:
 
     std::unique_ptr<LevelManager> levelManager;
 
+    Mix_Chunk* collisionSound = nullptr;
+
 public:
 
     Character(){
@@ -98,6 +100,14 @@ public:
             }
         }
         return newProjectiles;
+    }
+
+    void setCollisionSound(Mix_Chunk* newSound){
+        collisionSound = newSound;
+    }
+
+    Mix_Chunk* getCollisionSound(){
+        return collisionSound;
     }
 
     void getPushedBy(Character* other){

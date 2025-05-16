@@ -349,6 +349,11 @@ private:
             if(mainChar->checkCollision(*enemies[e])){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
+
+                Mix_Chunk* sound = mainChar->getCollisionSound();
+                if(sound != nullptr){
+                    audioManager->playAudio(sound);
+                }
             }
 
             for(size_t p=0; p<projectiles.size(); p++){
