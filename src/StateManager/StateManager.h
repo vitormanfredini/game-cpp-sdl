@@ -10,10 +10,16 @@ private:
     GameplayState gameplayState = GameplayState::Play;
     bool paused = false;
     bool quitTrigger = false;
+    std::function<void()> onStartLevelCallback;
 
 public:
 
     void setMainState(MainState newMainState){
+        if(mainState != MainState::Gameplay && newMainState == MainState::Gameplay){
+            if(onStartLevelCallback){
+                onStartLevelCallback();
+            }
+        }
         mainState = newMainState;
     }
 
@@ -99,6 +105,10 @@ public:
 
     bool shouldQuit(){
         return quitTrigger;
+    }
+
+    void setOnStartLevelCallback(std::function<void()> callback) {
+        onStartLevelCallback = callback;
     }
 
 };

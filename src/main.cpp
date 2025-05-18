@@ -27,6 +27,7 @@
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
 #include "AudioManager.h"
+#include "LevelSongPlayer.h"
 
 int main() {
 
@@ -36,8 +37,6 @@ int main() {
     int heightPixels = 800 * 2;
 
     SDLUtils::initializeSDL(window, sdl_renderer, widthPixels, heightPixels);
-
-    AudioManager audioManager;
 
     Renderer renderer {
         sdl_renderer,
@@ -54,6 +53,7 @@ int main() {
         0.0f
     };
 
+    AudioManager audioManager;
     FontManager fontManager;
     TextureManager textureManager {renderer.getSDLRenderer(), &fontManager};
     StateManager stateManager;
@@ -75,9 +75,8 @@ int main() {
     };
 
     std::unique_ptr<LevelManager> mainCharLevelManager = std::make_unique<LevelManager>();
-    mainCharLevelManager->setAdvanceLevelCallback([&engine](int level) {
-        std::cout << "mainChar is now level " << level << std::endl;
-        engine.advanceLevel();
+    mainCharLevelManager->setOnAdvanceLevelCallback([&engine](int level) {
+        engine.onAdvanceLevel(level);
     });
 
     Character mainChar;
@@ -143,7 +142,35 @@ int main() {
     level1.addKeyframe({ 4000, 30, CharacterType::Boss });
     level1.addKeyframe({ 6000, 30, CharacterType::Boss });
 
+    LevelSongPlayer song1 {&audioManager, 240};
+    song1.addLevelLoops({
+        audioManager.loadAudio("audio/song1/layer1.wav")
+    });
+    song1.addLevelLoops({
+        audioManager.loadAudio("audio/song1/layer1.wav"),
+        audioManager.loadAudio("audio/song1/layer2.wav")
+    });
+    song1.addLevelLoops({
+        audioManager.loadAudio("audio/song1/layer1.wav"),
+        audioManager.loadAudio("audio/song1/layer2.wav"),
+        audioManager.loadAudio("audio/song1/layer3.wav")
+    });
+    song1.addLevelLoops({
+        audioManager.loadAudio("audio/song1/layer1.wav"),
+        audioManager.loadAudio("audio/song1/layer2.wav"),
+        audioManager.loadAudio("audio/song1/layer3.wav"),
+        audioManager.loadAudio("audio/song1/layer4.wav")
+    });
+    song1.addLevelLoops({
+        audioManager.loadAudio("audio/song1/layer1.wav"),
+        audioManager.loadAudio("audio/song1/layer2.wav"),
+        audioManager.loadAudio("audio/song1/layer3.wav"),
+        audioManager.loadAudio("audio/song1/layer5.wav")
+    });
+
     engine.setLevelScript(&level1);
+
+    engine.setSongPlayer(&song1);
 
     GameObject healthBar {};
     healthBar.setPosition(0.0f,0.0f);

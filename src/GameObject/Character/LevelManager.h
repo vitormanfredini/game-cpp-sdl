@@ -45,7 +45,7 @@ public:
         return gemValue / maxGemValue;
     }
 
-    void setAdvanceLevelCallback(std::function<void(int)> onAdvanceLevel) {
+    void setOnAdvanceLevelCallback(std::function<void(int)> onAdvanceLevel) {
         onAdvanceLevelCallback = onAdvanceLevel;
     }
 

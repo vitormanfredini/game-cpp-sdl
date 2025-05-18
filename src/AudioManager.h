@@ -49,6 +49,13 @@ public:
         }
     }
 
+    void playAudio(Mix_Chunk* sound, int offsetInUpdates){
+        int channel = Mix_PlayChannelTimed(-1, sound, 0, (1000/60)*offsetInUpdates); // 0 = play once (not looped)
+        if (channel == -1) {
+            std::cerr << "Failed to play audio: " << Mix_GetError() << std::endl;
+        }
+    }
+
 private:
     std::unordered_map<std::string, Mix_Chunk*> cache;
 

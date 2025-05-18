@@ -23,6 +23,7 @@
 #include "StateManager/StateManager.h"
 #include "AudioManager.h"
 #include "MouseEventType.h"
+#include "LevelSongPlayer.h"
 
 class GameEngine {
 
@@ -67,6 +68,13 @@ public:
             Alignment::UI
         ));
 
+        stateManager->setOnStartLevelCallback([this](){
+            onLevelStart();
+        });
+    }
+
+    void onLevelStart(){
+        songPlayer->play();
     }
 
     void setMainChar(Character* newMainChar){
@@ -85,6 +93,10 @@ public:
         levelScript = newLevelScript;
     }
 
+    void setSongPlayer(LevelSongPlayer* newSongPlayer){
+        songPlayer = newSongPlayer;
+    }
+
     void setMapComponent(MapComponent* newMapComponent){
         mapComponent = newMapComponent;
     }
@@ -94,6 +106,8 @@ public:
     }
 
     void update(){
+
+        songPlayer->update(globalUpdatesCount);
 
         deltatime->update();
         int updatesNeeded = deltatime->getUpdatesNeeded();
@@ -116,6 +130,8 @@ public:
         if(mainChar->isDead()){
             stateManager->triggerQuit();
         }
+
+        globalUpdatesCount++;
 
     }
 
@@ -174,10 +190,12 @@ public:
         );
     }
 
-    void advanceLevel(){
+    void onAdvanceLevel(int level){
+        std::cout << "mainChar is now level " << level << std::endl;
         upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar, upgradeFactory));
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();
+        songPlayer->onLevelUpdate(level, globalUpdatesCount);
     }
 
     void handleKeyboardAndMouseEvent(SDL_Event &event){
@@ -261,6 +279,7 @@ private:
     GameObject* healthBar = nullptr;
     GameObject* gemValueBar = nullptr;
     LevelScript* levelScript = nullptr;
+    LevelSongPlayer* songPlayer = nullptr;
     TextureManager* textureManager = nullptr;
     AudioManager* audioManager = nullptr;
     CharacterFactory characterFactory;
@@ -283,6 +302,7 @@ private:
     float virtualMouseX, virtualMouseY;
 
     int gameWorldUpdatesCount = 0;
+    int globalUpdatesCount = 0;
 
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
