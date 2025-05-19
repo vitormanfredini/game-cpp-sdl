@@ -27,10 +27,34 @@ public:
         currentLevel = level;
     }
 
+    void play(){
+        isPlaying = true;
+    }
+
+private:
+    std::vector<std::vector<Mix_Chunk*>> levelLoops = {};
+    std::vector<Mix_Chunk*> loopsPlaying = {};
+    int currentLevel = 0;
+    int loopLengthInUpdates;
+    bool isPlaying = false;
+
+    AudioManager* audioManager;
+
+    std::vector<Mix_Chunk*> getLoopsForLevel(int level){
+        if(levelLoops.size() == 0){
+            return {};
+        }
+        if(level >= levelLoops.size()){
+            return levelLoops[levelLoops.size()-1];
+        }
+        return levelLoops[level];
+    }
+
     void playSounds(int level, int currentUpdateCount){
         if(!isPlaying){
             return;
         }
+
         std::vector<Mix_Chunk*> notPlaying = {};
         std::vector<Mix_Chunk*> playing = {};
         std::vector<Mix_Chunk*> levelAudios = getLoopsForLevel(level);
@@ -63,33 +87,14 @@ public:
         }
     }
 
-    void play(){
-        isPlaying = true;
-    }
-
-private:
-    std::vector<std::vector<Mix_Chunk*>> levelLoops = {};
-    std::vector<Mix_Chunk*> loopsPlaying = {};
-    int currentLevel = 0;
-    int loopLengthInUpdates;
-    bool isPlaying = false;
-
-    AudioManager* audioManager;
-
-    std::vector<Mix_Chunk*> getLoopsForLevel(int level){
-        if(levelLoops.size() == 0){
-            return {};
-        }
-        if(level >= levelLoops.size()){
-            return levelLoops[levelLoops.size()-1];
-        }
-        return levelLoops[level];
-    }
-
     void playAudiosWithOffset(std::vector<Mix_Chunk*>& audios, int offset){
+        if(audios.size() == 0) return;
+        std::cout << "offset " << offset << std::endl;
         for(Mix_Chunk* audio : audios){
+            std::cout << audio << " - ";
             audioManager->playAudio(audio, offset);
         }
+        std::cout << std::endl;
     }
 
 };

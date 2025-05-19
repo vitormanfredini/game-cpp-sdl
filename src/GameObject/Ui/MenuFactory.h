@@ -90,7 +90,7 @@ public:
         std::vector<std::unique_ptr<UpgradeOption>> options = upgradeFactory->createRandomUpgradeOptions(3);
 
         if(options.size() == 0){
-            std::cout << "options.size() == 0" << std::endl;
+            std::cerr << "options.size() == 0" << std::endl;
             // provavelmente acabaram os upgrades. implementar itens no submenu para colocar no lugar
         }
 
@@ -121,7 +121,7 @@ public:
                 }else if(upgrade->getType() == UpgradeComponent::Type::Weapon){
                     charReceivesReward->consumeWeaponUpgrade(upgrade->getWeaponUpgrade());
                 }else{
-                    std::cout << "optionButton->setCallback(): upgrade type not implemented" << std::endl;
+                    std::cerr << "optionButton->setCallback(): upgrade type not implemented" << std::endl;
                 }
                 
                 stateManager->setGamePlayState(GameplayState::Play);

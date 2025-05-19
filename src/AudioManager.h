@@ -43,14 +43,16 @@ public:
     }
 
     void playAudio(Mix_Chunk* sound){
-        int channel = Mix_PlayChannel(-1, sound, 0); // 0 = play once (not looped)
-        if (channel == -1) {
-            std::cerr << "Failed to play audio: " << Mix_GetError() << std::endl;
-        }
+        playAudio(sound, 0);
     }
 
     void playAudio(Mix_Chunk* sound, int offsetInUpdates){
-        int channel = Mix_PlayChannelTimed(-1, sound, 0, (1000/60)*offsetInUpdates); // 0 = play once (not looped)
+        Mix_Chunk* soundToPlay = sound;
+        if(offsetInUpdates > 0){
+            soundToPlay = sideloadChunkWithOffset(sound, offsetInUpdates);
+        }
+
+        int channel = Mix_PlayChannel(-1, soundToPlay, 0); // 0 = play once (not looped)
         if (channel == -1) {
             std::cerr << "Failed to play audio: " << Mix_GetError() << std::endl;
         }
@@ -58,6 +60,29 @@ public:
 
 private:
     std::unordered_map<std::string, Mix_Chunk*> cache;
+
+    Mix_Chunk* sideloadChunkWithOffset(Mix_Chunk* originalChunk, int offsetInUpdates) {
+
+        int samplesPerUpdate = 44100 / 60;  // Assuming 60 updates per second
+        int samplesOffset = offsetInUpdates * samplesPerUpdate;
+
+        // Convert to byte offset
+        int bytesPerSample = 4;  // 16-bit mono
+        int byteOffset = samplesOffset * bytesPerSample;
+        
+        if (byteOffset >= originalChunk->alen) {
+            std::cerr << "createChunkWithOffset(): Offset beyond the end of the sound: " << std::endl;
+            return nullptr;
+        }
+        
+        Mix_Chunk* offsetChunk = new Mix_Chunk;
+        offsetChunk->allocated = 0; // We don't own the memory
+        offsetChunk->abuf = originalChunk->abuf + byteOffset;
+        offsetChunk->alen = originalChunk->alen - byteOffset;
+        offsetChunk->volume = originalChunk->volume;
+        
+        return offsetChunk;
+    }
 
     Mix_Chunk* loadFromCache(const std::string& textureName){
         auto it = cache.find(textureName);
