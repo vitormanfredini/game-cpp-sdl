@@ -22,8 +22,11 @@ public:
         int textureWidth, textureHeight;
         SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
         if(textureHeight == 0){
-            std::cerr << "SpriteRenderer(): couldn't get texture height" << std::endl;
+            std::cerr << "HorizontalSpriteAnimationRenderer(): couldn't get texture height" << std::endl;
             return;
+        }
+        if(textureWidth % textureHeight != 0){
+            std::cerr << "HorizontalSpriteAnimationRenderer(): texture doesn't form squares. to fix this, make sure texture width is divisible by its height." << std::endl;
         }
         numberOfFrames = textureWidth / textureHeight;
         frameWidth = textureHeight;
@@ -43,7 +46,7 @@ public:
 
     void render(GameObject& gameObject, RenderProps props) override {
         if (texture == nullptr) {
-            std::cerr << "SpriteRenderer: no texture" << std::endl;
+            std::cerr << "HorizontalSpriteAnimationRenderer: no texture" << std::endl;
             return;
         }
 
