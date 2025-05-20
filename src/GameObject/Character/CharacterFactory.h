@@ -69,7 +69,7 @@ public:
             0.025f,
             Alignment::Centered
         ));
-        prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45,0.333));
+        prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45, 0.12, 0.25, 0.33, 0.5));
 
         prototypes[CharacterType::Boss] = std::make_unique<Character>();
         prototypes[CharacterType::Boss]->setSize(0.1f,0.1f);

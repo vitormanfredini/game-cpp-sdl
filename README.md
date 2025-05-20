@@ -6,7 +6,6 @@ TODO:
 - maybe implement generic (templated) cache class? audio and texture uses same structure
 - user asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
 - movement Alignment calculations to a helper function/class to avoid repeating it
-- enemies that move in angled trajectories should come straight if they are too far away, otherwise they move veeery far
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
