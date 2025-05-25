@@ -121,26 +121,40 @@ int main() {
     engine.setMapComponent(&mapFromImage);
 
     LevelScript level1;
-    level1.addKeyframe({ 60, 3, CharacterType::Regular });
-    level1.addKeyframe({ 90, 6, CharacterType::Regular });
-    level1.addKeyframe({ 120, 5, CharacterType::Regular });
-    level1.addKeyframe({ 160, 10, CharacterType::Regular });
-    level1.addKeyframe({ 300, 15, CharacterType::Regular });
-    level1.addKeyframe({ 420, 15, CharacterType::Regular });
-    level1.addKeyframe({ 600, 14, CharacterType::Bigger });
-    level1.addKeyframe({ 620, 14, CharacterType::Bigger });
-    level1.addKeyframe({ 640, 15, CharacterType::Bigger });
-    level1.addKeyframe({ 750, 14, CharacterType::Bigger });
-    level1.addKeyframe({ 900, 14, CharacterType::Bigger });
-    level1.addKeyframe({ 920, 14, CharacterType::Bigger });
-    level1.addKeyframe({ 940, 15, CharacterType::Bigger });
-    level1.addKeyframe({ 1200, 16, CharacterType::Bigger });
-    level1.addKeyframe({ 1300, 16, CharacterType::Bigger });
-    level1.addKeyframe({ 1400, 19, CharacterType::Bigger });
-    level1.addKeyframe({ 1800, 13, CharacterType::Boss });
-    level1.addKeyframe({ 2000, 15, CharacterType::Boss });
-    level1.addKeyframe({ 4000, 30, CharacterType::Boss });
-    level1.addKeyframe({ 6000, 30, CharacterType::Boss });
+
+    for(int c=0;c<100;c++){
+        int framesOffset = c * 680;
+        level1.addKeyframe({ framesOffset + 240, 1 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 540, 3 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 1000, 3 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 1500, 5 * (c+1), CharacterType::Regular });
+
+        level1.addKeyframe({ framesOffset + 2300, 5 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 2400, 1 * (c+1), CharacterType::Bigger });
+        level1.addKeyframe({ framesOffset + 2500, 2 * (c+1), CharacterType::Regular });
+
+        level1.addKeyframe({ framesOffset + 3500, 5 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 3600, 3 * (c+1), CharacterType::Bigger });
+        level1.addKeyframe({ framesOffset + 3700, 5 * (c+1), CharacterType::Regular });
+
+        level1.addKeyframe({ framesOffset + 4200, 1 * (c+1), CharacterType::Boss });
+
+        level1.addKeyframe({ framesOffset + 4600, 30 * (c+1), CharacterType::Regular });
+
+        level1.addKeyframe({ framesOffset + 5100, 20 * (c+1), CharacterType::Bigger });
+
+        level1.addKeyframe({ framesOffset + 5100, 1 * (c+1), CharacterType::Boss });
+
+        level1.addKeyframe({ framesOffset + 5500, 15 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 5500, 20 * (c+1), CharacterType::Bigger });
+
+        level1.addKeyframe({ framesOffset + 6000, 3 * (c+1), CharacterType::Boss });
+
+        level1.addKeyframe({ framesOffset + 6700, 10 * (c+1), CharacterType::Regular });
+        level1.addKeyframe({ framesOffset + 6700, 10 * (c+1), CharacterType::Bigger });
+        level1.addKeyframe({ framesOffset + 6700, 10 * (c+1), CharacterType::Boss });
+    }
+
 
     LevelSongPlayer song1 {&audioManager, 240};
     song1.addLevelLoops({

@@ -16,17 +16,16 @@ protected:
             originChar->getX(),
             originChar->getY()
         );
-        projectile->setSize(0.35,0.03);
+        projectile->setSize(0.45,0.03);
         projectile->addRenderComponent(std::make_unique<SpriteRenderer>(
             texture,
             Alignment::Centered
         ));
         projectile->setCollisionComponent(std::make_unique<BoxCollider>(
-            0.35,
+            0.45,
             0.03,
             Alignment::Centered
         ));
-        projectile->setDirection(originChar->getMovementDirectionTowards(towardsChar).normalized());
         projectile->setVelocity(0.0f);
         projectile->setDurationInUpdates(5);
         projectile->setMaxHits(100);

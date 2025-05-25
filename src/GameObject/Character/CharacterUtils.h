@@ -11,22 +11,22 @@ class CharacterUtils {
 
 public:
 
-    static int getClosestCharacterIndex(std::vector<std::unique_ptr<Character>>& chars, Character* refChar) {
+    static Character* getClosestCharacterIndex(std::vector<std::unique_ptr<Character>>& chars, Character* refChar) {
         if(chars.size() == 0){
-            return -1;
+            return nullptr;
         }
 
         int index = 0;
-        double minDistance = 0;
+        double minDistance = 9999999;
         for(size_t c=0;c<chars.size();c++){
             double distance = refChar->distanceFrom(chars[c].get());
-            if(index==0 || distance<minDistance){
+            if(c == 0 || distance < minDistance){
                 index = c;
                 minDistance = distance;
             }
         }
 
-        return index;
+        return chars[index].get();
     }
 
     

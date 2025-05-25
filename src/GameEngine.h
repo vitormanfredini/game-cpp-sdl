@@ -339,17 +339,16 @@ private:
 
         mapComponent->update(camera->getPositionX(),camera->getPositionY());
 
-        int closestEnemyIndex = CharacterUtils::getClosestCharacterIndex(enemies, mainChar);
-        if(closestEnemyIndex >= 0){
-            std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(enemies[closestEnemyIndex].get());
+        std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(
+            CharacterUtils::getClosestCharacterIndex(enemies, mainChar)
+        );
 
-            for(std::unique_ptr<Projectile>& projectile : newProjectiles){
-                Mix_Chunk* sound = projectile->getSound();
-                if(sound != nullptr){
-                    audioManager->playAudio(sound);
-                }
-                projectiles.push_back(std::move(projectile));
+        for(std::unique_ptr<Projectile>& projectile : newProjectiles){
+            Mix_Chunk* sound = projectile->getSound();
+            if(sound != nullptr){
+                audioManager->playAudio(sound);
             }
+            projectiles.push_back(std::move(projectile));
         }
 
         for(size_t e=0; e<enemies.size(); e++){

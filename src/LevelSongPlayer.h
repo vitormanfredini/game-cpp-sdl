@@ -89,12 +89,9 @@ private:
 
     void playAudiosWithOffset(std::vector<Mix_Chunk*>& audios, int offset){
         if(audios.size() == 0) return;
-        std::cout << "offset " << offset << std::endl;
         for(Mix_Chunk* audio : audios){
-            std::cout << audio << " - ";
             audioManager->playAudio(audio, offset);
         }
-        std::cout << std::endl;
     }
 
 };

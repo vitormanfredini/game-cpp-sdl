@@ -3,6 +3,7 @@
 #include "Projectile.h"
 #include "WeaponComponent.h"
 #include <memory>
+#include "RandomGenerator.h"
 
 class FireBallThrower: public WeaponComponent {
 
@@ -26,7 +27,16 @@ protected:
             0.03,
             Alignment::Centered
         ));
-        projectile->setDirection(originChar->getMovementDirectionTowards(towardsChar).normalized());
+        if(towardsChar == nullptr){
+            projectile->setDirection(
+                MovementDirection(
+                    RandomGenerator::getInstance().getRandom() - 0.5f,
+                    RandomGenerator::getInstance().getRandom() - 0.5f
+                ).normalized()
+            );
+        }else{
+            projectile->setDirection(originChar->getMovementDirectionTowards(towardsChar).normalized());
+        }
         projectile->setVelocity(0.005f);
         projectile->setDurationInUpdates(120);
         return projectile;
