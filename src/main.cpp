@@ -137,7 +137,7 @@ int main() {
         level1.addKeyframe({ framesOffset + 3600, 3 * (c+1), CharacterType::Bigger });
         level1.addKeyframe({ framesOffset + 3700, 5 * (c+1), CharacterType::Regular });
 
-        level1.addKeyframe({ framesOffset + 4200, 1 * (c+1), CharacterType::Boss });
+        level1.addKeyframe({ framesOffset + 4150, 1 * (c+1), CharacterType::Boss });
 
         level1.addKeyframe({ framesOffset + 4600, 30 * (c+1), CharacterType::Regular });
 
