@@ -52,11 +52,6 @@ public:
         return texture;
     }
 
-    static Mix_Chunk* toAudioChunk(const char* filename) {
-        BinaryResource binaryResource = getBinaryResource(filename);
-        return SDLUtils::loadAudioFromEmbedded(binaryResource.data, binaryResource.length);
-    }
-
     static std::vector<std::vector<RGBAPixel>> toRGBAPixelData(const char* filename) {
         BinaryResource mapTestImage = BinaryResourceLoader::getBinaryResource(filename);
 

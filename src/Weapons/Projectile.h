@@ -12,7 +12,7 @@ private:
     float attack = 0.0f;
     int remainingHitsBeforeDisappearing = 1;
     int durationInUpdates = 10;
-    Mix_Chunk* sound = nullptr;
+    // Mix_Chunk* sound = nullptr;
 
 public:
 
@@ -66,12 +66,12 @@ public:
         return attack;
     }
 
-    void setSound(Mix_Chunk* newSound){
-        sound = newSound;
-    }
+    // void setSound(Mix_Chunk* newSound){
+    //     sound = newSound;
+    // }
 
-    Mix_Chunk* getSound(){
-        return sound;
-    }
+    // Mix_Chunk* getSound(){
+    //     return sound;
+    // }
 
 };

@@ -21,9 +21,9 @@
 #include <memory>
 #include "LevelScript.h"
 #include "StateManager/StateManager.h"
-#include "AudioManager.h"
 #include "MouseEventType.h"
-#include "LevelSongPlayer.h"
+// #include "LevelSongPlayer.h"
+#include "AudioEngine.h"
 
 class GameEngine {
 
@@ -38,7 +38,7 @@ public:
         MenuFactory* menuFactory,
         UpgradeFactory* upgradeFactory,
         ItemFactory* itemFactory,
-        AudioManager* audioManager
+        AudioEngine* audioEngine
     ):
     renderer(renderer),
     camera(camera),
@@ -48,9 +48,9 @@ public:
     characterFactory(textureManager),
     stateManager(stateManager),
     itemFactory(itemFactory),
+    audioEngine(audioEngine),
     menuFactory(menuFactory),
-    upgradeFactory(upgradeFactory),
-    audioManager(audioManager)
+    upgradeFactory(upgradeFactory)
     {
         menu = std::move(menuFactory->createMainMenu());
 
@@ -74,7 +74,8 @@ public:
     }
 
     void onLevelStart(){
-        songPlayer->play();
+        // songPlayer->play();
+        audioEngine->loadSound("audio/song1/layer1.wav");
     }
 
     void setMainChar(Character* newMainChar){
@@ -93,9 +94,9 @@ public:
         levelScript = newLevelScript;
     }
 
-    void setSongPlayer(LevelSongPlayer* newSongPlayer){
-        songPlayer = newSongPlayer;
-    }
+    // void setSongPlayer(LevelSongPlayer* newSongPlayer){
+    //     songPlayer = newSongPlayer;
+    // }
 
     void setMapComponent(MapComponent* newMapComponent){
         mapComponent = newMapComponent;
@@ -107,7 +108,7 @@ public:
 
     void update(){
 
-        songPlayer->update(globalUpdatesCount);
+        // songPlayer->update(globalUpdatesCount);
 
         deltatime->update();
         int updatesNeeded = deltatime->getUpdatesNeeded();
@@ -195,7 +196,7 @@ public:
         upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar, upgradeFactory));
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();
-        songPlayer->onLevelUpdate(level, globalUpdatesCount);
+        // songPlayer->onLevelUpdate(level, globalUpdatesCount);
     }
 
     void handleKeyboardAndMouseEvent(SDL_Event &event){
@@ -279,11 +280,10 @@ private:
     GameObject* healthBar = nullptr;
     GameObject* gemValueBar = nullptr;
     LevelScript* levelScript = nullptr;
-    LevelSongPlayer* songPlayer = nullptr;
     TextureManager* textureManager = nullptr;
-    AudioManager* audioManager = nullptr;
     CharacterFactory characterFactory;
     ItemFactory* itemFactory;
+    AudioEngine* audioEngine;
     MenuFactory* menuFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
     StateManager* stateManager = nullptr;
@@ -344,10 +344,10 @@ private:
         );
 
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
-            Mix_Chunk* sound = projectile->getSound();
-            if(sound != nullptr){
-                audioManager->playAudio(sound);
-            }
+            // Mix_Chunk* sound = projectile->getSound();
+            // if(sound != nullptr){
+            //     audioManager->playAudio(sound);
+            // }
             projectiles.push_back(std::move(projectile));
         }
 
@@ -369,10 +369,10 @@ private:
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
 
-                Mix_Chunk* sound = mainChar->getCollisionSound();
-                if(sound != nullptr){
-                    audioManager->playAudio(sound);
-                }
+                // Mix_Chunk* sound = mainChar->getCollisionSound();
+                // if(sound != nullptr){
+                //     audioManager->playAudio(sound);
+                // }
             }
 
             for(size_t p=0; p<projectiles.size(); p++){

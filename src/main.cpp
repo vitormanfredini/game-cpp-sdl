@@ -26,8 +26,7 @@
 #include "Maps/MapFromImage.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
-#include "AudioManager.h"
-#include "LevelSongPlayer.h"
+#include "AudioEngine.h"
 
 int main() {
 
@@ -53,13 +52,18 @@ int main() {
         0.0f
     };
 
-    AudioManager audioManager;
     FontManager fontManager;
     TextureManager textureManager {renderer.getSDLRenderer(), &fontManager};
     StateManager stateManager;
     ItemFactory itemFactory(&textureManager);
     UpgradeFactory upgradeFactory(&itemFactory);
     MenuFactory menuFactory(&textureManager, &stateManager);
+
+    AudioEngine audioEngine;
+    if (!audioEngine.init()) {
+        std::cerr << "Couldn't initialize Audio Engine" << std::endl;
+        return -1;
+    }
 
     GameEngine engine {
         &renderer,
@@ -71,7 +75,7 @@ int main() {
         &menuFactory,
         &upgradeFactory,
         &itemFactory,
-        &audioManager
+        &audioEngine
     };
 
     std::unique_ptr<LevelManager> mainCharLevelManager = std::make_unique<LevelManager>();
@@ -85,7 +89,7 @@ int main() {
     mainChar.setInitialBaseSpeed(0.5f);
     mainChar.setInitialMaxHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
-    mainChar.setCollisionSound(audioManager.loadAudio("audio/collision.wav"));
+    // mainChar.setCollisionSound(audioManager.loadAudio("audio/collision.wav"));
     mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(
         textureManager.loadTexture("images/dog.png"),
         Alignment::BottomUpCentered
@@ -102,14 +106,14 @@ int main() {
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponFireDogThrower->setAttack(0.5f);
     weaponFireDogThrower->setFireFrequency(20);
-    weaponFireDogThrower->setFireSound(audioManager.loadAudio("audio/pew.wav"));
+    // weaponFireDogThrower->setFireSound(audioManager.loadAudio("audio/pew.wav"));
     mainChar.addWeapon(std::move(weaponFireDogThrower));
 
     std::unique_ptr<Sword> weaponSword = std::make_unique<Sword>();
     weaponSword->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponSword->setAttack(2.0f);
     weaponSword->setFireFrequency(87);
-    weaponSword->setFireSound(audioManager.loadAudio("audio/fu.wav"));
+    // weaponSword->setFireSound(audioManager.loadAudio("audio/fu.wav"));
     mainChar.addWeapon(std::move(weaponSword));
 
     
@@ -154,37 +158,7 @@ int main() {
         level1.addKeyframe({ framesOffset + 6700, 10 * (c+1), CharacterType::Bigger });
         level1.addKeyframe({ framesOffset + 6700, 10 * (c+1), CharacterType::Boss });
     }
-
-
-    LevelSongPlayer song1 {&audioManager, 240};
-    song1.addLevelLoops({
-        audioManager.loadAudio("audio/song1/layer1.wav")
-    });
-    song1.addLevelLoops({
-        audioManager.loadAudio("audio/song1/layer1.wav"),
-        audioManager.loadAudio("audio/song1/layer2.wav")
-    });
-    song1.addLevelLoops({
-        audioManager.loadAudio("audio/song1/layer1.wav"),
-        audioManager.loadAudio("audio/song1/layer2.wav"),
-        audioManager.loadAudio("audio/song1/layer3.wav")
-    });
-    song1.addLevelLoops({
-        audioManager.loadAudio("audio/song1/layer1.wav"),
-        audioManager.loadAudio("audio/song1/layer2.wav"),
-        audioManager.loadAudio("audio/song1/layer3.wav"),
-        audioManager.loadAudio("audio/song1/layer4.wav")
-    });
-    song1.addLevelLoops({
-        audioManager.loadAudio("audio/song1/layer1.wav"),
-        audioManager.loadAudio("audio/song1/layer2.wav"),
-        audioManager.loadAudio("audio/song1/layer3.wav"),
-        audioManager.loadAudio("audio/song1/layer5.wav")
-    });
-
     engine.setLevelScript(&level1);
-
-    engine.setSongPlayer(&song1);
 
     GameObject healthBar {};
     healthBar.setPosition(0.0f,0.0f);
@@ -222,6 +196,7 @@ int main() {
         }
     }
 
+    audioEngine.cleanup();
     SDLUtils::quitSDL(window, sdl_renderer);
 
     return 0;

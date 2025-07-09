@@ -3,8 +3,11 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- AudioEngine: loading sounds into memory and playing sounds should be treated differently.
+- AudioEngine: implement some type of tick. implement a way for audios to loop on the tick.
+- maybe move SDL initialization to GameEngine
 - maybe implement generic (templated) cache class? audio and texture uses same structure
-- user asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
+- use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
 - movement Alignment calculations to a helper function/class to avoid repeating it
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
 - make a weapon factory with prototype pattern
