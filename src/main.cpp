@@ -106,14 +106,14 @@ int main() {
     weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponFireDogThrower->setAttack(0.5f);
     weaponFireDogThrower->setFireFrequency(20);
-    // weaponFireDogThrower->setFireSound(audioManager.loadAudio("audio/pew.wav"));
+    weaponFireDogThrower->setFireSound(audioEngine.loadSound("audio/pew.wav"));
     mainChar.addWeapon(std::move(weaponFireDogThrower));
 
     std::unique_ptr<Sword> weaponSword = std::make_unique<Sword>();
     weaponSword->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
     weaponSword->setAttack(2.0f);
     weaponSword->setFireFrequency(87);
-    // weaponSword->setFireSound(audioManager.loadAudio("audio/fu.wav"));
+    weaponSword->setFireSound(audioEngine.loadSound("audio/fu.wav"));
     mainChar.addWeapon(std::move(weaponSword));
 
     
@@ -196,7 +196,6 @@ int main() {
         }
     }
 
-    audioEngine.cleanup();
     SDLUtils::quitSDL(window, sdl_renderer);
 
     return 0;

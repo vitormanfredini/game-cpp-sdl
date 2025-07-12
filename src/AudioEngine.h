@@ -4,18 +4,37 @@
 #include <iostream>
 #include <vector>
 #include "BinaryResourceLoader.h"
+#include <unordered_map>
 
 class AudioEngine {
 public:
     AudioEngine(){}
 
+    ~AudioEngine(){
+        cleanup();
+        SDL_CloseAudio();
+    }
+
     struct Sound {
         Sint16* buffer;
         Uint32 length;
+        
+        Sound(Sint16* buf, Uint32 len)
+            :   buffer(buf),
+                length(len) {}
+    };
+
+    struct SoundPlaying {
+        Sound* sound;
         Uint32 position;
 
-        Sound(Sint16* buf, Uint32 len) : buffer(buf), length(len), position(0) {}
-        bool isFinished() const { return position >= length; }
+        SoundPlaying(Sound* sound, int position)
+            :   sound(sound),
+                position(position) {}
+
+        bool isFinished() const {
+            return position >= sound->length;
+        }
     };
 
     bool init() {
@@ -43,7 +62,12 @@ public:
         return true;
     }
 
-    void loadSound(const std::string& filename) {
+    int loadSound(const std::string& filename) {
+
+        auto it = stringIdToSound.find(filename);
+        if (it != stringIdToSound.end()) {
+            return stringIdToIntId[filename];
+        }
 
         BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
 
@@ -53,13 +77,26 @@ public:
         SDL_RWops* rw = SDL_RWFromConstMem(binaryResource.data, binaryResource.length);
         if (SDL_LoadWAV_RW(rw, 1, &spec, &buffer, &length) == nullptr) {
             std::cerr << "AudioEngine loadSound: Failed to load WAV (" << filename << "): " << SDL_GetError() << std::endl;
-            return;
+            return -1;
         }
 
-        SDL_LockAudio();
-        activeSounds.emplace_back(reinterpret_cast<Sint16*>(buffer), length / 2);
-        SDL_UnlockAudio();
+        Sound* newSound = new Sound(reinterpret_cast<Sint16*>(buffer), length / 2);
 
+        stringIdToSound[filename] = newSound;
+        intIdToSound[nextId] = newSound;
+        stringIdToIntId[filename] = nextId;
+        nextId++;
+
+        return nextId - 1;
+    }
+
+    void playSound(int id, int position = 0){
+        if(id <= 0){
+            return;
+        }
+        SDL_LockAudio();
+        soundsPlaying.emplace_back(intIdToSound[id], position);
+        SDL_UnlockAudio();
     }
 
     static void audioCallbackWrapper(void* userdata, Uint8* stream, int len) {
@@ -69,45 +106,73 @@ public:
     void audioCallback(Sint16* stream, int len) {
         SDL_memset(stream, 0, len * sizeof(Sint16));
 
-        for (auto& sound : activeSounds) {
-            if (sound.isFinished()) continue;
+        for (auto& soundPlaying : soundsPlaying) {
+            if (soundPlaying.isFinished()) continue;
 
-            Uint32 remainingSamples = sound.length - sound.position;
+            Uint32 remainingSamples = soundPlaying.sound->length - soundPlaying.position;
             Uint32 mixSamples = (remainingSamples < len) ? remainingSamples : len;
 
             for (Uint32 i = 0; i < mixSamples; ++i) {
-                Sint32 sample = stream[i] + sound.buffer[sound.position + i];
-
-                if (sample > 32767){
-                    sample = 32767;
-                } else if (sample < -32768){
-                    sample = -32768;
-                }
-
-                stream[i] = static_cast<Sint16>(sample);
+                stream[i] = stream[i] + soundPlaying.sound->buffer[soundPlaying.position + i];
             }
 
-            sound.position += mixSamples;
+            soundPlaying.position += mixSamples;
         }
 
-        auto it = activeSounds.begin();
-        while (it != activeSounds.end()) {
+        hardLimiter(stream, len);
+
+        removeFinishedSounds();
+    }
+
+private:
+    std::vector<SoundPlaying> soundsPlaying;
+
+    std::unordered_map<std::string, Sound*> stringIdToSound;
+    std::unordered_map<int, Sound*> intIdToSound;
+    std::unordered_map<std::string, int> stringIdToIntId;
+    
+    int nextId = 1;
+
+    void removeFinishedSounds(){
+        auto it = soundsPlaying.begin();
+        while (it != soundsPlaying.end()) {
             if (it->isFinished()) {
-                SDL_FreeWAV(reinterpret_cast<Uint8*>(it->buffer));
-                it = activeSounds.erase(it);
+                it = soundsPlaying.erase(it);
             } else {
                 ++it;
             }
         }
     }
 
-    void cleanup() {
-        for (auto& sound : activeSounds) {
-            SDL_FreeWAV(reinterpret_cast<Uint8*>(sound.buffer));
+    void hardLimiter(Sint16* stream, int len) {
+        for (Uint32 i = 0; i < len; ++i) {
+            Sint32 sample = stream[i];
+
+            if (sample > 32767){
+                sample = 32767;
+            } else if (sample < -32768){
+                sample = -32768;
+            }
+
+            stream[i] = sample;
         }
-        SDL_CloseAudio();
     }
 
-private:
-    std::vector<Sound> activeSounds;
+    void cleanup() {
+        SDL_LockAudio();
+        
+        for (const auto& pair : intIdToSound) {
+            SDL_FreeWAV(reinterpret_cast<Uint8*>(pair.second->buffer));
+            delete pair.second;
+        }
+
+        soundsPlaying.clear();
+        stringIdToSound.clear();
+        intIdToSound.clear();
+        stringIdToIntId.clear();
+        nextId = 1;
+
+        SDL_UnlockAudio();
+    }
+
 };

@@ -75,7 +75,8 @@ public:
 
     void onLevelStart(){
         // songPlayer->play();
-        audioEngine->loadSound("audio/song1/layer1.wav");
+        int soundId = audioEngine->loadSound("audio/song1/layer1.wav");
+        audioEngine->playSound(soundId);
     }
 
     void setMainChar(Character* newMainChar){
@@ -344,10 +345,7 @@ private:
         );
 
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
-            // Mix_Chunk* sound = projectile->getSound();
-            // if(sound != nullptr){
-            //     audioManager->playAudio(sound);
-            // }
+            audioEngine->playSound(projectile->getSound());
             projectiles.push_back(std::move(projectile));
         }
 
@@ -368,11 +366,8 @@ private:
             if(mainChar->checkCollision(*enemies[e])){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
-
-                // Mix_Chunk* sound = mainChar->getCollisionSound();
-                // if(sound != nullptr){
-                //     audioManager->playAudio(sound);
-                // }
+                audioEngine->playSound(mainChar->getCollisionSound());
+                
             }
 
             for(size_t p=0; p<projectiles.size(); p++){

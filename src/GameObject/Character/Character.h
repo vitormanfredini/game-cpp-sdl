@@ -35,7 +35,7 @@ private:
 
     std::unique_ptr<LevelManager> levelManager;
 
-    // Mix_Chunk* collisionSound = nullptr;
+    int collisionSoundId = -1;
 
 public:
 
@@ -102,13 +102,13 @@ public:
         return newProjectiles;
     }
 
-    // void setCollisionSound(Mix_Chunk* newSound){
-    //     collisionSound = newSound;
-    // }
+    void setCollisionSound(int newSoundId){
+        collisionSoundId = newSoundId;
+    }
 
-    // Mix_Chunk* getCollisionSound(){
-    //     return collisionSound;
-    // }
+    int getCollisionSound(){
+        return collisionSoundId;
+    }
 
     void getPushedBy(Character* other){
         MovementDirection movementDirection = getMovementDirectionTowards(other).normalized();
