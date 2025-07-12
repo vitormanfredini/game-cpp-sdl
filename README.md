@@ -4,10 +4,10 @@ This is a project I'm doing for studying C++ and SDL.
 
 TODO:
 - CacheEngine: implement a cache class where Resources can be identified by string and int. Use a template to specify the type being cached, a callback function to load the resource from the filename and callback function to free it.
-- AudioEngine: implement some type of tick. implement a way for audios to loop on the tick.
+- AudioEngine: implement some type of tick. implement a way for audios to loop on the tick and a way to schedule sounds to play on the next tick.
 - maybe move SDL initialization to GameEngine
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
-- movement Alignment calculations to a helper function/class to avoid repeating it
+- move Alignment calculations to a helper function/class to avoid repeating it
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
