@@ -5,15 +5,10 @@
 #include <vector>
 #include "BinaryResourceLoader.h"
 #include <unordered_map>
+#include "CacheManager.h"
 
 class AudioEngine {
 public:
-    AudioEngine(){}
-
-    ~AudioEngine(){
-        cleanup();
-        SDL_CloseAudio();
-    }
 
     struct Sound {
         Sint16* buffer;
@@ -36,6 +31,13 @@ public:
             return position >= sound->length;
         }
     };
+
+    AudioEngine(){}
+
+    ~AudioEngine(){
+        cleanup();
+        SDL_CloseAudio();
+    }
 
     bool init() {
         if (SDL_Init(SDL_INIT_AUDIO) < 0) {
@@ -63,31 +65,7 @@ public:
     }
 
     int loadSound(const std::string& filename) {
-
-        auto it = stringIdToSound.find(filename);
-        if (it != stringIdToSound.end()) {
-            return stringIdToIntId[filename];
-        }
-
-        BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
-
-        Uint8* buffer;
-        Uint32 length;
-        SDL_AudioSpec spec;
-        SDL_RWops* rw = SDL_RWFromConstMem(binaryResource.data, binaryResource.length);
-        if (SDL_LoadWAV_RW(rw, 1, &spec, &buffer, &length) == nullptr) {
-            std::cerr << "AudioEngine loadSound: Failed to load WAV (" << filename << "): " << SDL_GetError() << std::endl;
-            return -1;
-        }
-
-        Sound* newSound = new Sound(reinterpret_cast<Sint16*>(buffer), length / 2);
-
-        stringIdToSound[filename] = newSound;
-        intIdToSound[nextId] = newSound;
-        stringIdToIntId[filename] = nextId;
-        nextId++;
-
-        return nextId - 1;
+        return soundsCache.load(filename);
     }
 
     void playSound(int id, int position = 0){
@@ -95,7 +73,7 @@ public:
             return;
         }
         SDL_LockAudio();
-        soundsPlaying.emplace_back(intIdToSound[id], position);
+        soundsPlaying.emplace_back(soundsCache.get(id), position);
         SDL_UnlockAudio();
     }
 
@@ -125,13 +103,29 @@ public:
     }
 
 private:
+
     std::vector<SoundPlaying> soundsPlaying;
 
-    std::unordered_map<std::string, Sound*> stringIdToSound;
-    std::unordered_map<int, Sound*> intIdToSound;
-    std::unordered_map<std::string, int> stringIdToIntId;
-    
-    int nextId = 1;
+    CacheManager<Sound*> soundsCache {
+        [](std::string& filename) -> Sound* {
+            BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
+
+            Uint8* buffer;
+            Uint32 length;
+            SDL_AudioSpec spec;
+            SDL_RWops* rw = SDL_RWFromConstMem(binaryResource.data, binaryResource.length);
+            if (SDL_LoadWAV_RW(rw, 1, &spec, &buffer, &length) == nullptr) {
+                std::cerr << "AudioEngine loadSound: Failed to load WAV (" << filename << "): " << SDL_GetError() << std::endl;
+                return nullptr;
+            }
+
+            return new Sound(reinterpret_cast<Sint16*>(buffer), length / 2);
+        },
+        [](Sound* sound){
+            SDL_FreeWAV(reinterpret_cast<Uint8*>(sound->buffer));
+            delete sound;
+        },
+    };
 
     void removeFinishedSounds(){
         auto it = soundsPlaying.begin();
@@ -160,18 +154,10 @@ private:
 
     void cleanup() {
         SDL_LockAudio();
-        
-        for (const auto& pair : intIdToSound) {
-            SDL_FreeWAV(reinterpret_cast<Uint8*>(pair.second->buffer));
-            delete pair.second;
-        }
 
+        soundsCache.clear();
         soundsPlaying.clear();
-        stringIdToSound.clear();
-        intIdToSound.clear();
-        stringIdToIntId.clear();
-        nextId = 1;
-
+        
         SDL_UnlockAudio();
     }
 

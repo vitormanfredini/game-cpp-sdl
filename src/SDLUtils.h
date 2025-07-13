@@ -102,42 +102,4 @@ public:
         return pixelData;
     }
 
-    static void initializeSDL(SDL_Window*& window, SDL_Renderer*& sdl_renderer, int width, int height){
-
-        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-            std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
-            return;
-        }
-    
-        if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-            std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
-            SDL_Quit();
-            return;
-        }
-        
-        window = SDL_CreateWindow("GAME!!!!!1", 250, 130, width, height, SDL_WINDOW_SHOWN);
-        if (window == nullptr) {
-            std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-            IMG_Quit();
-            SDL_Quit();
-            return;
-        }
-    
-        sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-        if (sdl_renderer == nullptr) {
-            std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-            SDL_DestroyWindow(window);
-            IMG_Quit();
-            SDL_Quit();
-            return;
-        }
-    }
-
-    static void quitSDL(SDL_Window*& window, SDL_Renderer*& sdl_renderer){
-        SDL_DestroyRenderer(sdl_renderer);
-        SDL_DestroyWindow(window);
-        IMG_Quit();
-        SDL_Quit();
-    }
-
 };

@@ -9,7 +9,7 @@ class Renderer {
 
 public:
 
-    Renderer(SDL_Renderer* sdl_renderer, int _widthPixels, int _heightPixels) : sdl_renderer(sdl_renderer), widthPixels(_widthPixels), heightPixels(_heightPixels), window(nullptr) {
+    Renderer(int _widthPixels, int _heightPixels) : widthPixels(_widthPixels), heightPixels(_heightPixels) {
         screenScale = widthPixels > heightPixels ? static_cast<float>(widthPixels) : static_cast<float>(heightPixels);
 
         if(widthPixels > heightPixels){
@@ -20,6 +20,45 @@ public:
             leftOffset = ((1.0f - ratio) / 2) * -1;
         }
     };
+
+    bool init(){
+        if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
+            std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+            return false;
+        }
+
+        if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+            std::cerr << "IMG_Init Error: " << IMG_GetError() << std::endl;
+            SDL_Quit();
+            return false;
+        }
+
+        window = SDL_CreateWindow("GAME!!!!!1", 250, 130, widthPixels, heightPixels, SDL_WINDOW_SHOWN);
+        if (window == nullptr) {
+            std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+            IMG_Quit();
+            SDL_Quit();
+            return false;
+        }
+
+        sdl_renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+        if (sdl_renderer == nullptr) {
+            std::cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
+            SDL_DestroyWindow(window);
+            IMG_Quit();
+            SDL_Quit();
+            return false;
+        }
+
+        return true;
+    }
+
+    void quit(){
+        SDL_DestroyRenderer(sdl_renderer);
+        SDL_DestroyWindow(window);
+        IMG_Quit();
+        SDL_Quit();
+    }
 
     ~Renderer(){ }
 

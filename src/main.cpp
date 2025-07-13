@@ -30,18 +30,13 @@
 
 int main() {
 
-    SDL_Window* window = nullptr;
-    SDL_Renderer* sdl_renderer = nullptr;
-    int widthPixels = 1200 * 2;
-    int heightPixels = 800 * 2;
-
-    SDLUtils::initializeSDL(window, sdl_renderer, widthPixels, heightPixels);
-
     Renderer renderer {
-        sdl_renderer,
-        widthPixels,
-        heightPixels
+        1200 * 2,
+        800 * 2
     };
+    if(!renderer.init()){
+        return -1;
+    }
 
     Input input;
     DeltaTime deltaTime { 60 };
@@ -196,7 +191,7 @@ int main() {
         }
     }
 
-    SDLUtils::quitSDL(window, sdl_renderer);
+    renderer.quit();
 
     return 0;
 }
