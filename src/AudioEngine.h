@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include "CacheManager.h"
 
+#define BUFFER_SIZE 4096
+
 class AudioEngine {
 public:
 
@@ -32,7 +34,10 @@ public:
         }
     };
 
-    AudioEngine(){}
+    AudioEngine(){
+        weakTick = loadSound("audio/song1/click_weak.wav");
+        strongTick = loadSound("audio/song1/click_strong.wav");
+    }
 
     ~AudioEngine(){
         cleanup();
@@ -50,7 +55,7 @@ public:
         desiredSpec.freq = 44100;
         desiredSpec.format = AUDIO_S16SYS;
         desiredSpec.channels = 1;
-        desiredSpec.samples = 4096;
+        desiredSpec.samples = BUFFER_SIZE;
         desiredSpec.callback = &AudioEngine::audioCallbackWrapper;
         desiredSpec.userdata = this;
 
@@ -82,27 +87,66 @@ public:
     }
 
     void audioCallback(Sint16* stream, int len) {
-        SDL_memset(stream, 0, len * sizeof(Sint16));
+        if(len != BUFFER_SIZE){
+            std::cerr << "AudioEngine audioCallback(): len != BUFFER_SIZE" << std::endl;
+            return;
+        }
+
+        for (int i = 0; i < len; ++i) {
+            auxBuffer[i] = 0;
+        }
+
+        // beatSamplesCount += len;
+        // if(beatSamplesCount >= samplesPerBeat){
+        //     if(measureBeatsCount == 0){
+        //         playSound(strongTick);
+        //     }else{
+        //         playSound(weakTick);
+        //     }
+        //     beatSamplesCount -= samplesPerBeat;
+        //     int offsetToBeat = len - beatSamplesCount;
+        //     measureBeatsCount++;
+        //     if(measureBeatsCount == 4){
+        //         measureBeatsCount = 0;
+        //         measuresCount++;
+        //     }
+        // }
+        
 
         for (auto& soundPlaying : soundsPlaying) {
-            if (soundPlaying.isFinished()) continue;
-
             Uint32 remainingSamples = soundPlaying.sound->length - soundPlaying.position;
             Uint32 mixSamples = (remainingSamples < len) ? remainingSamples : len;
 
             for (Uint32 i = 0; i < mixSamples; ++i) {
-                stream[i] = stream[i] + soundPlaying.sound->buffer[soundPlaying.position + i];
+                auxBuffer[i] = auxBuffer[i] + soundPlaying.sound->buffer[soundPlaying.position + i];
             }
 
             soundPlaying.position += mixSamples;
         }
 
-        hardLimiter(stream, len);
+        hardLimiter(auxBuffer, len);
+
+        SDL_memset(stream, 0, len * sizeof(Sint16));
+        for (int i = 0; i < len; ++i) {
+            stream[i] = auxBuffer[i];
+        }
 
         removeFinishedSounds();
+
+        
     }
 
 private:
+
+    int auxBuffer[BUFFER_SIZE];
+
+    // const int samplesPerBeat = 24054; // 24054 samples = about 0.54 seconds
+    // int beatSamplesCount = 0;
+    // int measureBeatsCount = 0;
+    // int measuresCount = 0;
+
+    int weakTick = 0;
+    int strongTick = 0;
 
     std::vector<SoundPlaying> soundsPlaying;
 
@@ -138,17 +182,13 @@ private:
         }
     }
 
-    void hardLimiter(Sint16* stream, int len) {
-        for (Uint32 i = 0; i < len; ++i) {
-            Sint32 sample = stream[i];
-
-            if (sample > 32767){
-                sample = 32767;
-            } else if (sample < -32768){
-                sample = -32768;
+    void hardLimiter(int stream[], int len) {
+        for (int i = 0; i < len; ++i) {
+            if (stream[i] > 32767){
+                stream[i] = 32767;
+            } else if (stream[i] < -32768){
+                stream[i] = -32768;
             }
-
-            stream[i] = sample;
         }
     }
 

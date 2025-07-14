@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 project(SDL2Game)
 
 set(CMAKE_BUILD_TYPE Debug)
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address,undefined -fno-omit-frame-pointer")
-# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address,undefined")
 set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
 
 enable_testing()
@@ -11,7 +9,6 @@ add_subdirectory(tests)
 add_subdirectory(src)
 
 find_package(SDL2 REQUIRED)
-# find_package(SDL2_mixer REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(/usr/include/SDL2)
 find_library(SDL2_IMAGE_LIBRARY SDL2_image REQUIRED)
@@ -20,6 +17,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDL2_TTF REQUIRED IMPORTED_TARGET SDL2_ttf)
 
 set(RESOURCE_DIR ${CMAKE_SOURCE_DIR}/resources)
+
+set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE SOURCE_FILES
     ${CMAKE_SOURCE_DIR}/src/*.cpp
