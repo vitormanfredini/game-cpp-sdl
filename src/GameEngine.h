@@ -22,8 +22,7 @@
 #include "LevelScript.h"
 #include "StateManager/StateManager.h"
 #include "MouseEventType.h"
-// #include "LevelSongPlayer.h"
-#include "AudioEngine.h"
+#include "Audio/AudioEngine.h"
 
 class GameEngine {
 
@@ -74,9 +73,7 @@ public:
     }
 
     void onLevelStart(){
-        // songPlayer->play();
-        int soundId = audioEngine->loadSound("audio/song1/layer1.wav");
-        audioEngine->playSound(soundId);
+        audioEngine->startBeat();
     }
 
     void setMainChar(Character* newMainChar){
@@ -367,7 +364,6 @@ private:
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
                 audioEngine->playSound(mainChar->getCollisionSound());
-                
             }
 
             for(size_t p=0; p<projectiles.size(); p++){

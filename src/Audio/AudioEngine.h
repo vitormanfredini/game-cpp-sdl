@@ -6,6 +6,7 @@
 #include "BinaryResourceLoader.h"
 #include <unordered_map>
 #include "CacheManager.h"
+#include "BeatManager.h"
 
 #define BUFFER_SIZE 4096
 
@@ -24,10 +25,12 @@ public:
     struct SoundPlaying {
         Sound* sound;
         Uint32 position;
+        Uint32 offset;
 
-        SoundPlaying(Sound* sound, int position)
+        SoundPlaying(Sound* sound, Uint32 position, Uint32 offset)
             :   sound(sound),
-                position(position) {}
+                position(position),
+                offset(offset) {}
 
         bool isFinished() const {
             return position >= sound->length;
@@ -36,6 +39,7 @@ public:
 
     AudioEngine(){
         weakTick = loadSound("audio/song1/click_weak.wav");
+        // strongTick = loadSound("audio/song1/layer1.wav");
         strongTick = loadSound("audio/song1/click_strong.wav");
     }
 
@@ -73,77 +77,80 @@ public:
         return soundsCache.load(filename);
     }
 
-    void playSound(int id, int position = 0){
+    void playSound(int id, int position = 0, int offset = 0){
         if(id <= 0){
             return;
         }
         SDL_LockAudio();
-        soundsPlaying.emplace_back(soundsCache.get(id), position);
+        soundsPlaying.emplace_back(soundsCache.get(id), position, offset);
         SDL_UnlockAudio();
+    }
+
+    void startBeat(){
+        beatManager.reset();
+        beatManager.play();
     }
 
     static void audioCallbackWrapper(void* userdata, Uint8* stream, int len) {
         static_cast<AudioEngine*>(userdata)->audioCallback(reinterpret_cast<Sint16*>(stream), len / 2);
     }
 
-    void audioCallback(Sint16* stream, int len) {
-        if(len != BUFFER_SIZE){
+    void audioCallback(Sint16* stream, int length) {
+        if(length != BUFFER_SIZE){
             std::cerr << "AudioEngine audioCallback(): len != BUFFER_SIZE" << std::endl;
             return;
         }
 
-        for (int i = 0; i < len; ++i) {
+        for (int i = 0; i < length; ++i) {
             auxBuffer[i] = 0;
         }
 
-        // beatSamplesCount += len;
-        // if(beatSamplesCount >= samplesPerBeat){
-        //     if(measureBeatsCount == 0){
-        //         playSound(strongTick);
-        //     }else{
-        //         playSound(weakTick);
-        //     }
-        //     beatSamplesCount -= samplesPerBeat;
-        //     int offsetToBeat = len - beatSamplesCount;
-        //     measureBeatsCount++;
-        //     if(measureBeatsCount == 4){
-        //         measureBeatsCount = 0;
-        //         measuresCount++;
-        //     }
-        // }
-        
+        BeatManager::BeatToProcess beatToProcess = beatManager.updateAndGetBeatToProcess(length);
+        if(beatToProcess.beatType != BeatManager::BeatType::NoBeat){
+            if(beatToProcess.beatType == BeatManager::BeatType::Weak){
+                playSound(weakTick, 0, beatToProcess.offsetSamples);
+            }
+            if(beatToProcess.beatType == BeatManager::BeatType::Strong){
+                playSound(strongTick, 0, beatToProcess.offsetSamples);
+            }
+        }
 
         for (auto& soundPlaying : soundsPlaying) {
             Uint32 remainingSamples = soundPlaying.sound->length - soundPlaying.position;
-            Uint32 mixSamples = (remainingSamples < len) ? remainingSamples : len;
+            Uint32 mixSamples = (remainingSamples < length) ? remainingSamples : length;
+
+            bool shouldApplyoffset = soundPlaying.position == 0 && soundPlaying.offset > 0;
+            
+            Uint32 initialIndex = 0;
+            if(shouldApplyoffset){
+                initialIndex = soundPlaying.offset;
+                Uint32 lengthAfterOffset = length - soundPlaying.offset;
+                mixSamples = (remainingSamples < lengthAfterOffset) ? remainingSamples : lengthAfterOffset;
+            }
 
             for (Uint32 i = 0; i < mixSamples; ++i) {
-                auxBuffer[i] = auxBuffer[i] + soundPlaying.sound->buffer[soundPlaying.position + i];
+                auxBuffer[initialIndex + i] = auxBuffer[initialIndex + i] + soundPlaying.sound->buffer[soundPlaying.position + i];
             }
 
             soundPlaying.position += mixSamples;
         }
 
-        hardLimiter(auxBuffer, len);
+        hardLimiter(auxBuffer, length);
 
-        SDL_memset(stream, 0, len * sizeof(Sint16));
-        for (int i = 0; i < len; ++i) {
+        SDL_memset(stream, 0, length * sizeof(Sint16));
+        for (int i = 0; i < length; ++i) {
             stream[i] = auxBuffer[i];
         }
 
         removeFinishedSounds();
 
-        
     }
 
 private:
 
     int auxBuffer[BUFFER_SIZE];
 
-    // const int samplesPerBeat = 24054; // 24054 samples = about 0.54 seconds
-    // int beatSamplesCount = 0;
-    // int measureBeatsCount = 0;
-    // int measuresCount = 0;
+    BeatManager beatManager { 24054 }; // 24054 samples = 1 beat at about 0.54 seconds
 
     int weakTick = 0;
     int strongTick = 0;

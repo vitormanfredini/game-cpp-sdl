@@ -26,7 +26,7 @@
 #include "Maps/MapFromImage.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
-#include "AudioEngine.h"
+#include "Audio/AudioEngine.h"
 
 int main() {
 
@@ -84,7 +84,7 @@ int main() {
     mainChar.setInitialBaseSpeed(0.5f);
     mainChar.setInitialMaxHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
-    // mainChar.setCollisionSound(audioManager.loadAudio("audio/collision.wav"));
+    mainChar.setCollisionSound(audioEngine.loadSound("audio/collision.wav"));
     mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(
         textureManager.loadTexture("images/dog.png"),
         Alignment::BottomUpCentered
