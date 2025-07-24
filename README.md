@@ -3,7 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- AudioEngine: implement a way for audios to loop on the tick and a way to schedule sounds to play on the next tick.
+- AudioEngine: implement a way for audios to loop on the tick.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
 - move Alignment calculations to a helper function/class to avoid repeating it
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)

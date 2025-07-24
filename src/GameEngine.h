@@ -195,6 +195,8 @@ public:
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();
         // songPlayer->onLevelUpdate(level, globalUpdatesCount);
+        testeScheduleSound = audioEngine->loadSound("audio/song1/layer3.wav");
+        audioEngine->scheduleSoundToNextBeat(testeScheduleSound, BeatManager::BeatType::Strong);
     }
 
     void handleKeyboardAndMouseEvent(SDL_Event &event){
@@ -304,6 +306,8 @@ private:
 
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
+
+    int testeScheduleSound;
 
     void doGameWorldUpdate(){
 
