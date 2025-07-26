@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include "CacheManager.h"
 #include "BeatManager.h"
+#include "MissionSong.h"
 
 #define BUFFER_SIZE 4096
 
@@ -38,9 +39,8 @@ public:
     };
 
     AudioEngine(){
-        weakTick = loadSound("audio/song1/click_weak.wav");
-        // strongTick = loadSound("audio/song1/layer1.wav");
-        strongTick = loadSound("audio/song1/click_strong.wav");
+        // weakTick = loadSound("audio/click_weak.wav");
+        // strongTick = loadSound("audio/click_strong.wav");
     }
 
     ~AudioEngine(){
@@ -77,6 +77,10 @@ public:
         return soundsCache.load(filename);
     }
 
+    void setMissionSong(MissionSong* newMissingSong){
+        missionSong = newMissingSong;
+    }
+
     void playSound(int id, int position = 0, int offset = 0){
         if(id <= 0){
             return;
@@ -86,8 +90,8 @@ public:
         SDL_UnlockAudio();
     }
 
-    void scheduleSoundToNextBeat(int id, BeatManager::BeatType beatType){
-        schedule[beatType].push_back(id);
+    void onAdvanceLevel(int level){
+        missionSong->changeLevel(level);
     }
 
     void startBeat(){
@@ -112,26 +116,13 @@ public:
         BeatManager::BeatToProcess beatToProcess = beatManager.updateAndGetBeatToProcess(length);
         if(beatToProcess.beatType != BeatManager::BeatType::NoBeat){
             if(beatToProcess.beatType == BeatManager::BeatType::Weak){
-                auto it = schedule.find(BeatManager::BeatType::Weak);
-                if (it != schedule.end()) {
-                    const std::vector<int>& vec = it->second;
-                    for(int soundId : it->second){
-                        playSound(soundId, 0, beatToProcess.offsetSamples);
-                    }
-                    schedule.erase(BeatManager::BeatType::Weak);
-                }
-                playSound(weakTick, 0, beatToProcess.offsetSamples);
+                // playSound(weakTick, 0, beatToProcess.offsetSamples);
             }
             if(beatToProcess.beatType == BeatManager::BeatType::Strong){
-                auto it = schedule.find(BeatManager::BeatType::Strong);
-                if (it != schedule.end()) {
-                    const std::vector<int>& vec = it->second;
-                    for(int soundId : it->second){
-                        playSound(soundId, 0, beatToProcess.offsetSamples);
-                    }
-                    schedule.erase(BeatManager::BeatType::Strong);
+                for(int soundId : missionSong->getLevelLoopSounds()){
+                    playSound(soundId, 0, beatToProcess.offsetSamples);
                 }
-                playSound(strongTick, 0, beatToProcess.offsetSamples);
+                // playSound(strongTick, 0, beatToProcess.offsetSamples);
             }
         }
 
@@ -170,14 +161,14 @@ private:
 
     int auxBuffer[BUFFER_SIZE];
 
-    BeatManager beatManager { 24054 }; // 24054 samples = 1 beat at about 0.54 seconds
+    BeatManager beatManager { 25442 };
 
-    int weakTick = 0;
-    int strongTick = 0;
+    // int weakTick = 0;
+    // int strongTick = 0;
 
     std::vector<SoundPlaying> soundsPlaying;
 
-    std::unordered_map<BeatManager::BeatType, std::vector<int>> schedule;
+    MissionSong* missionSong;
 
     CacheManager<Sound*> soundsCache {
         [](std::string& filename) -> Sound* {

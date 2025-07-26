@@ -3,7 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- AudioEngine: implement a way for audios to loop on the tick.
+- Make a way to specify volume for each sound in the mix.
+- GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
 - move Alignment calculations to a helper function/class to avoid repeating it
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
@@ -22,6 +23,7 @@ TODO:
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
 - render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
 - FUTURE: keep renderables from last frame in a buffer, if rendering is faster than updates, use last and current renderables to predict where everything will be. (that allows for higher framerates without changing the update rate)
+- add icon
 
 # Rendering specifics
 

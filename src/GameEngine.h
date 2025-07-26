@@ -92,10 +92,6 @@ public:
         levelScript = newLevelScript;
     }
 
-    // void setSongPlayer(LevelSongPlayer* newSongPlayer){
-    //     songPlayer = newSongPlayer;
-    // }
-
     void setMapComponent(MapComponent* newMapComponent){
         mapComponent = newMapComponent;
     }
@@ -105,8 +101,6 @@ public:
     }
 
     void update(){
-
-        // songPlayer->update(globalUpdatesCount);
 
         deltatime->update();
         int updatesNeeded = deltatime->getUpdatesNeeded();
@@ -194,9 +188,7 @@ public:
         upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar, upgradeFactory));
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();
-        // songPlayer->onLevelUpdate(level, globalUpdatesCount);
-        testeScheduleSound = audioEngine->loadSound("audio/song1/layer3.wav");
-        audioEngine->scheduleSoundToNextBeat(testeScheduleSound, BeatManager::BeatType::Strong);
+        audioEngine->onAdvanceLevel(level);
     }
 
     void handleKeyboardAndMouseEvent(SDL_Event &event){
@@ -306,8 +298,6 @@ private:
 
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
-
-    int testeScheduleSound;
 
     void doGameWorldUpdate(){
 

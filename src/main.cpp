@@ -27,6 +27,7 @@
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
 #include "Audio/AudioEngine.h"
+#include "Audio/MissionSong.h"
 
 int main() {
 
@@ -59,6 +60,22 @@ int main() {
         std::cerr << "Couldn't initialize Audio Engine" << std::endl;
         return -1;
     }
+
+    MissionSong mission1Song;
+    mission1Song.addLoopSound(0, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/loop1.wav"));
+    mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    mission1Song.addLoopSound(2, audioEngine.loadSound("audio/song1/loop2.wav"));
+    mission1Song.addLoopSound(2, audioEngine.loadSound("audio/song1/drums1.wav"));
+    
+    mission1Song.addLoopSound(3, audioEngine.loadSound("audio/song1/loop3.wav"));
+    mission1Song.addLoopSound(3, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/loop4.wav"));
+    mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/drums1.wav"));
+    audioEngine.setMissionSong(&mission1Song);
 
     GameEngine engine {
         &renderer,
