@@ -28,6 +28,7 @@
 #include "Font/FontManager.h"
 #include "Audio/AudioEngine.h"
 #include "Audio/MissionSong.h"
+#include "GameObject/CharacterSpriteAnimationRenderer.h"
 
 int main() {
 
@@ -97,14 +98,16 @@ int main() {
 
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);
-    mainChar.setSize(0.10f,0.10f);
+    float sizeMultiplier = 2.0f;
+    mainChar.setSize(0.045f*sizeMultiplier,0.100f*sizeMultiplier);
     mainChar.setInitialBaseSpeed(0.5f);
     mainChar.setInitialMaxHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
     mainChar.setCollisionSound(audioEngine.loadSound("audio/collision.wav"));
-    mainChar.addRenderComponent(std::make_unique<SpriteRenderer>(
-        textureManager.loadTexture("images/dog.png"),
-        Alignment::BottomUpCentered
+    mainChar.addRenderComponent(std::make_unique<CharacterSpriteAnimationRenderer>(
+        textureManager.loadTexture("images/chars/vitor_sprites.png"),
+        Alignment::BottomUpCentered,
+        15
     ));
     mainChar.setCollisionComponent(std::make_unique<BoxCollider>(
         0.10f,
@@ -132,7 +135,7 @@ int main() {
 
     engine.setMainChar(&mainChar);
 
-    MapFromImage mapFromImage {&textureManager, "maps/01.png", 8};
+    MapFromImage mapFromImage {&textureManager, "maps/01.png", 12};
 
     engine.setMapComponent(&mapFromImage);
 
