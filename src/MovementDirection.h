@@ -39,4 +39,8 @@ struct MovementDirection {
     bool isZero() const {
         return horizontal == 0.0f && vertical == 0.0f;
     }
+
+    float abs(){
+        return std::abs(horizontal) + std::abs(vertical);
+    }
 };

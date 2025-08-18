@@ -5,20 +5,30 @@
 #include "RenderProps.h"
 #include "RenderComponent.h"
 #include "Alignment.h"
+#include "FrameStepper.h"
 
 class CharacterSpriteAnimationRenderer : public RenderComponent {
 private:
     SDL_Texture* texture;
     Alignment alignment;
-    int updatesPerFrame;
-    int updates = -1;
-    int numberOfFrames = 4;
-    int currentFrame = 0;
+
     int frameWidth;
     int frameHeight;
 
+    FrameStepper walkingFrameStepper { 4, 20 };
+    FrameStepper idleFrameStepper { 2, 50 };
+
+    enum class MovementState {
+        Walking,
+        Idle
+    };
+
+    bool facingRight = true;
+
+    MovementState movementState = MovementState::Idle;
+
 public:
-    CharacterSpriteAnimationRenderer(SDL_Texture* texture, Alignment alignment, int updatesPerFrame) : texture(texture), alignment(alignment), updatesPerFrame(updatesPerFrame) {
+    CharacterSpriteAnimationRenderer(SDL_Texture* texture, Alignment alignment) : texture(texture), alignment(alignment) {
         int textureWidth, textureHeight;
         SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
         if(textureHeight == 0){
@@ -29,18 +39,40 @@ public:
             std::cerr << "CharacterSpriteAnimationRenderer(): texture need to be divisible by 4." << std::endl;
         }
         frameWidth = textureWidth / 4;
-        frameHeight = textureHeight;
+        frameHeight = textureHeight / 2;
     }
 
-    void update() override {
-        updates += 1;
-        if(updates >= updatesPerFrame){
-            updates = 0;
-            currentFrame += 1;
+    void update(GameObject& gameObject) override {
+
+        Character* character = dynamic_cast<Character*>(&gameObject);
+        if (!character){
+            std::cerr << "CharacterSpriteAnimationRenderer.update(): not Character" << std::endl;
+            return;
+        };
+
+        MovementDirection direction = character->getCurrentDirections();
+        float charAbsVelocity = direction.abs();
+
+        if(std::abs(direction.horizontal) > 0.00001f){
+            facingRight = direction.horizontal > 0.0f;
         }
-        if(currentFrame >= numberOfFrames){
-            currentFrame = 0;
+
+        if(charAbsVelocity > 0.1 && movementState == MovementState::Idle){
+            movementState = MovementState::Walking;
+            walkingFrameStepper.reset();
         }
+        if(charAbsVelocity < 0.01 && movementState == MovementState::Walking){
+            movementState = MovementState::Idle;
+            idleFrameStepper.reset();
+        }
+
+        if(movementState == MovementState::Idle){
+            idleFrameStepper.update();
+        }
+        if(movementState == MovementState::Walking){
+            walkingFrameStepper.update();
+        }
+
     }
 
     void render(GameObject& gameObject, RenderProps props) override {
@@ -48,6 +80,12 @@ public:
             std::cerr << "CharacterSpriteAnimationRenderer: no texture" << std::endl;
             return;
         }
+
+        Character* character = dynamic_cast<Character*>(&gameObject);
+        if (!character){
+            std::cerr << "CharacterSpriteAnimationRenderer.render(): not Character" << std::endl;
+            return;
+        };
 
         float x = gameObject.x;
         float y = gameObject.y;
@@ -82,9 +120,21 @@ public:
 
         }
 
+        if(movementState == MovementState::Idle){
+            idleFrameStepper.update();
+        }
+        if(movementState == MovementState::Walking){
+            walkingFrameStepper.update();
+        }
+
+        int currentFrame = movementState == MovementState::Idle ?
+            idleFrameStepper.getFrame()
+            :
+            walkingFrameStepper.getFrame();
+
         SDL_Rect srcRect = {
             currentFrame * frameWidth,
-            0,
+            movementState == MovementState::Walking ? 0 : frameHeight,
             frameWidth,
             frameHeight,
         };
@@ -96,10 +146,20 @@ public:
             static_cast<int>(std::round(height * props.screenScale)),
         };
 
-        SDL_RenderCopy(props.sdl_renderer, texture, &srcRect, &dstRect);
+        // SDL_RenderCopy(props.sdl_renderer, texture, &srcRect, &dstRect);
+
+        SDL_RenderCopyEx(
+            props.sdl_renderer,
+            texture,
+            &srcRect,
+            &dstRect,
+            0.0,
+            nullptr,
+            facingRight ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL
+        );
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<CharacterSpriteAnimationRenderer>(texture, alignment, updatesPerFrame);
+        return std::make_unique<CharacterSpriteAnimationRenderer>(texture, alignment);
     }
 };

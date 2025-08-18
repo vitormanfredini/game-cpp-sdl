@@ -33,7 +33,7 @@ public:
         frameHeight = textureHeight;
     }
 
-    void update() override {
+    void update(GameObject& gameObject) override {
         updates += 1;
         if(updates >= updatesPerFrame){
             updates = 0;

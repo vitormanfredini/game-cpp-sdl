@@ -106,8 +106,7 @@ int main() {
     mainChar.setCollisionSound(audioEngine.loadSound("audio/collision.wav"));
     mainChar.addRenderComponent(std::make_unique<CharacterSpriteAnimationRenderer>(
         textureManager.loadTexture("images/chars/vitor_sprites.png"),
-        Alignment::BottomUpCentered,
-        15
+        Alignment::BottomUpCentered
     ));
     mainChar.setCollisionComponent(std::make_unique<BoxCollider>(
         0.10f,

@@ -8,7 +8,7 @@ class RenderComponent {
         virtual void render(GameObject& gameObject, RenderProps props) = 0;
         virtual ~RenderComponent() = default;
         virtual std::unique_ptr<RenderComponent> clone() const = 0;
-        virtual void update() {
+        virtual void update(GameObject& gameObject) {
             //
         }
 };

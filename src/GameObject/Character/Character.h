@@ -37,6 +37,8 @@ private:
 
     int collisionSoundId = -1;
 
+    MovementDirection currentDirections;
+
 public:
 
     Character(){
@@ -88,7 +90,7 @@ public:
         }
 
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
-            renderComponent->update();
+            renderComponent->update(*this);
         }
     }
 
@@ -171,9 +173,14 @@ public:
         }
     }
 
-    void move(MovementDirection directions){
-        y += directions.vertical * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
-        x += directions.horizontal * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
+    void move(MovementDirection normalizedDirections){
+        currentDirections = normalizedDirections;
+        y += normalizedDirections.vertical * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
+        x += normalizedDirections.horizontal * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
+    }
+
+    MovementDirection getCurrentDirections(){
+        return currentDirections;
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
