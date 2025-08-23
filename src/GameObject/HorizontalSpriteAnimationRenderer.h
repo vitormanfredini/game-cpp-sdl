@@ -18,18 +18,19 @@ private:
     int frameHeight;
 
 public:
-    HorizontalSpriteAnimationRenderer(SDL_Texture* texture, Alignment alignment, int updatesPerFrame) : texture(texture), alignment(alignment), updatesPerFrame(updatesPerFrame) {
+    HorizontalSpriteAnimationRenderer(SDL_Texture* texture, Alignment alignment, int updatesPerFrame, int frameWidth) : texture(texture), alignment(alignment), updatesPerFrame(updatesPerFrame), frameWidth(frameWidth) {
         int textureWidth, textureHeight;
         SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
         if(textureHeight == 0){
             std::cerr << "HorizontalSpriteAnimationRenderer(): couldn't get texture height" << std::endl;
             return;
         }
-        if(textureWidth % textureHeight != 0){
-            std::cerr << "HorizontalSpriteAnimationRenderer(): texture doesn't form squares. to fix this, make sure texture width is divisible by its height." << std::endl;
+        if(textureWidth % frameWidth != 0){
+            std::cerr << "HorizontalSpriteAnimationRenderer(): texture width must be evenly divisible by frame width." << std::endl;
+            std::cout << "textureWidth: " << textureWidth << std::endl;
+            std::cout << "frameWidth: " << frameWidth << std::endl;
         }
-        numberOfFrames = textureWidth / textureHeight;
-        frameWidth = textureHeight;
+        numberOfFrames = textureWidth / frameWidth;
         frameHeight = textureHeight;
     }
 
@@ -101,6 +102,6 @@ public:
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<HorizontalSpriteAnimationRenderer>(texture, alignment, updatesPerFrame);
+        return std::make_unique<HorizontalSpriteAnimationRenderer>(texture, alignment, updatesPerFrame, frameWidth);
     }
 };

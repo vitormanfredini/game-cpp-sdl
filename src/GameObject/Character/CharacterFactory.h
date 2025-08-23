@@ -26,47 +26,55 @@ class CharacterFactory {
 public:
 
     CharacterFactory(TextureManager* textureManager){
+
+        float widthRatioEnemy1 = 0.42;
+        float sizeEnemy1 = 0.09;
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
-        prototypes[CharacterType::Regular]->setSize(0.066f,0.066f);
+        prototypes[CharacterType::Regular]->setSize(sizeEnemy1*widthRatioEnemy1,sizeEnemy1);
         prototypes[CharacterType::Regular]->setInitialBaseSpeed(0.4f);
         prototypes[CharacterType::Regular]->setCollisionAttack(0.005);
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/enemy_regular_idle_animation_9parts.png"),
+            textureManager->loadTexture("images/chars/enemy2_horizontal_sprites.png"),
             Alignment::BottomUpCentered,
-            20
+            5,
+            18
         ));
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),
             textureManager->loadTexture(200,69,49)
         ));
         prototypes[CharacterType::Regular]->setCollisionComponent(std::make_unique<BoxCollider>(
-            0.066f,
-            0.022f,
+            sizeEnemy1*widthRatioEnemy1,
+            sizeEnemy1 / 3,
             Alignment::Centered
         ));
         prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45));
 
+        float widthRatioEnemy2 = 1.03;
+        float sizeEnemy2 = 0.06;
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
-        prototypes[CharacterType::Bigger]->setSize(0.077f,0.077f);
+        prototypes[CharacterType::Bigger]->setSize(sizeEnemy2*widthRatioEnemy2,sizeEnemy2);
         prototypes[CharacterType::Bigger]->setInitialBaseSpeed(0.33f);
         prototypes[CharacterType::Bigger]->setCollisionAttack(0.008);
         prototypes[CharacterType::Bigger]->setInitialMaxHealth(3.0f);
         prototypes[CharacterType::Bigger]->setInitialHealth(3.0f);
         prototypes[CharacterType::Bigger]->setWeight(0.85f);
-        prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<SpriteRenderer>(
-            textureManager->loadTexture("images/enemy_bigger.png"),
-            Alignment::BottomUpCentered
+        prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            textureManager->loadTexture("images/chars/enemy1_horizontal_sprites.png"),
+            Alignment::BottomUpCentered,
+            5,
+            37
         ));
         prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),
             textureManager->loadTexture(200,69,49)
         ));
         prototypes[CharacterType::Bigger]->setCollisionComponent(std::make_unique<BoxCollider>(
-            0.077f,
-            0.025f,
+            sizeEnemy2*widthRatioEnemy2,
+            widthRatioEnemy2 / 3,
             Alignment::Centered
         ));
         prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45, 0.12, 0.25, 0.33, 0.5));
