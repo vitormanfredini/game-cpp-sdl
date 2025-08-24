@@ -4,6 +4,8 @@
 #include <SDL2/SDL_image.h>
 #include <iostream>
 #include <vector>
+#include <memory>
+
 #include "Renderer.h"
 #include "Camera.h"
 #include "DeltaTime.h"
@@ -18,8 +20,7 @@
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "GameObject/Ui/Intro.h"
-#include <memory>
-#include "LevelScript.h"
+#include "Levels/LevelScript.h"
 #include "StateManager/StateManager.h"
 #include "MouseEventType.h"
 #include "Audio/AudioEngine.h"
@@ -88,8 +89,8 @@ public:
         gemValueBar = newGemValueBar;
     }
 
-    void setLevelScript(LevelScript* newLevelScript){
-        levelScript = newLevelScript;
+    void setLevelScript(std::unique_ptr<LevelScript> newLevelScript){
+        levelScript = std::move(newLevelScript);
     }
 
     void setMapComponent(MapComponent* newMapComponent){
@@ -271,7 +272,7 @@ private:
     Input* input = nullptr;
     GameObject* healthBar = nullptr;
     GameObject* gemValueBar = nullptr;
-    LevelScript* levelScript = nullptr;
+    std::unique_ptr<LevelScript> levelScript;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
     ItemFactory* itemFactory;
@@ -318,7 +319,7 @@ private:
             projectile->update();
         }
 
-        camera->update(mainChar->getX(), mainChar->getY());
+        camera->pointTo(mainChar);
 
         std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(gameWorldUpdatesCount);
         for(LevelScriptKeyFrame keyFrame : keyFrames){

@@ -3,7 +3,8 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- Animations: the sprites do the up and down animation, but that should probably be done with a MoverCompenent
+- The purple robot seems to collide (and die) at random sometimes
+- Animations: the sprites do the up and down animation but that should probably be done with a MoverCompenent
 - use FrameStepper on HorizontalSpriteAnimationRenderer (and check if more places could use it too)
 - Make a way to specify volume for each sound in the mix.
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MovingAverage.h"
+#include "GameObject/Character/Character.h"
 
 class Camera {
 
@@ -18,7 +19,13 @@ public:
         averagePosY.fill(startY);
     }
 
-    void update(float positionX, float positionY){
+    void pointTo(Character* character){
+        float x = character->getX();
+        float y = character->getY() - (character->getHeight() / 2);
+        pointTo(x, y);
+    }
+
+    void pointTo(float positionX, float positionY){
         averagePosX.addValue(positionX);
         averagePosY.addValue(positionY);
         averagePosXCache = averagePosX.getAverage();
