@@ -25,32 +25,13 @@ public:
         float width = gameObject.width;
         float height = gameObject.height;
 
-        switch (alignment) {
-            case Alignment::BottomUpCentered:
-                x = x - props.cameraPosX + props.leftOffset - (width / 2);
-                y = y - props.cameraPosY + props.topOffset - height;
-                break;
-            case Alignment::Centered:
-                x = x - props.cameraPosX + props.leftOffset - (width / 2);
-                y = y - props.cameraPosY + props.topOffset - (height / 2);
-                break;
-            case Alignment::TopLeft:
-                x = x - props.cameraPosX + props.leftOffset;
-                y = y - props.cameraPosY + props.topOffset;
-                break;
-            case Alignment::BottomLeft:
-                x = x - props.cameraPosX + props.leftOffset;
-                y = y - props.cameraPosY + props.topOffset - height;
-                break;
-            case Alignment::TopDownCentered:
-                x = x - props.cameraPosX + props.leftOffset - (width / 2);
-                y = y - props.cameraPosY + props.topOffset;
-                break;
-            case Alignment::UI:
-                x = x + props.leftOffset;
-                y = y + props.topOffset;
-                break;
+        x = x + props.leftOffset;
+        y = y + props.topOffset;
 
+        if(alignment != Alignment::UI){
+            auto [offsetX, offsetY] = AlignmentUtils::computeOffsets(alignment, width, height);
+            x = x - props.cameraPosX + offsetX;
+            y = y - props.cameraPosY + offsetY;
         }
 
         SDL_Rect rect = {

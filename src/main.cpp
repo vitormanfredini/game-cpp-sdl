@@ -92,11 +92,6 @@ int main() {
         &audioEngine
     };
 
-    std::unique_ptr<LevelManager> mainCharLevelManager = std::make_unique<LevelManager>();
-    mainCharLevelManager->setOnAdvanceLevelCallback([&engine](int level) {
-        engine.onAdvanceLevel(level);
-    });
-
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);
     float sizeMultiplier = 2.0f;
@@ -114,6 +109,11 @@ int main() {
         0.033f,
         Alignment::Centered
     ));
+
+    std::unique_ptr<LevelManager> mainCharLevelManager = std::make_unique<LevelManager>();
+    mainCharLevelManager->setOnAdvanceLevelCallback([&engine](int level) {
+        engine.onAdvanceLevel(level);
+    });
     mainChar.setLevelManager(std::move(mainCharLevelManager));
     
 

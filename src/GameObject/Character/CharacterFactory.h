@@ -74,7 +74,7 @@ public:
         ));
         prototypes[CharacterType::Bigger]->setCollisionComponent(std::make_unique<BoxCollider>(
             sizeEnemy2*widthRatioEnemy2,
-            widthRatioEnemy2 / 3,
+            sizeEnemy2 / 3,
             Alignment::Centered
         ));
         prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45, 0.12, 0.25, 0.33, 0.5));

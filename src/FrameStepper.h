@@ -21,6 +21,10 @@ public:
         return currentFrame;
     }
 
+    int getUpdatesPerFrame(){
+        return updatesPerFrame;
+    }
+
     void reset(){
         currentUpdate = -1;
         currentFrame = 0;

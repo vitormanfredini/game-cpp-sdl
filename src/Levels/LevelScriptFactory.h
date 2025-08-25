@@ -11,7 +11,7 @@ public:
         std::unique_ptr<LevelScript> level1 = std::make_unique<LevelScript>();
 
         for(int c=0;c<100;c++){
-            int framesOffset = c * 680;
+            int framesOffset = c * 6800;
             level1->addKeyframe({ framesOffset + 240, 1 * (c+1), CharacterType::Regular });
             level1->addKeyframe({ framesOffset + 540, 3 * (c+1), CharacterType::Regular });
             level1->addKeyframe({ framesOffset + 1000, 3 * (c+1), CharacterType::Regular });

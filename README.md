@@ -3,13 +3,12 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- The purple robot seems to collide (and die) at random sometimes
-- Animations: the sprites do the up and down animation but that should probably be done with a MoverCompenent
-- use FrameStepper on HorizontalSpriteAnimationRenderer (and check if more places could use it too)
+- fire sounds are a bit out of sync (make every engine update have it's own sample offset in the audio engine)
+- when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
+- Animations: the sprites do the up and down animation but that should probably be done with a MoverComponent
 - Make a way to specify volume for each sound in the mix.
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
-- move Alignment calculations to a helper function/class to avoid repeating it
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
@@ -22,7 +21,6 @@ TODO:
 - separate .h and .cpp files
 - no texture is being unloaded. implement a way of telling the TextureManager the texture's context (menu, game world, in-game UI, etc) so we can unload them without unloading textures that are being used.
 - main char healthbar render is not taking into account the screen offset, possible resizing necessary, etc
-- when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
 - render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
 - FUTURE: keep renderables from last frame in a buffer, if rendering is faster than updates, use last and current renderables to predict where everything will be. (that allows for higher framerates without changing the update rate)
