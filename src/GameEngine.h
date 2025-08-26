@@ -141,7 +141,7 @@ public:
             for(std::unique_ptr<GameObject>& renderable : mapComponent->getTiles()){
                 renderer->addRenderable(renderable.get());
             }
-    
+
             for(std::unique_ptr<Character>& enemy : enemies){
                 renderer->addRenderable(enemy.get());
             }
@@ -149,9 +149,9 @@ public:
             for(std::unique_ptr<Item>& item : items){
                 renderer->addRenderable(item.get());
             }
-    
+
             renderer->addRenderable(mainChar);
-    
+
             for(std::unique_ptr<Projectile>& projectile : projectiles){
                 renderer->addRenderable(projectile.get());
             }
@@ -208,7 +208,7 @@ public:
                         break;
                     }
                 }
-                
+
                 if(stateManager->isPaused()){
                     if(event.key.keysym.sym==SDLK_RETURN){
                         stateManager->pauseToggle();
@@ -219,7 +219,7 @@ public:
                         break;
                     }
                 }
-                
+
                 break;
             case SDL_KEYUP:
                 if(stateManager->shouldUpdateGameWorld()){

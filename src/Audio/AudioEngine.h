@@ -25,13 +25,13 @@ public:
 
     struct SoundPlaying {
         Sound* sound;
-        Uint32 position;
         Uint32 offset;
+        Uint32 position;
 
-        SoundPlaying(Sound* sound, Uint32 position, Uint32 offset)
+        SoundPlaying(Sound* sound, Uint32 offset, Uint32 position)
             :   sound(sound),
-                position(position),
-                offset(offset) {}
+                offset(offset),
+                position(position) {}
 
         bool isFinished() const {
             return position >= sound->length;
@@ -39,8 +39,7 @@ public:
     };
 
     AudioEngine(){
-        // weakTick = loadSound("audio/click_weak.wav");
-        // strongTick = loadSound("audio/click_strong.wav");
+        strongTick = loadSound("audio/click_strong.wav");
     }
 
     ~AudioEngine(){
@@ -81,12 +80,12 @@ public:
         missionSong = newMissingSong;
     }
 
-    void playSound(int id, int position = 0, int offset = 0){
+    void playSound(int id, int offset = 0, int position = 0){
         if(id <= 0){
             return;
         }
         SDL_LockAudio();
-        soundsPlaying.emplace_back(soundsCache.get(id), position, offset);
+        soundsPlaying.emplace_back(soundsCache.get(id), offset, position);
         SDL_UnlockAudio();
     }
 
@@ -95,8 +94,11 @@ public:
     }
 
     void startBeat(){
-        beatManager.reset();
-        beatManager.play();
+        beatManagerMusic.reset();
+        beatManagerMusic.play();
+
+        beatManagerUpdates.reset();
+        beatManagerUpdates.play();
     }
 
     static void audioCallbackWrapper(void* userdata, Uint8* stream, int len) {
@@ -113,17 +115,17 @@ public:
             auxBuffer[i] = 0;
         }
 
-        BeatManager::BeatToProcess beatToProcess = beatManager.updateAndGetBeatToProcess(length);
-        if(beatToProcess.beatType != BeatManager::BeatType::NoBeat){
-            if(beatToProcess.beatType == BeatManager::BeatType::Weak){
-                // playSound(weakTick, 0, beatToProcess.offsetSamples);
+        std::vector<int> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsOffsets(length);
+        for(int offset : musicBeatsOffsets){
+            std::cout << "offset: " << offset << std::endl;
+            for(int soundId : missionSong->getLevelLoopSounds()){
+                playSound(soundId, offset);
             }
-            if(beatToProcess.beatType == BeatManager::BeatType::Strong){
-                for(int soundId : missionSong->getLevelLoopSounds()){
-                    playSound(soundId, 0, beatToProcess.offsetSamples);
-                }
-                // playSound(strongTick, 0, beatToProcess.offsetSamples);
-            }
+        }
+
+        std::vector<int> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsOffsets(length);
+        for(int offset : updateBeatsOffsets){
+            playSound(strongTick, offset);
         }
 
         for (auto& soundPlaying : soundsPlaying) {
@@ -161,14 +163,15 @@ private:
 
     int auxBuffer[BUFFER_SIZE];
 
-    BeatManager beatManager { 25442 };
+    BeatManager beatManagerMusic { 25442 * 4 };
 
-    // int weakTick = 0;
-    // int strongTick = 0;
+    BeatManager beatManagerUpdates { 11025 };
 
     std::vector<SoundPlaying> soundsPlaying;
 
     MissionSong* missionSong;
+
+    int strongTick = 0;
 
     CacheManager<Sound*> soundsCache {
         [](std::string& filename) -> Sound* {

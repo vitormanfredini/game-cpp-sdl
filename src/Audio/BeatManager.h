@@ -3,21 +3,6 @@
 class BeatManager {
 public:
 
-    enum class BeatType {
-        NoBeat,
-        Strong,
-        Weak
-    };
-
-    struct BeatToProcess {
-        BeatType beatType;
-        int offsetSamples;
-        
-        BeatToProcess(BeatType beatType, int offsetSamples)
-            :   beatType(beatType),
-                offsetSamples(offsetSamples) {}
-    };
-
     BeatManager(int samplesPerBeat)
         :   samplesPerBeat(samplesPerBeat) {
         reset();
@@ -27,39 +12,24 @@ public:
         //
     }
 
-    BeatToProcess updateAndGetBeatToProcess(int samplesToProcess) {
+    std::vector<int> updateAndGetBeatsOffsets(int samplesToAdd) {
+
+        std::vector<int> beatsOffsets = {};
 
         if(!playing){
-            return BeatToProcess(BeatType::NoBeat, 0);
-        }
-        
-        bool isFirstBeat = measuresCount == 0 && measureBeatsCount == 0 && beatSamplesCount == 0;
-
-        beatSamplesCount += samplesToProcess;
-
-        if(isFirstBeat){
-            measureBeatsCount++;
-            return BeatToProcess(BeatType::Strong, 0);
+            return beatsOffsets;
         }
 
-        bool hasBeat = beatSamplesCount >= samplesPerBeat;
-
-        if(!hasBeat){
-            return BeatToProcess(BeatType::NoBeat, 0);
+        int offset = samplesToAdd - beatSamplesCount;
+        while(offset < samplesToAdd && offset >= 0){
+            beatsOffsets.push_back(offset);
+            beatSamplesCount -= samplesPerBeat;
+            offset += samplesPerBeat;
         }
 
-        beatSamplesCount -= samplesPerBeat;
+        beatSamplesCount += samplesToAdd;
 
-        BeatType beatType = measureBeatsCount == 0 ? BeatType::Strong : BeatType::Weak;
-        int offset = samplesToProcess - beatSamplesCount;
-
-        measureBeatsCount++;
-        if(measureBeatsCount == 4){
-            measureBeatsCount = 0;
-            measuresCount++;
-        }
-
-        return BeatToProcess(beatType, offset);
+        return beatsOffsets;
 
     }
 
@@ -69,18 +39,12 @@ public:
 
     void reset(){
         beatSamplesCount = 0;
-        measureBeatsCount = 0;
-        measuresCount = 0;
         playing = false;
     }
 
 private:
-
     int samplesPerBeat;
     int beatSamplesCount;
-    int measureBeatsCount;
-    int measuresCount;
-
     bool playing;
 
 };
