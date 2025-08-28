@@ -2,13 +2,13 @@
 
 #include <vector>
 
-class MissionSong {
+class StageSong {
 public:
-    MissionSong(){
+    StageSong(){
         //
     }
 
-    ~MissionSong(){
+    ~StageSong(){
         //
     }
 

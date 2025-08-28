@@ -27,7 +27,7 @@
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
 #include "Audio/AudioEngine.h"
-#include "Audio/MissionSong.h"
+#include "Audio/StageSong.h"
 #include "GameObject/CharacterSpriteAnimationRenderer.h"
 #include "Stages/SpawnScheduleFactory.h"
 
@@ -63,7 +63,7 @@ int main() {
         return -1;
     }
 
-    MissionSong mission1Song;
+    StageSong mission1Song;
     mission1Song.addLoopSound(0, audioEngine.loadSound("audio/song1/drums1.wav"));
 
     mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/loop1.wav"));
@@ -77,7 +77,7 @@ int main() {
 
     mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/loop4.wav"));
     mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/drums1.wav"));
-    audioEngine.setMissionSong(&mission1Song);
+    audioEngine.setStageSong(&mission1Song);
 
     GameEngine engine {
         &renderer,

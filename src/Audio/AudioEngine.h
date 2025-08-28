@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include "CacheManager.h"
 #include "BeatManager.h"
-#include "MissionSong.h"
+#include "StageSong.h"
 
 #define BUFFER_SIZE 4096
 
@@ -76,21 +76,12 @@ public:
         return soundsCache.load(filename);
     }
 
-    void setMissionSong(MissionSong* newMissingSong){
-        missionSong = newMissingSong;
-    }
-
-    void playSound(int id, int offset = 0, int position = 0){
-        if(id <= 0){
-            return;
-        }
-        SDL_LockAudio();
-        soundsPlaying.emplace_back(soundsCache.get(id), offset, position);
-        SDL_UnlockAudio();
+    void setStageSong(StageSong* newStageSong){
+        stageSong = newStageSong;
     }
 
     void onAdvanceLevel(int level){
-        missionSong->changeLevel(level);
+        stageSong->changeLevel(level);
     }
 
     void startBeat(){
@@ -118,7 +109,7 @@ public:
         std::vector<int> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsOffsets(length);
         for(int offset : musicBeatsOffsets){
             // std::cout << "offset: " << offset << std::endl;
-            for(int soundId : missionSong->getLevelLoopSounds()){
+            for(int soundId : stageSong->getLevelLoopSounds()){
                 playSound(soundId, offset);
             }
         }
@@ -126,6 +117,13 @@ public:
         std::vector<int> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsOffsets(length);
         for(int offset : updateBeatsOffsets){
             // playSound(strongTick, offset);
+            while (!soundsNextUpdate.empty()) {
+                int soundId = soundsNextUpdate.back();
+                soundsNextUpdate.pop_back();
+
+                std::cout << "soundId: " << soundId << ". offset: " << offset << std::endl;
+                playSound(soundId, offset);
+            }
         }
 
         for (auto& soundPlaying : soundsPlaying) {
@@ -156,7 +154,10 @@ public:
         }
 
         removeFinishedSounds();
+    }
 
+    void playSoundOnNextUpdate(int id){
+        soundsNextUpdate.push_back(id);
     }
 
 private:
@@ -164,14 +165,24 @@ private:
     int auxBuffer[BUFFER_SIZE];
 
     BeatManager beatManagerMusic { 25442 * 4 };
-
     BeatManager beatManagerUpdates { 11025 };
+
+    std::vector<int> soundsNextUpdate = {};
 
     std::vector<SoundPlaying> soundsPlaying;
 
-    MissionSong* missionSong;
+    StageSong* stageSong;
 
     int strongTick = 0;
+
+    void playSound(int id, int offset = 0, int position = 0){
+        if(id <= 0){
+            return;
+        }
+        SDL_LockAudio();
+        soundsPlaying.emplace_back(soundsCache.get(id), offset, position);
+        SDL_UnlockAudio();
+    }
 
     CacheManager<Sound*> soundsCache {
         [](std::string& filename) -> Sound* {
@@ -220,6 +231,7 @@ private:
 
         soundsCache.clear();
         soundsPlaying.clear();
+        soundsNextUpdate.clear();
         
         SDL_UnlockAudio();
     }

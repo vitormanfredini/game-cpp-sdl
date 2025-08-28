@@ -337,7 +337,7 @@ private:
         );
 
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
-            audioEngine->playSound(projectile->getSound());
+            audioEngine->playSoundOnNextUpdate(projectile->getSound());
             projectiles.push_back(std::move(projectile));
         }
 
@@ -358,7 +358,7 @@ private:
             if(mainChar->checkCollision(*enemies[e])){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
-                audioEngine->playSound(mainChar->getCollisionSound());
+                audioEngine->playSoundOnNextUpdate(mainChar->getCollisionSound());
             }
 
             for(size_t p=0; p<projectiles.size(); p++){
