@@ -20,7 +20,7 @@
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "GameObject/Ui/Intro.h"
-#include "Levels/LevelScript.h"
+#include "Stages/SpawnSchedule.h"
 #include "StateManager/StateManager.h"
 #include "MouseEventType.h"
 #include "Audio/AudioEngine.h"
@@ -89,8 +89,8 @@ public:
         gemValueBar = newGemValueBar;
     }
 
-    void setLevelScript(std::unique_ptr<LevelScript> newLevelScript){
-        levelScript = std::move(newLevelScript);
+    void setSpawnSchedule(std::unique_ptr<SpawnSchedule> newSpawnSchedule){
+        spawnSchedule = std::move(newSpawnSchedule);
     }
 
     void setMapComponent(MapComponent* newMapComponent){
@@ -272,7 +272,7 @@ private:
     Input* input = nullptr;
     GameObject* healthBar = nullptr;
     GameObject* gemValueBar = nullptr;
-    std::unique_ptr<LevelScript> levelScript;
+    std::unique_ptr<SpawnSchedule> spawnSchedule;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
     ItemFactory* itemFactory;
@@ -321,8 +321,8 @@ private:
 
         camera->pointTo(mainChar);
 
-        std::vector<LevelScriptKeyFrame> keyFrames = levelScript->getCurrentKeyFramesAndDelete(gameWorldUpdatesCount);
-        for(LevelScriptKeyFrame keyFrame : keyFrames){
+        std::vector<SpawnScheduleKeyFrame> keyFrames = spawnSchedule->popKeyFramesAt(gameWorldUpdatesCount);
+        for(SpawnScheduleKeyFrame keyFrame : keyFrames){
             for(int c=0;c<keyFrame.enemies;c++){
                 std::unique_ptr<Character> newEnemy = characterFactory.create(keyFrame.characterType);
                 newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));

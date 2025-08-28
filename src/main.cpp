@@ -29,7 +29,7 @@
 #include "Audio/AudioEngine.h"
 #include "Audio/MissionSong.h"
 #include "GameObject/CharacterSpriteAnimationRenderer.h"
-#include "Levels/LevelScriptFactory.h"
+#include "Stages/SpawnScheduleFactory.h"
 
 int main() {
 
@@ -143,8 +143,8 @@ int main() {
 
     engine.setMapComponent(&mapFromImage);
 
-    LevelScriptFactory levelScriptFactory;
-    engine.setLevelScript(levelScriptFactory.makeLevelScript1());
+    SpawnScheduleFactory spawnScheduleFactory;
+    engine.setSpawnSchedule(spawnScheduleFactory.makeStage1());
 
     GameObject healthBar {};
     healthBar.setPosition(0.0f,0.0f);

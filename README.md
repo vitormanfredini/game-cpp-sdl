@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- make enemies face the Character they are following
 - fire sounds are a bit out of sync (make every engine update have it's own sample offset in the audio engine)
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Animations: the sprites do the up and down animation but that should probably be done with a MoverComponent
@@ -15,7 +16,6 @@ TODO:
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
 - implement transitions between tiles with different textures
 - implement different ways that enemies can move: sine wav adding and subtracting from movement, aim and charge, etc
-- choose side that enemies come from in the level script (or make them appear mostly in the direction that the mainChar is moving)
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen
 - separate .h and .cpp files
