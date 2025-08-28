@@ -117,7 +117,7 @@ public:
 
         std::vector<int> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsOffsets(length);
         for(int offset : musicBeatsOffsets){
-            std::cout << "offset: " << offset << std::endl;
+            // std::cout << "offset: " << offset << std::endl;
             for(int soundId : missionSong->getLevelLoopSounds()){
                 playSound(soundId, offset);
             }
