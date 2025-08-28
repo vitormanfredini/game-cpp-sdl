@@ -125,7 +125,7 @@ public:
 
         std::vector<int> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsOffsets(length);
         for(int offset : updateBeatsOffsets){
-            playSound(strongTick, offset);
+            // playSound(strongTick, offset);
         }
 
         for (auto& soundPlaying : soundsPlaying) {

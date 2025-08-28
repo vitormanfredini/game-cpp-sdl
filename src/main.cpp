@@ -100,6 +100,10 @@ int main() {
     mainChar.setInitialMaxHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
     mainChar.setCollisionSound(audioEngine.loadSound("audio/collision.wav"));
+    mainChar.addRenderComponent(std::make_unique<ShadowRenderer>(
+        textureManager.loadTexture("images/chars/shadow.png"),
+        0.017
+    ));
     mainChar.addRenderComponent(std::make_unique<CharacterSpriteAnimationRenderer>(
         textureManager.loadTexture("images/chars/vitor_sprites.png"),
         Alignment::BottomUpCentered

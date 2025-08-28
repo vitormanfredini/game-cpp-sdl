@@ -14,6 +14,7 @@ public:
             int framesOffset = c * 6800;
             level1->addKeyframe({ framesOffset + 240, 1 * (c+1), CharacterType::Regular });
             level1->addKeyframe({ framesOffset + 540, 3 * (c+1), CharacterType::Regular });
+            level1->addKeyframe({ framesOffset + 650, 1 * (c+1), CharacterType::Boss });
             level1->addKeyframe({ framesOffset + 1000, 3 * (c+1), CharacterType::Regular });
             level1->addKeyframe({ framesOffset + 1050, 2 * (c+1), CharacterType::Bigger });
             level1->addKeyframe({ framesOffset + 1500, 5 * (c+1), CharacterType::Regular });
