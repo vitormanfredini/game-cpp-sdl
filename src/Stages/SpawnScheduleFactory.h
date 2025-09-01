@@ -15,6 +15,7 @@ public:
             stage->addKeyframe({ framesOffset + 240, 1 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 540, 3 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 650, 1 * (c+1), CharacterType::Boss });
+            stage->addKeyframe({ framesOffset + 750, 3 * (c+1), CharacterType::Fire });
             stage->addKeyframe({ framesOffset + 1000, 3 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 1050, 2 * (c+1), CharacterType::Bigger });
             stage->addKeyframe({ framesOffset + 1500, 5 * (c+1), CharacterType::Regular });
@@ -23,6 +24,7 @@ public:
             stage->addKeyframe({ framesOffset + 2300, 5 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 2400, 3 * (c+1), CharacterType::Bigger });
             stage->addKeyframe({ framesOffset + 2500, 2 * (c+1), CharacterType::Regular });
+            stage->addKeyframe({ framesOffset + 2800, 2 * (c+1), CharacterType::Fire });
 
             stage->addKeyframe({ framesOffset + 3500, 5 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 3600, 3 * (c+1), CharacterType::Bigger });
@@ -35,8 +37,10 @@ public:
             stage->addKeyframe({ framesOffset + 5100, 16 * (c+1), CharacterType::Bigger });
 
             stage->addKeyframe({ framesOffset + 5100, 1 * (c+1), CharacterType::Boss });
+            stage->addKeyframe({ framesOffset + 5100, 2 * (c+1), CharacterType::Fire });
 
             stage->addKeyframe({ framesOffset + 5500, 15 * (c+1), CharacterType::Regular });
+            stage->addKeyframe({ framesOffset + 5500, 7 * (c+1), CharacterType::Fire });
             stage->addKeyframe({ framesOffset + 5500, 20 * (c+1), CharacterType::Bigger });
 
             stage->addKeyframe({ framesOffset + 6000, 3 * (c+1), CharacterType::Boss });

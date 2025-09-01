@@ -1,3 +1,3 @@
 #pragma once
 
-enum CharacterType { Main, Regular, Bigger, Boss };
+enum CharacterType { Main, Regular, Bigger, Fire, Boss };

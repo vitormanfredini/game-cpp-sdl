@@ -108,7 +108,6 @@ public:
 
         std::vector<int> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsOffsets(length);
         for(int offset : musicBeatsOffsets){
-            // std::cout << "offset: " << offset << std::endl;
             for(int soundId : stageSong->getLevelLoopSounds()){
                 playSound(soundId, offset);
             }
@@ -116,12 +115,10 @@ public:
 
         std::vector<int> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsOffsets(length);
         for(int offset : updateBeatsOffsets){
-            // playSound(strongTick, offset);
             while (!soundsNextUpdate.empty()) {
                 int soundId = soundsNextUpdate.back();
                 soundsNextUpdate.pop_back();
 
-                std::cout << "soundId: " << soundId << ". offset: " << offset << std::endl;
                 playSound(soundId, offset);
             }
         }

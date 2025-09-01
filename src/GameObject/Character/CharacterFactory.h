@@ -28,6 +28,11 @@ public:
 
     CharacterFactory(TextureManager* textureManager){
 
+        std::unique_ptr<CharacterHealthBarRenderer> defaultHealthBarRenderer = std::make_unique<CharacterHealthBarRenderer>(
+            textureManager->loadTexture(87, 45, 53),
+            textureManager->loadTexture(200,69,49)
+        );
+
         float heightEnemy1 = 0.09;
         float widthRatioEnemy1 = 0.42;
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
@@ -47,10 +52,7 @@ public:
             5,
             18
         ));
-        prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
-            textureManager->loadTexture(87, 45, 53),
-            textureManager->loadTexture(200,69,49)
-        ));
+        prototypes[CharacterType::Regular]->addRenderComponent(defaultHealthBarRenderer->clone());
         prototypes[CharacterType::Regular]->setCollisionComponent(std::make_unique<BoxCollider>(
             heightEnemy1*widthRatioEnemy1,
             heightEnemy1 / 3,
@@ -58,7 +60,7 @@ public:
         ));
         prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45));
 
-        float heightEnemy2 = 0.06;
+        float heightEnemy2 = 0.07;
         float widthRatioEnemy2 = 1.03;
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(heightEnemy2*widthRatioEnemy2,heightEnemy2);
@@ -77,10 +79,7 @@ public:
             5,
             37
         ));
-        prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
-            textureManager->loadTexture(87, 45, 53),
-            textureManager->loadTexture(200,69,49)
-        ));
+        prototypes[CharacterType::Bigger]->addRenderComponent(defaultHealthBarRenderer->clone());
         prototypes[CharacterType::Bigger]->setCollisionComponent(std::make_unique<BoxCollider>(
             heightEnemy2*widthRatioEnemy2,
             heightEnemy2 / 3,
@@ -88,7 +87,7 @@ public:
         ));
         prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45, 0.12, 0.25, 0.33, 0.5));
 
-        float heightEnemy3 = 0.12;
+        float heightEnemy3 = 0.14;
         float widthRatioEnemy3 = 0.66;
         prototypes[CharacterType::Boss] = std::make_unique<Character>();
         prototypes[CharacterType::Boss]->setSize(heightEnemy3*widthRatioEnemy3,heightEnemy3);
@@ -107,16 +106,40 @@ public:
             8,
             34
         ));
-        prototypes[CharacterType::Boss]->addRenderComponent(std::make_unique<CharacterHealthBarRenderer>(
-            textureManager->loadTexture(87, 45, 53),
-            textureManager->loadTexture(200,69,49)
-        ));
+        prototypes[CharacterType::Boss]->addRenderComponent(defaultHealthBarRenderer->clone());
         prototypes[CharacterType::Boss]->setCollisionComponent(std::make_unique<BoxCollider>(
             heightEnemy3*widthRatioEnemy3,
             heightEnemy3 / 3,
             Alignment::Centered
         ));
         prototypes[CharacterType::Boss]->setMovementComponent(std::make_unique<StraightMover>());
+
+        float heightEnemy4 = 0.2;
+        float widthRatioEnemy4 = 0.3777;
+        prototypes[CharacterType::Fire] = std::make_unique<Character>();
+        prototypes[CharacterType::Fire]->setSize(heightEnemy4*widthRatioEnemy4,heightEnemy4);
+        prototypes[CharacterType::Fire]->setInitialBaseSpeed(0.3f);
+        prototypes[CharacterType::Fire]->setCollisionAttack(0.015);
+        prototypes[CharacterType::Fire]->setInitialMaxHealth(11.0f);
+        prototypes[CharacterType::Fire]->setInitialHealth(11.0f);
+        prototypes[CharacterType::Fire]->setWeight(1.5f);
+        prototypes[CharacterType::Fire]->addRenderComponent(std::make_unique<ShadowRenderer>(
+            textureManager->loadTexture("images/chars/shadow.png"),
+            0.025
+        ));
+        prototypes[CharacterType::Fire]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            textureManager->loadTexture("images/chars/enemy4_horizontal_sprites.png"),
+            Alignment::BottomUpCentered,
+            8,
+            34
+        ));
+        prototypes[CharacterType::Fire]->addRenderComponent(defaultHealthBarRenderer->clone());
+        prototypes[CharacterType::Fire]->setCollisionComponent(std::make_unique<BoxCollider>(
+            heightEnemy4*widthRatioEnemy4,
+            heightEnemy4 / 3,
+            Alignment::Centered
+        ));
+        prototypes[CharacterType::Fire]->setMovementComponent(std::make_unique<StraightMover>());
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {
