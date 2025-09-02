@@ -115,7 +115,7 @@ public:
         prototypes[CharacterType::Boss]->setMovementComponent(std::make_unique<StraightMover>());
 
         float heightEnemy4 = 0.2;
-        float widthRatioEnemy4 = 0.3777;
+        float widthRatioEnemy4 = 0.325;
         prototypes[CharacterType::Fire] = std::make_unique<Character>();
         prototypes[CharacterType::Fire]->setSize(heightEnemy4*widthRatioEnemy4,heightEnemy4);
         prototypes[CharacterType::Fire]->setInitialBaseSpeed(0.3f);
@@ -130,8 +130,8 @@ public:
         prototypes[CharacterType::Fire]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
             textureManager->loadTexture("images/chars/enemy4_horizontal_sprites.png"),
             Alignment::BottomUpCentered,
-            8,
-            34
+            6,
+            28
         ));
         prototypes[CharacterType::Fire]->addRenderComponent(defaultHealthBarRenderer->clone());
         prototypes[CharacterType::Fire]->setCollisionComponent(std::make_unique<BoxCollider>(
