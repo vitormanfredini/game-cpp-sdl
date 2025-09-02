@@ -185,7 +185,7 @@ public:
     }
 
     void onAdvanceLevel(int level){
-        std::cout << "mainChar is now level " << level << std::endl;
+        // std::cout << "mainChar is now level " << level << std::endl;
         upgradeMenu = std::move(menuFactory->createUpgradeMenu(mainChar, upgradeFactory));
         stateManager->setGamePlayState(GameplayState::UpgradeMenu);
         input->reset();

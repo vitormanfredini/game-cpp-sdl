@@ -3,7 +3,6 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- make enemies face the Character they are following (use the moveTowards method from Character to infer what side they are facing, so it doesnt get weird for zigzag movers, angled movers, etc). Probably store this information inside Character and refactor CharacterSpriteAnimationRenderer to use the same variable.
 - make sounds (except music) specify what updates they should play on, so they don't play in weird timings (which will probably demand a way to mitigate the drift between the game engine clock and the audio clock)
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Animations: the sprites do the up and down animation but that should probably be done with a MoverComponent

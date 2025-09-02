@@ -15,6 +15,9 @@ private:
     int frameWidth;
     int frameHeight;
 
+    float lastX = 0.0f;
+    float lastY = 0.0f;
+
     FrameStepper walkingFrameStepper { 4, 20 };
     FrameStepper idleFrameStepper { 2, 50 };
 
@@ -22,8 +25,6 @@ private:
         Walking,
         Idle
     };
-
-    bool facingRight = true;
 
     MovementState movementState = MovementState::Idle;
 
@@ -50,27 +51,25 @@ public:
             return;
         };
 
-        MovementDirection direction = character->getCurrentDirections();
-        float charAbsVelocity = direction.abs();
+        float absDeltaX = std::abs(lastX - character->getX());
+        float absDeltaY = std::abs(lastY - character->getY());
+        lastX = character->getX();
+        lastY = character->getY();
 
-        if(std::abs(direction.horizontal) > 0.00001f){
-            facingRight = direction.horizontal > 0.0f;
-        }
+        bool thereIsMovement = absDeltaX > 0.001 || absDeltaY > 0.001;
 
-        if(charAbsVelocity > 0.1 && movementState == MovementState::Idle){
+        if(thereIsMovement && movementState == MovementState::Idle){
             movementState = MovementState::Walking;
             walkingFrameStepper.reset();
-        }
-        if(charAbsVelocity < 0.01 && movementState == MovementState::Walking){
+        }else if(!thereIsMovement && movementState == MovementState::Walking){
             movementState = MovementState::Idle;
             idleFrameStepper.reset();
         }
 
-        if(movementState == MovementState::Idle){
-            idleFrameStepper.update();
-        }
         if(movementState == MovementState::Walking){
             walkingFrameStepper.update();
+        }else if(movementState == MovementState::Idle){
+            idleFrameStepper.update();
         }
 
     }
@@ -92,14 +91,10 @@ public:
         float width = gameObject.width;
         float height = gameObject.height;
 
-        x = x + props.leftOffset;
-        y = y + props.topOffset;
+        auto [offsetX, offsetY] = AlignmentUtils::computeOffsets(alignment, width, height);
+        x = x + props.leftOffset - props.cameraPosX + offsetX;
+        y = y + props.topOffset - props.cameraPosY + offsetY;
 
-        if(alignment != Alignment::UI){
-            auto [offsetX, offsetY] = AlignmentUtils::computeOffsets(alignment, width, height);
-            x = x - props.cameraPosX + offsetX;
-            y = y - props.cameraPosY + offsetY;
-        }
 
         if(movementState == MovementState::Idle){
             idleFrameStepper.update();
@@ -127,8 +122,6 @@ public:
             static_cast<int>(std::round(height * props.screenScale)),
         };
 
-        // SDL_RenderCopy(props.sdl_renderer, texture, &srcRect, &dstRect);
-
         SDL_RenderCopyEx(
             props.sdl_renderer,
             texture,
@@ -136,7 +129,7 @@ public:
             &dstRect,
             0.0,
             nullptr,
-            facingRight ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL
+            character->isFacingRight() ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL
         );
     }
 

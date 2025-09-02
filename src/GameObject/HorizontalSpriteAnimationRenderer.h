@@ -44,6 +44,13 @@ public:
             return;
         }
 
+        bool facingRight = true;
+
+        Character* character = dynamic_cast<Character*>(&gameObject);
+        if (character){
+            facingRight = character->isFacingRight();
+        }
+
         float x = gameObject.x;
         float y = gameObject.y;
         float width = gameObject.width;
@@ -72,7 +79,15 @@ public:
             static_cast<int>(std::round(height * props.screenScale)),
         };
 
-        SDL_RenderCopy(props.sdl_renderer, texture, &srcRect, &dstRect);
+        SDL_RenderCopyEx(
+            props.sdl_renderer,
+            texture,
+            &srcRect,
+            &dstRect,
+            0.0,
+            nullptr,
+            facingRight ? SDL_FLIP_NONE : SDL_FLIP_HORIZONTAL
+        );
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
