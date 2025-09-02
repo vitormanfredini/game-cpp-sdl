@@ -21,24 +21,6 @@ class UiHealthBarRenderer;
 
 class Character: public GameObject {
 
-private:
-    float collisionAttack = 0.001;
-    float weight = 1.0f;
-
-    std::unordered_map<CharacterStat, std::unique_ptr<StatComponent>> stats;
-    float health = 1.0f;
-
-    int regenerateHealthUpdateCount = 0;
-
-    std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
-    std::unique_ptr<MovementComponent> movementComponent;
-
-    std::unique_ptr<LevelManager> levelManager;
-
-    int collisionSoundId = -1;
-
-    bool facingRight = true;
-
 public:
 
     Character(){
@@ -182,20 +164,12 @@ public:
         }
     }
 
-    bool isFacingRight(){
-        return facingRight;
-    }
-
-    void move(MovementDirection normalizedDirections){
-        y += normalizedDirections.vertical * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
-        x += normalizedDirections.horizontal * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
-
-        // only change facingRight if Character is mainChar (doesn't have a movementComponent)
-        if (!movementComponent){
-            if(std::abs(normalizedDirections.horizontal) > 0.001){
-                facingRight = normalizedDirections.horizontal > 0;
-            }
+    void moveByInput(MovementDirection normalizedDirections){
+        if(std::abs(normalizedDirections.horizontal) > 0.001){
+            facingRight = normalizedDirections.horizontal > 0;
         }
+
+        move(normalizedDirections);
     }
 
     MovementDirection getMovementDirectionTowards(Character* other){
@@ -210,6 +184,10 @@ public:
             deltaX / maxAbsDelta,
             deltaY / maxAbsDelta,
         };
+    }
+
+    bool isFacingRight(){
+        return facingRight;
     }
 
     void takeDamageFrom(Projectile* projectile){
@@ -301,6 +279,29 @@ public:
         }
 
         return copy;
+    }
+
+private:
+    float collisionAttack = 0.001;
+    float weight = 1.0f;
+
+    std::unordered_map<CharacterStat, std::unique_ptr<StatComponent>> stats;
+    float health = 1.0f;
+
+    int regenerateHealthUpdateCount = 0;
+
+    std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
+    std::unique_ptr<MovementComponent> movementComponent;
+
+    std::unique_ptr<LevelManager> levelManager;
+
+    int collisionSoundId = -1;
+
+    bool facingRight = true;
+
+    void move(MovementDirection normalizedDirections){
+        y += normalizedDirections.vertical * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
+        x += normalizedDirections.horizontal * stats[CharacterStat::BaseSpeed]->getValue() * 0.01;
     }
 
 };

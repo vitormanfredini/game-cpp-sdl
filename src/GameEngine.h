@@ -305,7 +305,7 @@ private:
         input->update();
 
         mainChar->update();
-        mainChar->move(input->getInputDirections().normalized());
+        mainChar->moveByInput(input->getInputDirections().normalized());
 
         for(std::unique_ptr<Item>& item : items){
             item->update();
