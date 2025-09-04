@@ -35,6 +35,10 @@ public:
         return paused;
     }
 
+    bool isInsideStage(){
+        return mainState == MainState::Gameplay;
+    }
+
     bool shouldUpdateGameWorld(){
         if(mainState != MainState::Gameplay){
             return false;

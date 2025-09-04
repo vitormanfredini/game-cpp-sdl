@@ -118,14 +118,16 @@ public:
             }
             if(stateManager->shouldUpdateGameWorld()){
                 doGameWorldUpdate();
+                stageUpdatesCountUnpaused += 1;
+            }
+            if(stateManager->isInsideStage()){
+                stageUpdatesCountTotal += 1;
             }
         }
 
         if(mainChar->isDead()){
             stateManager->triggerQuit();
         }
-
-        globalUpdatesCount++;
 
     }
 
@@ -294,8 +296,8 @@ private:
 
     float virtualMouseX, virtualMouseY;
 
-    int gameWorldUpdatesCount = 0;
-    int globalUpdatesCount = 0;
+    int stageUpdatesCountTotal = 0;
+    int stageUpdatesCountUnpaused = 0;
 
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
@@ -321,7 +323,7 @@ private:
 
         camera->pointTo(mainChar);
 
-        std::vector<SpawnScheduleKeyFrame> keyFrames = spawnSchedule->popKeyFramesAt(gameWorldUpdatesCount);
+        std::vector<SpawnScheduleKeyFrame> keyFrames = spawnSchedule->popKeyFramesAt(stageUpdatesCountUnpaused);
         for(SpawnScheduleKeyFrame keyFrame : keyFrames){
             for(int c=0;c<keyFrame.enemies;c++){
                 std::unique_ptr<Character> newEnemy = characterFactory.create(keyFrame.characterType);
@@ -337,7 +339,7 @@ private:
         );
 
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
-            audioEngine->playSoundOnNextUpdate(projectile->getSound());
+            scheduleSoundToNextUpdate(projectile->getSound());
             projectiles.push_back(std::move(projectile));
         }
 
@@ -358,7 +360,7 @@ private:
             if(mainChar->checkCollision(*enemies[e])){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
-                audioEngine->playSoundOnNextUpdate(mainChar->getCollisionSound());
+                scheduleSoundToNextUpdate(mainChar->getCollisionSound());
             }
 
             for(size_t p=0; p<projectiles.size(); p++){
@@ -409,7 +411,10 @@ private:
             enemies.erase(enemies.begin() + index);
         }
 
-        gameWorldUpdatesCount += 1;
+    }
+
+    void scheduleSoundToNextUpdate(int id){
+        audioEngine->scheduleSoundToUpdate(id, stageUpdatesCountTotal);
     }
 
 };

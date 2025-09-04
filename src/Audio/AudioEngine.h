@@ -38,6 +38,13 @@ public:
         }
     };
 
+    struct SoundScheduledToUpdate {
+        int id;
+        int update;
+
+        SoundScheduledToUpdate(int id, int update): id(id), update(update) {}
+    };
+
     AudioEngine(){
         strongTick = loadSound("audio/click_strong.wav");
     }
@@ -106,20 +113,27 @@ public:
             auxBuffer[i] = 0;
         }
 
-        std::vector<int> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsOffsets(length);
-        for(int offset : musicBeatsOffsets){
+        std::vector<BeatManager::BeatUpdateAndOffset> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsUpdatesAndOffsets(length);
+        for(BeatManager::BeatUpdateAndOffset beatOffset : musicBeatsOffsets){
             for(int soundId : stageSong->getLevelLoopSounds()){
-                playSound(soundId, offset);
+                playSound(soundId, beatOffset.offset);
             }
         }
 
-        std::vector<int> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsOffsets(length);
-        for(int offset : updateBeatsOffsets){
-            while (!soundsNextUpdate.empty()) {
-                int soundId = soundsNextUpdate.back();
-                soundsNextUpdate.pop_back();
-
-                playSound(soundId, offset);
+        int lastBeatProcessed = -1;
+        std::vector<BeatManager::BeatUpdateAndOffset> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsUpdatesAndOffsets(length);
+        for(BeatManager::BeatUpdateAndOffset beatOffset : updateBeatsOffsets){
+            auto it = soundsScheduledForUpdates.begin();
+            while (it != soundsScheduledForUpdates.end()) {
+                if(it->update == beatOffset.beat){
+                    playSound(it->id, beatOffset.offset);
+                    it = soundsScheduledForUpdates.erase(it);
+                } else if(beatOffset.beat > it->update) {
+                    std::cerr << "beat is " << beatOffset.beat << ". scheduled sound is for beat: " << it->update << ". removing from schedule." << std::endl;
+                    it = soundsScheduledForUpdates.erase(it);
+                }else{
+                    ++it;
+                }
             }
         }
 
@@ -153,8 +167,8 @@ public:
         removeFinishedSounds();
     }
 
-    void playSoundOnNextUpdate(int id){
-        soundsNextUpdate.push_back(id);
+    void scheduleSoundToUpdate(int id, int update){
+        soundsScheduledForUpdates.emplace_back(id, update);
     }
 
 private:
@@ -162,9 +176,9 @@ private:
     int auxBuffer[BUFFER_SIZE];
 
     BeatManager beatManagerMusic { 25442 * 4 };
-    BeatManager beatManagerUpdates { 11025 };
+    BeatManager beatManagerUpdates { 735 };
 
-    std::vector<int> soundsNextUpdate = {};
+    std::vector<SoundScheduledToUpdate> soundsScheduledForUpdates = {};
 
     std::vector<SoundPlaying> soundsPlaying;
 
@@ -228,7 +242,7 @@ private:
 
         soundsCache.clear();
         soundsPlaying.clear();
-        soundsNextUpdate.clear();
+        soundsScheduledForUpdates.clear();
         
         SDL_UnlockAudio();
     }

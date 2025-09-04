@@ -3,7 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- make sounds (except music) specify what updates they should play on, so they don't play in weird timings (which will probably demand a way to mitigate the drift between the game engine clock and the audio clock)
+- Mitigate the drift between the game engine clock and the audio clock. Also make them sync as soon as the stage begins.
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Animations: the sprites do the up and down animation but that should probably be done with a MoverComponent
 - Make a way to specify volume for each sound in the mix.
