@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
 - Mitigate the drift between the game engine clock and the audio clock. Also make them sync as soon as the stage begins.
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Animations: the sprites do the up and down animation but that should probably be done with a MoverComponent
