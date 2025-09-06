@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- Make upgrade manu be controlled wby the keyboard also
 - AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Animations: the sprites do the up and down animation but that should probably be done with a MoverComponent

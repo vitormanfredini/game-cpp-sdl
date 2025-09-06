@@ -40,7 +40,7 @@ public:
         prototypes[CharacterType::Regular]->setInitialBaseSpeed(0.4f);
         prototypes[CharacterType::Regular]->setCollisionAttack(0.005);
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
-        prototypes[CharacterType::Regular]->setInitialHealth(1.0f);
+        prototypes[CharacterType::Regular]->setInitialHealth(3.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<ShadowRenderer>(
             textureManager->loadTexture("images/chars/shadow.png"),
@@ -58,7 +58,7 @@ public:
             heightEnemy1 / 3,
             Alignment::Centered
         ));
-        prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45));
+        prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45, 0.02));
 
         float heightEnemy2 = 0.07;
         float widthRatioEnemy2 = 1.03;
@@ -122,7 +122,7 @@ public:
         prototypes[CharacterType::Fire]->setCollisionAttack(0.015);
         prototypes[CharacterType::Fire]->setInitialMaxHealth(11.0f);
         prototypes[CharacterType::Fire]->setInitialHealth(11.0f);
-        prototypes[CharacterType::Fire]->setWeight(1.5f);
+        prototypes[CharacterType::Fire]->setWeight(0.8f);
         prototypes[CharacterType::Fire]->addRenderComponent(std::make_unique<ShadowRenderer>(
             textureManager->loadTexture("images/chars/shadow.png"),
             0.025
@@ -140,6 +140,33 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Fire]->setMovementComponent(std::make_unique<StraightMover>());
+
+        float heightEnemy5 = 0.11;
+        float widthRatioEnemy5 = 0.4;
+        prototypes[CharacterType::Furnace] = std::make_unique<Character>();
+        prototypes[CharacterType::Furnace]->setSize(heightEnemy5*widthRatioEnemy5,heightEnemy5);
+        prototypes[CharacterType::Furnace]->setInitialBaseSpeed(0.6f);
+        prototypes[CharacterType::Furnace]->setCollisionAttack(0.0035);
+        prototypes[CharacterType::Furnace]->setInitialMaxHealth(1.0f);
+        prototypes[CharacterType::Furnace]->setInitialHealth(2.0f);
+        prototypes[CharacterType::Furnace]->setWeight(0.5f);
+        prototypes[CharacterType::Furnace]->addRenderComponent(std::make_unique<ShadowRenderer>(
+            textureManager->loadTexture("images/chars/shadow.png"),
+            0.025
+        ));
+        prototypes[CharacterType::Furnace]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            textureManager->loadTexture("images/chars/enemy5_horizontal_sprites.png"),
+            Alignment::BottomUpCentered,
+            6,
+            24
+        ));
+        prototypes[CharacterType::Furnace]->addRenderComponent(defaultHealthBarRenderer->clone());
+        prototypes[CharacterType::Furnace]->setCollisionComponent(std::make_unique<BoxCollider>(
+            heightEnemy5*widthRatioEnemy5,
+            heightEnemy5 / 3,
+            Alignment::Centered
+        ));
+        prototypes[CharacterType::Furnace]->setMovementComponent(std::make_unique<ZigZagMover>(60, 0.01));
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {

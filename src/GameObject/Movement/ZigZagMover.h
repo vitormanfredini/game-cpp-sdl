@@ -10,20 +10,20 @@ private:
     double maxAngle;
     double maxAngleInRadians;
 
+    double sinCycleStep;
     double sinCycle = 0.0;
-    double sinCycleStep = 0.02;
     double sinCurrentValue = 0.0;
 
 public:
 
-    ZigZagMover(double maxAngle): maxAngle(maxAngle), maxAngleInRadians(maxAngle * (M_PI / 180)) { };
+    ZigZagMover(double maxAngle, double cycleStep): maxAngle(maxAngle), maxAngleInRadians(maxAngle * (M_PI / 180)), sinCycleStep(cycleStep) { };
 
     MovementDirection getMovementDirection(GameObject& self, GameObject& target) override {
         return getNormalizedDirectionTowardsTarget(self, target).rotated(maxAngleInRadians * sinCurrentValue);
     }
 
     std::unique_ptr<MovementComponent> clone() const override {
-        return std::make_unique<ZigZagMover>(maxAngle);
+        return std::make_unique<ZigZagMover>(maxAngle, sinCycleStep);
     }
 
     void update() override {
