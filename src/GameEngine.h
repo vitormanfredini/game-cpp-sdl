@@ -121,6 +121,7 @@ public:
                 stageUpdatesCountUnpaused += 1;
             }
             if(stateManager->isInsideStage()){
+                audioEngine->onUpdateFinished(stageUpdatesCountTotal);
                 stageUpdatesCountTotal += 1;
             }
         }

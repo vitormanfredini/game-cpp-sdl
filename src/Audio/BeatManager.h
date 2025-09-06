@@ -19,7 +19,7 @@ public:
         BeatUpdateAndOffset(int beat, int offset): beat(beat), offset(offset) {}
     };
 
-    std::vector<BeatUpdateAndOffset> updateAndGetBeatsUpdatesAndOffsets(int samplesToAdd) {
+    std::vector<BeatUpdateAndOffset> updateAndGetBeatsUpdatesAndOffsets(int samplesToAdd, int correctionDelayInSamples = 0) {
 
         std::vector<BeatUpdateAndOffset> beatsOffsets = {};
 
@@ -28,17 +28,23 @@ public:
         }
 
         int offset = samplesToAdd - beatSamplesCount;
+
         while(offset < samplesToAdd && offset >= 0){
-            beatsOffsets.emplace_back(beats, offset);
+            beatsOffsets.emplace_back(nextBeat, offset);
             beatSamplesCount -= samplesPerBeat;
             offset += samplesPerBeat;
-            beats += 1;
+            nextBeat += 1;
         }
 
-        beatSamplesCount += samplesToAdd;
+        beatSamplesCount += samplesToAdd - correctionDelayInSamples;
 
         return beatsOffsets;
 
+    }
+
+    int samplesUntilBeat(int targetBeat){
+        int deltaBeats = targetBeat - nextBeat;
+        return samplesPerBeat - beatSamplesCount + (deltaBeats * samplesPerBeat);
     }
 
     void play(){
@@ -46,7 +52,7 @@ public:
     }
 
     void reset(){
-        beats = 0;
+        nextBeat = 0;
         beatSamplesCount = 0;
         playing = false;
     }
@@ -54,8 +60,7 @@ public:
 private:
     int samplesPerBeat;
     int beatSamplesCount;
-    int beats = 0;
+    int nextBeat = 0;
     bool playing;
-
 
 };

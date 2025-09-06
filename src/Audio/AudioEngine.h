@@ -9,7 +9,7 @@
 #include "BeatManager.h"
 #include "StageSong.h"
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 512
 
 class AudioEngine {
 public:
@@ -47,6 +47,9 @@ public:
 
     AudioEngine(){
         strongTick = loadSound("audio/click_strong.wav");
+        bufferTimeMs = (static_cast<double>(BUFFER_SIZE) / 44100.0) * 1000.0;
+        onUpdateFinished(0);
+        maxCorrection = BUFFER_SIZE / 2;
     }
 
     ~AudioEngine(){
@@ -91,7 +94,14 @@ public:
         stageSong->changeLevel(level);
     }
 
+    void onUpdateFinished(int update){
+        lastUpdateFinished = update;
+        timeLastUpdateFinished = SDL_GetPerformanceCounter();
+    }
+
     void startBeat(){
+        onUpdateFinished(0);
+
         beatManagerMusic.reset();
         beatManagerMusic.play();
 
@@ -109,19 +119,31 @@ public:
             return;
         }
 
-        for (int i = 0; i < length; ++i) {
-            auxBuffer[i] = 0;
+        double timeMsSinceLastUpdateFinished = (double) ((SDL_GetPerformanceCounter() - timeLastUpdateFinished)*1000.0 / (double) SDL_GetPerformanceFrequency());
+        int samplesUntilNextBeat = beatManagerUpdates.samplesUntilBeat(lastUpdateFinished);
+
+        double timeMsUntilNextBeat = (static_cast<double>(samplesUntilNextBeat) / 44100.0) * 1000.0;
+        double timeMsLastUpdateToNextBeat = timeMsSinceLastUpdateFinished + timeMsUntilNextBeat;
+
+        double minimumSafeTimeMsLastUpdateToNextBeat = 20.0 + bufferTimeMs;
+        double maximumAllowedTimeMsLastUpdateToNextBeat = 20.0 + bufferTimeMs + 20.0;
+
+        int smallCorrectionInSamples = 0;
+        if(timeMsLastUpdateToNextBeat < minimumSafeTimeMsLastUpdateToNextBeat){
+            double fullCorrectionInMs = minimumSafeTimeMsLastUpdateToNextBeat - timeMsLastUpdateToNextBeat;
+            smallCorrectionInSamples = static_cast<int>((fullCorrectionInMs * 0.05 * 44100.0) / 1000.0);
+        }else if(timeMsLastUpdateToNextBeat > maximumAllowedTimeMsLastUpdateToNextBeat){
+            double fullCorrectionInMs = maximumAllowedTimeMsLastUpdateToNextBeat - timeMsLastUpdateToNextBeat;
+            smallCorrectionInSamples = static_cast<int>((fullCorrectionInMs * 0.05 * 44100.0) / 1000.0);
         }
 
-        std::vector<BeatManager::BeatUpdateAndOffset> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsUpdatesAndOffsets(length);
-        for(BeatManager::BeatUpdateAndOffset beatOffset : musicBeatsOffsets){
-            for(int soundId : stageSong->getLevelLoopSounds()){
-                playSound(soundId, beatOffset.offset);
-            }
+        if(smallCorrectionInSamples > maxCorrection){
+            smallCorrectionInSamples = maxCorrection;
+        }else if(smallCorrectionInSamples < -maxCorrection){
+            smallCorrectionInSamples = -maxCorrection;
         }
 
-        int lastBeatProcessed = -1;
-        std::vector<BeatManager::BeatUpdateAndOffset> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsUpdatesAndOffsets(length);
+        std::vector<BeatManager::BeatUpdateAndOffset> updateBeatsOffsets = beatManagerUpdates.updateAndGetBeatsUpdatesAndOffsets(length, smallCorrectionInSamples);
         for(BeatManager::BeatUpdateAndOffset beatOffset : updateBeatsOffsets){
             auto it = soundsScheduledForUpdates.begin();
             while (it != soundsScheduledForUpdates.end()) {
@@ -135,6 +157,17 @@ public:
                     ++it;
                 }
             }
+        }
+
+        std::vector<BeatManager::BeatUpdateAndOffset> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsUpdatesAndOffsets(length);
+        for(BeatManager::BeatUpdateAndOffset beatOffset : musicBeatsOffsets){
+            for(int soundId : stageSong->getLevelLoopSounds()){
+                playSound(soundId, beatOffset.offset);
+            }
+        }
+
+        for (int i = 0; i < length; ++i) {
+            auxBuffer[i] = 0;
         }
 
         for (auto& soundPlaying : soundsPlaying) {
@@ -174,6 +207,7 @@ public:
 private:
 
     int auxBuffer[BUFFER_SIZE];
+    double bufferTimeMs;
 
     BeatManager beatManagerMusic { 25442 * 4 };
     BeatManager beatManagerUpdates { 735 };
@@ -185,6 +219,11 @@ private:
     StageSong* stageSong;
 
     int strongTick = 0;
+
+    int lastUpdateFinished;
+    Uint64 timeLastUpdateFinished;
+
+    int maxCorrection;
 
     void playSound(int id, int offset = 0, int position = 0){
         if(id <= 0){
@@ -243,6 +282,7 @@ private:
         soundsCache.clear();
         soundsPlaying.clear();
         soundsScheduledForUpdates.clear();
+        lastUpdateFinished = 0;
         
         SDL_UnlockAudio();
     }
