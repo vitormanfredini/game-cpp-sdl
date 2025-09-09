@@ -3,8 +3,9 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
-- Make upgrade manu be controlled wby the keyboard also
+- Make upgrade menu be controlled by the keyboard also
 - Make a Z dimension for how far the character is away from the ground (maybe Z is not a good name)
+- Add controller support
 - AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Make a way to specify volume for each sound in the mix.

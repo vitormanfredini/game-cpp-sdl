@@ -20,12 +20,12 @@ public:
         middleY = imagePixels[0].size() / 2;
 
         renderComponentsPrototypes[MapTileType::Ground] = std::make_unique<SpriteRenderer>(
-            textureManager->loadTexture("images/grass.png"),
+            textureManager->loadTexture("images/stage1/floor_gray.png"),
             Alignment::BottomLeft
         );
 
         renderComponentsPrototypes[MapTileType::Ground2] = std::make_unique<SpriteRenderer>(
-            textureManager->loadTexture("images/grass2.png"),
+            textureManager->loadTexture("images/stage1/floor_gray_dark.png"),
             Alignment::BottomLeft
         );
 
