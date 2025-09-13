@@ -23,7 +23,7 @@
 #include "GameObject/BoxCollider.h"
 #include "GameObject/UiHealthBarRenderer.h"
 #include "GameObject/UiGemValueBarRenderer.h"
-#include "Maps/MapFromImage.h"
+#include "Maps/MapFromImageIsometric.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
 #include "Audio/AudioEngine.h"
@@ -135,13 +135,27 @@ int main() {
     weaponSword->setFireSound(audioEngine.loadSound("audio/fu.wav"));
     mainChar.addWeapon(std::move(weaponSword));
 
-    
-
     engine.setMainChar(&mainChar);
 
-    MapFromImage mapFromImage {&textureManager, "maps/01.png", 12};
+    float tileWidth = 0.2f;
+    float tileHeight = tileWidth * 0.44f;
+    float tileHorizontalOffset = tileWidth * 0.64f;
+    float tileVerticalOffset = tileHeight * 0.8181818181f;
+    float tileAdditionalHorizontalOffsetPerRow = tileWidth * 0.36f;
+    float tileAdditionalVerticalOffsetPerRow = tileHeight * 0.18181818f * -1.0f;
 
-    engine.setMapComponent(&mapFromImage);
+    MapFromImageIsometric mapFromImageIsometric {
+        &textureManager,
+        "maps/02.png",
+        tileWidth,
+        tileHeight,
+        tileHorizontalOffset,
+        tileVerticalOffset,
+        tileAdditionalHorizontalOffsetPerRow,
+        tileAdditionalVerticalOffsetPerRow
+    };
+
+    engine.setMapComponent(&mapFromImageIsometric);
 
     SpawnScheduleFactory spawnScheduleFactory;
     engine.setSpawnSchedule(spawnScheduleFactory.makeStage1());

@@ -3,6 +3,7 @@
 This is a project I'm doing for studying C++ and SDL.
 
 TODO:
+- on MapFromImageIsometric, keep track of tiles in specific "blocks" and just return the ones that make sense (this way we can have enormous maps and not slow down the game).
 - Make upgrade menu be controlled by the keyboard also
 - Make a Z dimension for how far the character is away from the ground (maybe Z is not a good name)
 - Add controller support

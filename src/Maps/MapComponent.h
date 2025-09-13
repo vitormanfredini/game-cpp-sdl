@@ -14,31 +14,8 @@ protected:
     }
 
 public:
-    void update(float cameraPosX, float cameraPosY) {
+    virtual void update(float cameraPosX, float cameraPosY) = 0;
 
-        int currentBlockX = std::floor(cameraPosX);
-        int currentBlockY = std::floor(cameraPosY);
-        
-        for(int x=currentBlockX-1; x < currentBlockX+2; x++){
-            for(int y=currentBlockY-1; y < currentBlockY+2; y++){
-                bool blockAlreadyHasGround = false;
-                for(int t=0;t<groundTiles.size();t=t+getNumTilesCoverOneBlock()){
-                    if(std::round(groundTiles[t]->getX()) == x && std::round(groundTiles[t]->getY()) == y){
-                        blockAlreadyHasGround = true;
-                        break;
-                    }
-                }
-                if(blockAlreadyHasGround == false){
-                    addGroundTiles(x, y);
-                }
-            }
-        }
-    }
-
-    std::vector<std::unique_ptr<GameObject>>& getTiles(){
-        return groundTiles;
-    }
-
-    virtual void addGroundTiles(int blockX, int blockY) = 0;
+    virtual std::vector<std::unique_ptr<GameObject>>& getTiles() = 0;
 
 };

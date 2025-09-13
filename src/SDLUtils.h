@@ -60,9 +60,9 @@ public:
         Uint8* pixels = (Uint8*)surface->pixels;
         int bpp = surface->format->BytesPerPixel;
 
-        for (int x = 0; x < surface->w; x++) {
+        for (int y = 0; y < surface->h; y++) {
             pixelData.push_back({});
-            for (int y = 0; y < surface->h; y++) {
+            for (int x = 0; x < surface->w; x++) {
                 Uint8 r, g, b, a;
                 Uint32 pixel = 0;
 
@@ -89,7 +89,7 @@ public:
 
                 SDL_GetRGBA(pixel, surface->format, &r, &g, &b, &a);
 
-                pixelData[x].push_back({(int)r, (int)g, (int)b, (int)a});
+                pixelData[y].push_back({(int)r, (int)g, (int)b, (int)a});
 
                 // std::cout << "Pixel at (" << x << ", " << y << ") - "
                 //         << "R: " << (int)r << ", G: " << (int)g
