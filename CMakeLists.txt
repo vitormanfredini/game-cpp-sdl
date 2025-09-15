@@ -92,10 +92,8 @@ add_executable(SDL2Game ${SOURCE_FILES} ${EMBEDDED_HEADERS})
 add_dependencies(SDL2Game embed_resources)
 target_link_libraries(SDL2Game
     ${SDL2_LIBRARIES}
-    ${SDL2_MIXER_LIBRARIES}
     ${SDL2_IMAGE_LIBRARY}
     PkgConfig::SDL2_TTF
-    -lSDL2_mixer
 )
 target_include_directories(SDL2Game
     PRIVATE ${CMAKE_SOURCE_DIR}/src

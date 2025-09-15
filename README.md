@@ -1,6 +1,6 @@
 # SDL Game
 
-This is a project I'm doing for studying C++ and SDL.
+This is a game!!!!!!!1
 
 TODO:
 - on MapFromImageIsometric, keep track of tiles in specific "blocks" and just return the ones that make sense (this way we can have enormous maps and not slow down the game).
