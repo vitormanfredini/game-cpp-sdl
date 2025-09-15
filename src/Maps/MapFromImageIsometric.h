@@ -77,6 +77,8 @@ private:
 
     std::vector<std::vector<RGBAPixel>> imagePixels;
     float tileWidth, tileHeight, tileHorizontalOffset, tileVerticalOffset, tileAdditionalHorizontalOffsetPerRow, tileAdditionalVerticalOffsetPerColumn;
+    
+    std::vector<std::unique_ptr<GameObject>> groundTiles;
 
     std::unordered_map<MapTileType, std::unique_ptr<RenderComponent>> renderComponentsPrototypes;
 
