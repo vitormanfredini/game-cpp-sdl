@@ -146,7 +146,7 @@ int main() {
 
     MapFromImageIsometric mapFromImageIsometric {
         &textureManager,
-        "maps/02.png",
+        "maps/01.png",
         tileWidth,
         tileHeight,
         tileHorizontalOffset,

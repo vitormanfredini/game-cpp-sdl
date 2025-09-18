@@ -141,8 +141,8 @@ public:
         }
 
         if(stateManager->shouldRenderGameWorld()){
-            for(std::unique_ptr<GameObject>& renderable : mapComponent->getTiles()){
-                renderer->addRenderable(renderable.get());
+            for(GameObject* renderable : mapComponent->getTiles()){
+                renderer->addRenderable(renderable);
             }
 
             for(std::unique_ptr<Character>& enemy : enemies){

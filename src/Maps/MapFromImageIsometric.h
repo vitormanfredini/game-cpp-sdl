@@ -34,7 +34,27 @@ public:
     }
 
     void update(float cameraPosX, float cameraPosY){
+        int truncatedX = static_cast<int>(cameraPosX);
+        int truncatedY = static_cast<int>(cameraPosY);
+        
+        if(truncatedX == tilesCacheX && truncatedY == tilesCacheY){
+            return;
+        }
 
+        for(int x=truncatedX-1; x <= truncatedX + 1; x++){
+            for(int y=truncatedY-1; y <= truncatedY + 1; y++){
+                for (TileBlock& elem : tileBlocks) {
+                    if(elem.x == truncatedX && elem.y == truncatedY){
+                        for(std::unique_ptr<GameObject>& tile : elem.tiles){
+                            tilesCache.push_back(tile.get());
+                        }
+                    }
+                }
+            }
+        }
+
+        tilesCacheX = truncatedX;
+        tilesCacheY = truncatedY;
     }
 
     void addAllTiles(){
@@ -63,22 +83,51 @@ public:
                     tileWidth,
                     tileHeight
                 );
-                groundTiles.push_back(std::move(tile));
+                moveTileToBlock(std::move(tile),posX,posY);
             }
         }
 
     }
 
-    std::vector<std::unique_ptr<GameObject>>& getTiles(){
-        return groundTiles;
+    std::vector<GameObject*>& getTiles(){
+        return tilesCache;
     }
 
 private:
 
+    struct TileBlock {
+        int x;
+        int y;
+        std::vector<std::unique_ptr<GameObject>> tiles;
+    };
+    std::vector<TileBlock> tileBlocks;
+    
+    std::vector<GameObject*> tilesCache;
+    int tilesCacheX = -9999;
+    int tilesCacheY = 9999;
+
+    void moveTileToBlock(std::unique_ptr<GameObject> tile, float x, float y){
+        int truncatedX = static_cast<int>(x);
+        int truncatedY = static_cast<int>(y);
+
+        for (TileBlock& elem : tileBlocks) {
+            if(elem.x == truncatedX && elem.y == truncatedY){
+                elem.tiles.push_back(std::move(tile));
+                return;
+            }
+        }
+
+        tileBlocks.push_back({
+            truncatedX,
+            truncatedY,
+            std::vector<std::unique_ptr<GameObject>> {}
+        });
+        tileBlocks.back().tiles.push_back(std::move(tile));
+
+    }
+
     std::vector<std::vector<RGBAPixel>> imagePixels;
     float tileWidth, tileHeight, tileHorizontalOffset, tileVerticalOffset, tileAdditionalHorizontalOffsetPerRow, tileAdditionalVerticalOffsetPerColumn;
-    
-    std::vector<std::unique_ptr<GameObject>> groundTiles;
 
     std::unordered_map<MapTileType, std::unique_ptr<RenderComponent>> renderComponentsPrototypes;
 
