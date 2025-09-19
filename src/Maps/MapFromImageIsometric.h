@@ -43,11 +43,11 @@ public:
 
         for(int x=truncatedX-1; x <= truncatedX + 1; x++){
             for(int y=truncatedY-1; y <= truncatedY + 1; y++){
-                for (TileBlock& elem : tileBlocks) {
-                    if(elem.x == truncatedX && elem.y == truncatedY){
-                        for(std::unique_ptr<GameObject>& tile : elem.tiles){
-                            tilesCache.push_back(tile.get());
-                        }
+                std::string key = createKey(x,y);
+                auto it = tileBlockMap.find(key);
+                if (it != tileBlockMap.end()) {
+                    for(std::unique_ptr<GameObject>& tile : it->second){
+                        tilesCache.push_back(tile.get());
                     }
                 }
             }
@@ -83,7 +83,8 @@ public:
                     tileWidth,
                     tileHeight
                 );
-                moveTileToBlock(std::move(tile),posX,posY);
+                std::string key = createKey(static_cast<int>(posX),static_cast<int>(posY));
+                tileBlockMap[key].push_back(std::move(tile));
             }
         }
 
@@ -95,36 +96,15 @@ public:
 
 private:
 
-    struct TileBlock {
-        int x;
-        int y;
-        std::vector<std::unique_ptr<GameObject>> tiles;
-    };
-    std::vector<TileBlock> tileBlocks;
-    
+    std::string createKey(int x, int y) {
+        return std::to_string(x) + "_" + std::to_string(y);
+    }
+
+    std::unordered_map<std::string, std::vector<std::unique_ptr<GameObject>>> tileBlockMap;
+
     std::vector<GameObject*> tilesCache;
     int tilesCacheX = -9999;
     int tilesCacheY = 9999;
-
-    void moveTileToBlock(std::unique_ptr<GameObject> tile, float x, float y){
-        int truncatedX = static_cast<int>(x);
-        int truncatedY = static_cast<int>(y);
-
-        for (TileBlock& elem : tileBlocks) {
-            if(elem.x == truncatedX && elem.y == truncatedY){
-                elem.tiles.push_back(std::move(tile));
-                return;
-            }
-        }
-
-        tileBlocks.push_back({
-            truncatedX,
-            truncatedY,
-            std::vector<std::unique_ptr<GameObject>> {}
-        });
-        tileBlocks.back().tiles.push_back(std::move(tile));
-
-    }
 
     std::vector<std::vector<RGBAPixel>> imagePixels;
     float tileWidth, tileHeight, tileHorizontalOffset, tileVerticalOffset, tileAdditionalHorizontalOffsetPerRow, tileAdditionalVerticalOffsetPerColumn;
