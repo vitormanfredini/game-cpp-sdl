@@ -8,9 +8,9 @@
 class Item: public GameObject {
 
 private:
-    float value = 1.0f;
     bool consumed = false;
     ItemId itemId;
+    float value;
     std::unique_ptr<MovementComponent> movementComponent;
 
 public:
