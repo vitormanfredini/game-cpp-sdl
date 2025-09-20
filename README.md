@@ -4,9 +4,8 @@ This is a game!!!!!!!1
 
 TODO:
 - add tiles dynamically (instead of loading all of them at once at the begining)
-- enable all warnings
 - Make upgrade menu be controlled by the keyboard also
-- Make a Z dimension for how far the character is away from the ground (maybe Z is not a good name)
+- Make a Z dimension for how far the character (GameObject) is away from the ground (maybe Z is not a good name)
 - Add controller support
 - AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
 - when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
