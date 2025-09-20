@@ -244,6 +244,7 @@ public:
 
         copy->x = x;
         copy->y = y;
+        copy->z = z;
         copy->width = width;
         copy->height = height;
         copy->health = health;

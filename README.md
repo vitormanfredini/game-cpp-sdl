@@ -3,12 +3,11 @@
 This is a game!!!!!!!1
 
 TODO:
+- edit horizontal sprites to be vertically static and make a Mover that can animate the flying up-and-down effect.
 - add tiles dynamically (instead of loading all of them at once at the begining)
 - Make upgrade menu be controlled by the keyboard also
-- Make a Z dimension for how far the character (GameObject) is away from the ground (maybe Z is not a good name)
 - Add controller support
 - AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
-- when firing a projectile, fire it from the center of the Character (instead of the base) and calculate its direction also from that position so it doesn't miss the target. 
 - Make a way to specify volume for each sound in the mix.
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");

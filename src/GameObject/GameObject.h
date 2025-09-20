@@ -14,14 +14,14 @@ protected:
 
 public:
 
-    float x, y;
+    float x, y, z;
     float width, height;
 
     GameObject()
-        : x(0), y(0), width(0), height(0) {}
+        : x(0), y(0), z(0), width(0), height(0) {}
 
-    GameObject(float x, float y, float width, float height)
-        : x(x), y(y), width(width), height(height) {}
+    GameObject(float x, float y, float z, float width, float height)
+        : x(x), y(y), z(z), width(width), height(height) {}
 
     virtual ~GameObject() = default;
 
@@ -54,6 +54,10 @@ public:
     float getY() const { return y; }
     float getWidth() const { return width; }
     float getHeight() const { return height; }
+
+    void setZ(float newZ){
+        z = newZ;
+    }
 
     double distanceFrom(GameObject* other){
         return sqrt(pow(x - other->getX(), 2) +  pow(y - other->getY(), 2));

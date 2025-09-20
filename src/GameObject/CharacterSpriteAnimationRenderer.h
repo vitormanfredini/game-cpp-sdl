@@ -88,12 +88,13 @@ public:
 
         float x = gameObject.x;
         float y = gameObject.y;
+        float z = gameObject.z;
         float width = gameObject.width;
         float height = gameObject.height;
 
         auto [offsetX, offsetY] = AlignmentUtils::computeOffsets(alignment, width, height);
         x = x + props.leftOffset - props.cameraPosX + offsetX;
-        y = y + props.topOffset - props.cameraPosY + offsetY;
+        y = y + props.topOffset - props.cameraPosY + offsetY - z;
 
 
         if(movementState == MovementState::Idle){

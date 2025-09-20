@@ -17,6 +17,7 @@ protected:
             originChar->getX(),
             originChar->getY()
         );
+        projectile->setZ(originChar->getHeight() / 2);
         projectile->setSize(0.03,0.03);
         projectile->addRenderComponent(std::make_unique<SpriteRenderer>(
             texture,

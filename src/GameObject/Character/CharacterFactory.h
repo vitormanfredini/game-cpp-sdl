@@ -42,6 +42,7 @@ public:
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(3.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
+        prototypes[CharacterType::Regular]->setZ(heightEnemy1 * 0.25);
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<ShadowRenderer>(
             textureManager->loadTexture("images/chars/shadow.png"),
             0.017
@@ -69,6 +70,7 @@ public:
         prototypes[CharacterType::Bigger]->setInitialMaxHealth(3.0f);
         prototypes[CharacterType::Bigger]->setInitialHealth(3.0f);
         prototypes[CharacterType::Bigger]->setWeight(0.85f);
+        prototypes[CharacterType::Bigger]->setZ(heightEnemy2 * 0.25);
         prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<ShadowRenderer>(
             textureManager->loadTexture("images/chars/shadow.png"),
             0.02

@@ -22,11 +22,12 @@ public:
 
         float x = gameObject.x;
         float y = gameObject.y;
+        float z = gameObject.z;
         float width = gameObject.width;
         float height = gameObject.height;
 
         x = x + props.leftOffset;
-        y = y + props.topOffset;
+        y = y + props.topOffset - z;
 
         if(alignment != Alignment::UI){
             auto [offsetX, offsetY] = AlignmentUtils::computeOffsets(alignment, width, height);

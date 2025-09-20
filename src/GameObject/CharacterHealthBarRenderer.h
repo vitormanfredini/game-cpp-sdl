@@ -24,11 +24,12 @@ CharacterHealthBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregrou
 
         float x = gameObject.x;
         float y = gameObject.y;
+        float z = gameObject.z;
         float width = 0.03;
         float height = 0.003;
 
         x = x - props.cameraPosX + props.leftOffset - (width / 2);
-        y = y - props.cameraPosY + props.topOffset - gameObject.height;
+        y = y - props.cameraPosY + props.topOffset - gameObject.height - z;
 
         SDL_Rect rect = {
             static_cast<int>(std::round(x * props.screenScale)),
