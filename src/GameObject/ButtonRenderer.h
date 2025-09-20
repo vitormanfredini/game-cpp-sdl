@@ -39,6 +39,8 @@ public:
 
         int srcTextureY = 0;
         switch (button->getCurrentState()) {
+            case ButtonState::Idle:
+                break;
             case ButtonState::Hover:
                 srcTextureY += spritePartHeight;
                 break;

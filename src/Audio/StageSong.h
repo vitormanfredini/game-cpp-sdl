@@ -13,14 +13,14 @@ public:
     }
 
     void addLoopSound(int level, int soundId){
-        if(level >= loopSounds.size()){
+        if(level >= static_cast<int>(loopSounds.size())){
             loopSounds.resize(level + 1);
         }
         loopSounds[level].push_back(soundId);
     }
 
     std::vector<int> getLevelLoopSounds(){
-        if(currentLevel >= loopSounds.size()){
+        if(currentLevel >= static_cast<int>(loopSounds.size())){
             return {};
         }
         return loopSounds[currentLevel];

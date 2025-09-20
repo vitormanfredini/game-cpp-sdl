@@ -278,11 +278,12 @@ private:
     std::unique_ptr<SpawnSchedule> spawnSchedule;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
+    StateManager* stateManager = nullptr;
     ItemFactory* itemFactory;
     AudioEngine* audioEngine;
     MenuFactory* menuFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
-    StateManager* stateManager = nullptr;
+    
     Intro intro { 3*60 };
     GameObject pause;
 

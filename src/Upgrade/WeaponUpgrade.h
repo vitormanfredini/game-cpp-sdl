@@ -4,8 +4,8 @@
 
 class WeaponUpgrade {
 private:
-    float value;
     WeaponStat type;
+    float value;
 public:
     WeaponUpgrade(WeaponStat type, float value): type(type), value(value) {
         //

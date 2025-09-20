@@ -16,12 +16,11 @@ public:
         Item
     };
 private:
+
     Type type;
     std::unique_ptr<StatUpgrade> statUpgrade;
     std::unique_ptr<WeaponUpgrade> weaponUpgrade;
     std::unique_ptr<Item> item;
-    
-
     UpgradeId id;
     int level;
     std::string description;
@@ -41,10 +40,11 @@ public:
     UpgradeComponent(UpgradeComponent&& other) noexcept
         : type(other.type),
           statUpgrade(std::move(other.statUpgrade)),
-          level(other.level),
-          description(other.description),
+          weaponUpgrade(std::move(other.weaponUpgrade)),
           item(std::move(other.item)),
-          weaponUpgrade(std::move(other.weaponUpgrade))
+          id(other.id),
+          level(other.level),
+          description(other.description)
           { }
 
     Type getType() const { return type; }

@@ -54,7 +54,7 @@ public:
             stage->addKeyframe({ framesOffset + 6700, 10 * (c+1), CharacterType::Boss });
         }
 
-        return std::move(stage);
+        return stage;
     }
 
 };

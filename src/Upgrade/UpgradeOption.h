@@ -5,8 +5,8 @@
 
 struct UpgradeOption {
     UpgradeId id;
-    std::string description;
     UpgradeComponent::Type type;
+    std::string description;
 
     UpgradeOption(UpgradeId id, UpgradeComponent::Type type, std::string description) : id(id), type(type), description(description) {}
 };

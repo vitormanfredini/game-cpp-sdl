@@ -4,8 +4,8 @@
 
 class StatUpgrade {
 private:
-    float value;
     CharacterStat type;
+    float value;
 public:
     StatUpgrade(CharacterStat type, float value): type(type), value(value) {
         //

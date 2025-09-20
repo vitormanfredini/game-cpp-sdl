@@ -6,7 +6,7 @@ private:
     float initialValue;
     float value;
 public:
-    StatComponent(float initialValue): value(initialValue), initialValue(initialValue) {}
+    StatComponent(float initialValue): initialValue(initialValue), value(initialValue) {}
     virtual float getInitialValue(){
         return initialValue;
     };

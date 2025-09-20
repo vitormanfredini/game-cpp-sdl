@@ -6,9 +6,9 @@
 class LevelManager {
 
 private:
-    int level;
     float gemValue;
     float maxGemValue;
+    int level;
 
     std::function<void(int)> onAdvanceLevelCallback;
 
@@ -18,11 +18,11 @@ private:
 
 public:
 
-    LevelManager(): gemValue(0.0f), level(0), maxGemValue(0.0f) {
+    LevelManager(): gemValue(0.0f), maxGemValue(0.0f), level(0) {
         recalculateCurrentLevelMax();
     }
 
-    LevelManager(int level, float gemValue, float maxGemValue): level(level), gemValue(gemValue), maxGemValue(maxGemValue) {
+    LevelManager(float gemValue, float maxGemValue, int level): gemValue(gemValue), maxGemValue(maxGemValue), level(level) {
         recalculateCurrentLevelMax();
     }
 
@@ -50,7 +50,7 @@ public:
     }
 
     std::unique_ptr<LevelManager> clone() {
-        return std::make_unique<LevelManager>(level, gemValue, maxGemValue);
+        return std::make_unique<LevelManager>(gemValue, maxGemValue, level);
     }
 
 };

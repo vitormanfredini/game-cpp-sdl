@@ -172,7 +172,7 @@ public:
 
         for (auto& soundPlaying : soundsPlaying) {
             Uint32 remainingSamples = soundPlaying.sound->length - soundPlaying.position;
-            Uint32 mixSamples = (remainingSamples < length) ? remainingSamples : length;
+            Uint32 mixSamples = (static_cast<int>(remainingSamples) < length) ? remainingSamples : length;
 
             bool shouldApplyoffset = soundPlaying.position == 0 && soundPlaying.offset > 0;
             

@@ -62,8 +62,8 @@ public:
         float startingX = static_cast<float>(imagePixels[0].size() / 2) * tileHorizontalOffset * -1.0;
         float startingY = static_cast<float>(imagePixels.size() / 2) * tileVerticalOffset * -1.0;
 
-        for(int x=0; x<imagePixels[0].size(); x++){
-            for(int y=0; y<imagePixels.size(); y++){
+        for(int x=0; x<static_cast<int>(imagePixels[0].size()); x++){
+            for(int y=0; y<static_cast<int>(imagePixels.size()); y++){
                 std::unique_ptr<GameObject> tile = std::make_unique<GameObject>();
                 tile->addRenderComponent(
                     renderComponentsPrototypes[decideTileType(y, x)]->clone()

@@ -57,7 +57,7 @@ public:
         std::shuffle(std::begin(availableUpgradeIds), std::end(availableUpgradeIds), rng);
 
         std::vector<UpgradeId> limitedAvailableUpgradeIds = availableUpgradeIds;
-        if (limitedAvailableUpgradeIds.size() > max) {
+        if (static_cast<int>(limitedAvailableUpgradeIds.size()) > max) {
             limitedAvailableUpgradeIds.erase(limitedAvailableUpgradeIds.begin() + max, limitedAvailableUpgradeIds.end());
         }
 
@@ -78,7 +78,7 @@ public:
         UpgradeId upgradeId = option->id;
         upgradesTimesConsumed[upgradeId] += 1;
 
-        if(upgradesTimesConsumed[upgradeId] >= prototypes[upgradeId].size()){
+        if(upgradesTimesConsumed[upgradeId] >= static_cast<int>(prototypes[upgradeId].size())){
             availableUpgradeIds.erase(std::remove(availableUpgradeIds.begin(), availableUpgradeIds.end(), upgradeId), availableUpgradeIds.end());
         }
 
