@@ -94,8 +94,10 @@ int main() {
 
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);
-    float sizeMultiplier = 2.0f;
-    mainChar.setSize(0.045f*sizeMultiplier,0.100f*sizeMultiplier);
+    float widthRatio = 0.45;
+    float height = 0.2;
+    mainChar.setSize(height*widthRatio,height);
+    mainChar.setZ(height*0.01);
     mainChar.setInitialBaseSpeed(0.5f);
     mainChar.setInitialMaxHealth(1.0f);
     mainChar.setCollisionAttack(0.03f);
