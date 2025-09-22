@@ -15,6 +15,7 @@
 #include "Upgrade/UpgradeComponent.h"
 #include "StatComponent.h"
 #include "LevelManager.h"
+#include "GameObject/Movement/Floating/FloatingComponent.h"
 
 class CharacterHealthBarRenderer;
 class UiHealthBarRenderer;
@@ -69,6 +70,11 @@ public:
 
         if(movementComponent){
             movementComponent->update();
+        }
+
+        if(floatingComponent){
+            floatingComponent->update();
+            z = z + floatingComponent->getDelta();
         }
 
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
@@ -209,6 +215,10 @@ public:
         movementComponent = std::move(mover);
     }
 
+    void setFloatingComponent(std::unique_ptr<FloatingComponent> floater){
+        floatingComponent = std::move(floater);
+    }
+
     void setLevelManager(std::unique_ptr<LevelManager> newLevelManager) {
         levelManager = std::move(newLevelManager);
     }
@@ -268,6 +278,10 @@ public:
             copy->setMovementComponent(movementComponent->clone());
         }
 
+        if(floatingComponent){
+            copy->setFloatingComponent(floatingComponent->clone());
+        }
+
         if(levelManager){
             copy->setLevelManager(levelManager->clone());
         }
@@ -293,6 +307,7 @@ private:
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
+    std::unique_ptr<FloatingComponent> floatingComponent;
 
     std::unique_ptr<LevelManager> levelManager;
 

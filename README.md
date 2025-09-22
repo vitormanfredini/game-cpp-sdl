@@ -3,7 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- edit horizontal sprites to be vertically static and make a Mover that can animate the flying up-and-down effect.
 - add tiles dynamically (instead of loading all of them at once at the begining)
 - Make upgrade menu be controlled by the keyboard also
 - Add controller support

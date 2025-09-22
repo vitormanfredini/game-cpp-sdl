@@ -20,7 +20,9 @@
 #include "GameObject/Movement/StraightMover.h"
 #include "GameObject/Movement/AngledMover.h"
 #include "GameObject/Movement/ZigZagMover.h"
+#include "GameObject/Movement/Floating/SineFloater.h"
 #include "GameObject/ShadowRenderer.h"
+#include "SineLookupTable.h"
 
 class CharacterFactory {
 
@@ -34,7 +36,7 @@ public:
         );
 
         float heightEnemy1 = 0.09;
-        float widthRatioEnemy1 = 0.42;
+        float widthRatioEnemy1 = 0.4615;
         prototypes[CharacterType::Regular] = std::make_unique<Character>();
         prototypes[CharacterType::Regular]->setSize(heightEnemy1*widthRatioEnemy1,heightEnemy1);
         prototypes[CharacterType::Regular]->setInitialBaseSpeed(0.4f);
@@ -42,7 +44,7 @@ public:
         prototypes[CharacterType::Regular]->setInitialMaxHealth(1.0f);
         prototypes[CharacterType::Regular]->setInitialHealth(3.0f);
         prototypes[CharacterType::Regular]->setWeight(0.666f);
-        prototypes[CharacterType::Regular]->setZ(heightEnemy1 * 0.25);
+        prototypes[CharacterType::Regular]->setZ(heightEnemy1 * 0.3);
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<ShadowRenderer>(
             textureManager->loadTexture("images/chars/shadow.png"),
             0.017
@@ -60,9 +62,10 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45, 0.02));
+        prototypes[CharacterType::Regular]->setFloatingComponent(std::make_unique<SineFloater<100>>(SineLookupTable<100>::table, 0.01f));
 
         float heightEnemy2 = 0.07;
-        float widthRatioEnemy2 = 1.03;
+        float widthRatioEnemy2 = 1.1562;
         prototypes[CharacterType::Bigger] = std::make_unique<Character>();
         prototypes[CharacterType::Bigger]->setSize(heightEnemy2*widthRatioEnemy2,heightEnemy2);
         prototypes[CharacterType::Bigger]->setInitialBaseSpeed(0.33f);
@@ -88,6 +91,7 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45, 0.12, 0.25, 0.33, 0.5));
+        prototypes[CharacterType::Bigger]->setFloatingComponent(std::make_unique<SineFloater<140>>(SineLookupTable<140>::table, 0.01f));
 
         float heightEnemy3 = 0.14;
         float widthRatioEnemy3 = 0.66;
