@@ -19,13 +19,22 @@ class ItemFactory {
 public:
 
     ItemFactory(TextureManager* textureManager){
+
+        std::unique_ptr<ShadowRenderer> defaultItemShadow = std::make_unique<ShadowRenderer>(
+            textureManager->loadTexture("images/chars/shadow.png"),
+            0.01
+        );
+
         prototypes[ItemId::Gem] = std::make_unique<Item>(ItemId::Gem, 0.3f);
+        prototypes[ItemId::Gem]->addRenderComponent(defaultItemShadow->clone());
         prototypes[ItemId::Gem]->addRenderComponent(std::make_unique<SpriteRenderer>(
             textureManager->loadTexture("images/item_gem1.png"),
             Alignment::BottomUpCentered
         ));
+        
 
         prototypes[ItemId::Health] = std::make_unique<Item>(ItemId::Health, 0.1f);
+        prototypes[ItemId::Health]->addRenderComponent(defaultItemShadow->clone());
         prototypes[ItemId::Health]->addRenderComponent(std::make_unique<SpriteRenderer>(
             textureManager->loadTexture("images/item_health.png"),
             Alignment::BottomUpCentered
@@ -41,6 +50,7 @@ public:
                 Alignment::BottomUpCentered
             ));
             copy->setMovementComponent(std::make_unique<MagneticMover>());
+            copy->setZ(0.015f);
             return copy;
         }
 

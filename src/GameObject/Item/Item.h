@@ -60,6 +60,7 @@ public:
 
         copy->consumed = consumed;
         copy->setSize(getWidth(),getHeight());
+        copy->setZ(z);
 
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
             std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
