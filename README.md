@@ -8,21 +8,19 @@ TODO:
 - Add controller support
 - AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
 - Make a way to specify volume for each sound in the mix.
+- change both UI health bar and gem bar, to be smaller and to look like dark souls bars
+- render enemies (and items) from bottom to top (so they don't stay in front of others even though they are in the back)
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
 - WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
-- implement transitions between tiles with different textures
-- implement different ways that enemies can move: sine wav adding and subtracting from movement, aim and charge, etc
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen
 - separate .h and .cpp files
 - no texture is being unloaded. implement a way of telling the TextureManager the texture's context (menu, game world, in-game UI, etc) so we can unload them without unloading textures that are being used.
-- main char healthbar render is not taking into account the screen offset, possible resizing necessary, etc
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away
-- render enemies from bottom to top (so they don't stay in front of others even though they are in the back)
 - FUTURE: keep renderables from last frame in a buffer, if rendering is faster than updates, use last and current renderables to predict where everything will be. (that allows for higher framerates without changing the update rate)
 - add icon
 
