@@ -20,7 +20,7 @@ CharacterHealthBarRenderer(SDL_Texture* backgroundTexture, SDL_Texture* foregrou
         Character* character = dynamic_cast<Character*>(&gameObject);
         if (!character) return;
 
-        float healthPercentage = character->getHealthPercentage();
+        float healthPercentage = character->getHealth() / character->getMaxHealth();
 
         float x = gameObject.x;
         float y = gameObject.y;

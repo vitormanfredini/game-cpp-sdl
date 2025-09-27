@@ -21,8 +21,6 @@
 #include "GameObject/ButtonRenderer.h"
 #include "TextureManager.h"
 #include "GameObject/BoxCollider.h"
-#include "GameObject/UiHealthBarRenderer.h"
-#include "GameObject/UiGemValueBarRenderer.h"
 #include "Maps/MapFromImageIsometric.h"
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
@@ -30,6 +28,7 @@
 #include "Audio/StageSong.h"
 #include "GameObject/CharacterSpriteAnimationRenderer.h"
 #include "Stages/SpawnScheduleFactory.h"
+#include "GameObject/UiBarRenderer.h"
 
 int main() {
 
@@ -63,6 +62,19 @@ int main() {
         return -1;
     }
 
+    GameEngine engine {
+        &renderer,
+        &camera,
+        &deltaTime,
+        &input,
+        &textureManager,
+        &stateManager,
+        &menuFactory,
+        &upgradeFactory,
+        &itemFactory,
+        &audioEngine
+    };
+
     StageSong mission1Song;
     mission1Song.addLoopSound(0, audioEngine.loadSound("audio/song1/drums1.wav"));
 
@@ -78,19 +90,6 @@ int main() {
     mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/loop4.wav"));
     mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/drums1.wav"));
     audioEngine.setStageSong(&mission1Song);
-
-    GameEngine engine {
-        &renderer,
-        &camera,
-        &deltaTime,
-        &input,
-        &textureManager,
-        &stateManager,
-        &menuFactory,
-        &upgradeFactory,
-        &itemFactory,
-        &audioEngine
-    };
 
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);
@@ -163,29 +162,39 @@ int main() {
     engine.setSpawnSchedule(spawnScheduleFactory.makeStage1());
 
     GameObject healthBar {};
-    healthBar.setPosition(0.0f,0.0f);
-    healthBar.setSize(1.0f,0.03f);
-    healthBar.addRenderComponent(std::make_unique<UiHealthBarRenderer>(
-        textureManager.loadTexture(129,147,127),
-        textureManager.loadTexture(200,69,49),
-        &mainChar
+    healthBar.setPosition(0.01f,0.01f);
+    healthBar.setSize(0.2f,0.02f);
+    healthBar.addRenderComponent(std::make_unique<UiBarRenderer>(
+        textureManager.loadTexture("images/ui/ui_bar_sprites.png"),
+        textureManager.loadTexture(81,83,85),
+        textureManager.loadTexture(168,14,54),
+        [&mainChar](){
+           return mainChar.getMaxHealth();
+        },
+        [&mainChar](){
+           return mainChar.getHealth();
+        }
     ));
     engine.setHealthBar(&healthBar);
 
     GameObject gemValueBar {};
-    gemValueBar.setPosition(0.0f,0.03f);
-    gemValueBar.setSize(1.0f,0.03f);
-    gemValueBar.addRenderComponent(std::make_unique<UiGemValueBarRenderer>(
-        textureManager.loadTexture(129,147,127),
-        textureManager.loadTexture(69,200,49),
-        &mainChar
+    gemValueBar.setPosition(0.01f,0.04f);
+    gemValueBar.setSize(0.2f,0.02f);
+    gemValueBar.addRenderComponent(std::make_unique<UiBarRenderer>(
+        textureManager.loadTexture("images/ui/ui_bar_sprites.png"),
+        textureManager.loadTexture(81,83,85),
+        textureManager.loadTexture(7,102,172),
+        [&mainChar](){
+           return 1.0f;
+        },
+        [&mainChar](){
+           return mainChar.getLevelPercentage();
+        }
     ));
     engine.setGemValueBar(&gemValueBar);
 
     SDL_Event event;
-
     while (true) {
-
         while (SDL_PollEvent(&event)) {
             engine.handleKeyboardAndMouseEvent(event);
         }

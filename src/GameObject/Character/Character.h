@@ -17,9 +17,6 @@
 #include "LevelManager.h"
 #include "GameObject/Movement/Floating/FloatingComponent.h"
 
-class CharacterHealthBarRenderer;
-class UiHealthBarRenderer;
-
 class Character: public GameObject {
 
 public:
@@ -116,8 +113,12 @@ public:
         addHealth(newInitialHealth);
     }
 
-    float getHealthPercentage(){
-        return health / stats[CharacterStat::MaxHealth]->getValue();
+    float getHealth(){
+        return health;
+    }
+
+    float getMaxHealth(){
+        return stats[CharacterStat::MaxHealth]->getValue();
     }
 
     void addHealth(float value){
