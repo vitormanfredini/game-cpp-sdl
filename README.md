@@ -3,7 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- make gem bar start small and get bigger on each level
 - add tiles dynamically (instead of loading all of them at once at the begining)
 - Make upgrade menu be controlled by the keyboard also
 - Add controller support

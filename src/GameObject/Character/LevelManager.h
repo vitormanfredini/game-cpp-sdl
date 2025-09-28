@@ -41,8 +41,12 @@ public:
         }
     }
 
-    float getLevelPercentage(){
-        return gemValue / maxGemValue;
+    float getGemValue(){
+        return gemValue;
+    }
+
+    float getMaxGemValue(){
+        return maxGemValue;
     }
 
     void setOnAdvanceLevelCallback(std::function<void(int)> onAdvanceLevel) {

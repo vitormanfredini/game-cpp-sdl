@@ -179,16 +179,16 @@ int main() {
 
     GameObject gemValueBar {};
     gemValueBar.setPosition(0.01f,0.04f);
-    gemValueBar.setSize(0.2f,0.02f);
+    gemValueBar.setSize(0.02f,0.02f);
     gemValueBar.addRenderComponent(std::make_unique<UiBarRenderer>(
         textureManager.loadTexture("images/ui/ui_bar_sprites.png"),
         textureManager.loadTexture(81,83,85),
         textureManager.loadTexture(7,102,172),
         [&mainChar](){
-           return 1.0f;
+            return mainChar.getMaxGemValue();
         },
         [&mainChar](){
-           return mainChar.getLevelPercentage();
+            return mainChar.getCurrentGemValue();
         }
     ));
     engine.setGemValueBar(&gemValueBar);

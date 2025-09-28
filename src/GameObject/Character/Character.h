@@ -224,11 +224,19 @@ public:
         levelManager = std::move(newLevelManager);
     }
 
-    float getLevelPercentage(){
+    float getCurrentGemValue(){
         if(levelManager){
-            return levelManager->getLevelPercentage();
+            return levelManager->getGemValue();
         }
-        std::cerr << "getLevelPercentage(): Character does not have a LevelManager" << std::endl;
+        std::cerr << "getCurrentGemValue(): Character does not have a LevelManager" << std::endl;
+        return 0.0f;
+    }
+
+    float getMaxGemValue(){
+        if(levelManager){
+            return levelManager->getMaxGemValue();
+        }
+        std::cerr << "getMaxGemValue(): Character does not have a LevelManager" << std::endl;
         return 0.0f;
     }
 
