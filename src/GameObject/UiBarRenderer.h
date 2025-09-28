@@ -16,6 +16,8 @@ private:
     std::function<float()> getMax;
     std::function<float()> getCurrent;
 
+    int borderTextureWidth, borderTextureHeight;
+
 public:
     UiBarRenderer(
         SDL_Texture* barSpritesTexture,
@@ -29,7 +31,9 @@ public:
         foregroundTexture(foregroundTexture),
         getMax(getMax),
         getCurrent(getCurrent)
-    {}
+    {
+        SDL_QueryTexture(barSpritesTexture, nullptr, nullptr, &borderTextureWidth, &borderTextureHeight);
+    }
 
     void render(GameObject& gameObject, RenderProps props) override {
 
@@ -45,115 +49,125 @@ public:
 
         float borderPixelSize = gameObject.height / 9.0f;
 
+        int borderTopPixels = 2;
+        int borderRightPixels = 1;
+        int borderBottomPixels = 1;
+        int borderLeftPixels = 2;
+
+        float borderTopSize = static_cast<float>(borderTopPixels) * borderPixelSize;
+        float borderRightSize = static_cast<float>(borderRightPixels) * borderPixelSize;
+        float borderBottomSize = static_cast<float>(borderBottomPixels) * borderPixelSize;
+        float borderLeftSize = static_cast<float>(borderLeftPixels) * borderPixelSize;
+
         SDL_Rect borderTopLeftSrcRect = {
             0,
             0,
-            2,
-            2,
+            borderLeftPixels,
+            borderTopPixels,
         };
         SDL_Rect borderTopLeftDstRect = {
-            static_cast<int>(std::round((x - (2.0f * borderPixelSize)) * props.screenScale)),
-            static_cast<int>(std::round((y - (2.0f * borderPixelSize)) * props.screenScale)),
-            static_cast<int>(std::round((2.0f * borderPixelSize) * props.screenScale)),
-            static_cast<int>(std::round((2.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round((x - borderLeftSize) * props.screenScale)),
+            static_cast<int>(std::round((y - borderTopSize) * props.screenScale)),
+            static_cast<int>(std::round(borderLeftSize * props.screenScale)),
+            static_cast<int>(std::round(borderTopSize * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderTopLeftSrcRect, &borderTopLeftDstRect);
 
         SDL_Rect borderTopRightSrcRect = {
-            3,
+            borderTextureWidth - 1,
             0,
-            1,
-            2,
+            borderRightPixels,
+            borderTopPixels,
         };
         SDL_Rect borderTopRightDstRect = {
             static_cast<int>(std::round(((width * maxValue) + x) * props.screenScale)),
-            static_cast<int>(std::round((y - (2.0f * borderPixelSize)) * props.screenScale)),
-            static_cast<int>(std::round((1.0f * borderPixelSize) * props.screenScale)),
-            static_cast<int>(std::round((2.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round((y - borderTopSize) * props.screenScale)),
+            static_cast<int>(std::round(borderRightSize * props.screenScale)),
+            static_cast<int>(std::round(borderTopSize * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderTopRightSrcRect, &borderTopRightDstRect);
 
         SDL_Rect borderBottomLeftSrcRect = {
             0,
-            3,
-            2,
-            1,
+            borderTextureHeight - 1,
+            borderLeftPixels,
+            borderBottomPixels,
         };
         SDL_Rect borderBottomLeftDstRect = {
-            static_cast<int>(std::round((x - (2.0f * borderPixelSize)) * props.screenScale)),
+            static_cast<int>(std::round((x - borderLeftSize) * props.screenScale)),
             static_cast<int>(std::round((y + height) * props.screenScale)),
-            static_cast<int>(std::round((2.0f * borderPixelSize) * props.screenScale)),
-            static_cast<int>(std::round((1.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round(borderLeftSize * props.screenScale)),
+            static_cast<int>(std::round(borderBottomSize * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderBottomLeftSrcRect, &borderBottomLeftDstRect);
 
         SDL_Rect borderBottomRightSrcRect = {
-            3,
-            3,
+            borderTextureWidth - 1,
+            borderTextureHeight - 1,
             1,
             1,
         };
         SDL_Rect borderBottomRightDstRect = {
             static_cast<int>(std::round((x + (width * maxValue)) * props.screenScale)),
             static_cast<int>(std::round((y + height) * props.screenScale)),
-            static_cast<int>(std::round((1.0f * borderPixelSize) * props.screenScale)),
-            static_cast<int>(std::round((1.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round(borderRightSize * props.screenScale)),
+            static_cast<int>(std::round(borderBottomSize * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderBottomRightSrcRect, &borderBottomRightDstRect);
 
         SDL_Rect borderLeftSrcRect = {
             0,
-            2,
-            2,
+            borderTextureHeight - borderTopPixels - borderBottomPixels,
+            borderLeftPixels,
             1,
         };
         SDL_Rect borderLeftDstRect = {
-            static_cast<int>(std::round((x - (2.0f * borderPixelSize)) * props.screenScale)),
+            static_cast<int>(std::round((x - borderLeftSize) * props.screenScale)),
             static_cast<int>(std::round(y * props.screenScale)),
-            static_cast<int>(std::round((2.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round(borderLeftSize * props.screenScale)),
             static_cast<int>(std::round(height * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderLeftSrcRect, &borderLeftDstRect);
 
         SDL_Rect borderRightSrcRect = {
-            3,
-            2,
-            1,
+            borderTextureWidth - borderRightPixels,
+            borderTextureHeight - borderTopPixels - borderBottomPixels,
+            borderRightPixels,
             1,
         };
         SDL_Rect borderRightDstRect = {
             static_cast<int>(std::round((x + (width * maxValue)) * props.screenScale)),
             static_cast<int>(std::round(y * props.screenScale)),
-            static_cast<int>(std::round((1.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round(borderRightSize * props.screenScale)),
             static_cast<int>(std::round(height * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderRightSrcRect, &borderRightDstRect);
 
         SDL_Rect borderTopSrcRect = {
-            2,
+            borderLeftPixels,
             0,
             1,
-            2,
+            borderTopPixels,
         };
         SDL_Rect borderTopDstRect = {
             static_cast<int>(std::round(x * props.screenScale)),
-            static_cast<int>(std::round((y - (2.0f * borderPixelSize)) * props.screenScale)),
+            static_cast<int>(std::round((y - borderTopSize) * props.screenScale)),
             static_cast<int>(std::round((width * maxValue) * props.screenScale)),
-            static_cast<int>(std::round((2.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round(borderTopSize * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderTopSrcRect, &borderTopDstRect);
 
         SDL_Rect borderBottomSrcRect = {
-            2,
-            3,
+            borderLeftPixels,
+            borderTextureHeight - borderBottomPixels,
             1,
-            1,
+            borderBottomPixels,
         };
         SDL_Rect borderBottomDstRect = {
             static_cast<int>(std::round(x * props.screenScale)),
             static_cast<int>(std::round((y + height) * props.screenScale)),
             static_cast<int>(std::round((width * maxValue) * props.screenScale)),
-            static_cast<int>(std::round((1.0f * borderPixelSize) * props.screenScale)),
+            static_cast<int>(std::round(borderBottomSize * props.screenScale)),
         };
         SDL_RenderCopy(props.sdl_renderer, barSpritesTexture, &borderBottomSrcRect, &borderBottomDstRect);
 
