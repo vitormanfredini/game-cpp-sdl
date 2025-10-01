@@ -6,6 +6,7 @@
 #include "MapTileType.h"
 #include "TextureManager.h"
 #include "MapComponent.h"
+#include "BlockObjectManager.h"
 
 class MapFromImageIsometric : public MapComponent {
 
@@ -34,27 +35,7 @@ public:
     }
 
     void update(float cameraPosX, float cameraPosY){
-        int truncatedX = static_cast<int>(cameraPosX);
-        int truncatedY = static_cast<int>(cameraPosY);
-        
-        if(truncatedX == tilesCacheX && truncatedY == tilesCacheY){
-            return;
-        }
-
-        for(int x=truncatedX-1; x <= truncatedX + 1; x++){
-            for(int y=truncatedY-1; y <= truncatedY + 1; y++){
-                std::string key = createKey(x,y);
-                auto it = tileBlockMap.find(key);
-                if (it != tileBlockMap.end()) {
-                    for(std::unique_ptr<GameObject>& tile : it->second){
-                        tilesCache.push_back(tile.get());
-                    }
-                }
-            }
-        }
-
-        tilesCacheX = truncatedX;
-        tilesCacheY = truncatedY;
+        blockObjectManager.update(cameraPosX, cameraPosY);
     }
 
     void addAllTiles(){
@@ -83,28 +64,20 @@ public:
                     tileWidth,
                     tileHeight
                 );
-                std::string key = createKey(static_cast<int>(posX),static_cast<int>(posY));
-                tileBlockMap[key].push_back(std::move(tile));
+
+                blockObjectManager.addItem(static_cast<int>(posX),static_cast<int>(posY),std::move(tile));
             }
         }
 
     }
 
     std::vector<GameObject*>& getTiles(){
-        return tilesCache;
+        return blockObjectManager.getNearObjects();
     }
 
 private:
 
-    std::string createKey(int x, int y) {
-        return std::to_string(x) + "_" + std::to_string(y);
-    }
-
-    std::unordered_map<std::string, std::vector<std::unique_ptr<GameObject>>> tileBlockMap;
-
-    std::vector<GameObject*> tilesCache;
-    int tilesCacheX = -9999;
-    int tilesCacheY = 9999;
+    BlockObjectManager blockObjectManager;
 
     std::vector<std::vector<RGBAPixel>> imagePixels;
     float tileWidth, tileHeight, tileHorizontalOffset, tileVerticalOffset, tileAdditionalHorizontalOffsetPerRow, tileAdditionalVerticalOffsetPerColumn;

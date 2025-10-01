@@ -25,6 +25,7 @@
 #include "StateManager/StateManager.h"
 #include "MouseEventType.h"
 #include "Audio/AudioEngine.h"
+#include "Maps/BlockObjectManager.h"
 
 class GameEngine {
 
@@ -148,8 +149,8 @@ public:
                 renderer->addRenderable(renderable);
             }
 
-            for(std::unique_ptr<GameObject>& debri : debris){
-                renderer->addRenderable(debri.get());
+            for(GameObject* renderable : debris.getNearObjects()){
+                renderer->addRenderable(renderable);
             }
 
             for(std::unique_ptr<Character>& enemy : enemies){
@@ -299,7 +300,7 @@ private:
     std::vector<std::unique_ptr<Character>> enemies;
     std::vector<std::unique_ptr<Projectile>> projectiles;
     std::vector<std::unique_ptr<Item>> items;
-    std::vector<std::unique_ptr<GameObject>> debris;
+    BlockObjectManager debris;
 
     MapComponent* mapComponent;
 
@@ -342,6 +343,7 @@ private:
         }
 
         mapComponent->update(camera->getPositionX(),camera->getPositionY());
+        debris.update(camera->getPositionX(),camera->getPositionY());
 
         std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(
             CharacterUtils::getClosestCharacterIndex(enemies, mainChar)
@@ -415,7 +417,12 @@ private:
 
                 std::unique_ptr<GameObject> newDebris = debrisFactory->create();
                 newDebris->setPosition(enemies[e]->getX(), enemies[e]->getY());
-                debris.push_back(std::move(newDebris));
+                debris.addItem(
+                    static_cast<int>(std::round(enemies[e]->getX())),
+                    static_cast<int>(std::round(enemies[e]->getY())),
+                    std::move(newDebris),
+                    true
+                );
 
                 diedEnemies.push_back(e);
             }
