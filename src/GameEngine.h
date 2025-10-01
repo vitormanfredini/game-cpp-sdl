@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "DeltaTime.h"
 #include "Input.h"
+#include "GameObject/DebrisFactory.h"
 #include "GameObject/Character/Character.h"
 #include "GameObject/Character/CharacterUtils.h"
 #include "GameObject/Character/CharacterFactory.h"
@@ -38,6 +39,7 @@ public:
         MenuFactory* menuFactory,
         UpgradeFactory* upgradeFactory,
         ItemFactory* itemFactory,
+        DebrisFactory* debrisFactory,
         AudioEngine* audioEngine
     ):
     renderer(renderer),
@@ -50,6 +52,7 @@ public:
     itemFactory(itemFactory),
     audioEngine(audioEngine),
     menuFactory(menuFactory),
+    debrisFactory(debrisFactory),
     upgradeFactory(upgradeFactory)
     {
         menu = std::move(menuFactory->createMainMenu());
@@ -143,6 +146,10 @@ public:
         if(stateManager->shouldRenderGameWorld()){
             for(GameObject* renderable : mapComponent->getTiles()){
                 renderer->addRenderable(renderable);
+            }
+
+            for(std::unique_ptr<GameObject>& debri : debris){
+                renderer->addRenderable(debri.get());
             }
 
             for(std::unique_ptr<Character>& enemy : enemies){
@@ -282,17 +289,17 @@ private:
     ItemFactory* itemFactory;
     AudioEngine* audioEngine;
     MenuFactory* menuFactory = nullptr;
+    DebrisFactory* debrisFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
     
     Intro intro { 3*60 };
     GameObject pause;
 
     Character* mainChar;
-    std::vector<std::unique_ptr<Character>> enemies = {};
-
-    std::vector<std::unique_ptr<Projectile>> projectiles = {};
-
-    std::vector<std::unique_ptr<Item>> items = {};
+    std::vector<std::unique_ptr<Character>> enemies;
+    std::vector<std::unique_ptr<Projectile>> projectiles;
+    std::vector<std::unique_ptr<Item>> items;
+    std::vector<std::unique_ptr<GameObject>> debris;
 
     MapComponent* mapComponent;
 
@@ -405,6 +412,10 @@ private:
                     newHealthItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
                     items.push_back(std::move(newHealthItem));
                 }
+
+                std::unique_ptr<GameObject> newDebris = debrisFactory->create();
+                newDebris->setPosition(enemies[e]->getX(), enemies[e]->getY());
+                debris.push_back(std::move(newDebris));
 
                 diedEnemies.push_back(e);
             }

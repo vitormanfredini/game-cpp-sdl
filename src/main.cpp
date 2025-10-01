@@ -29,6 +29,7 @@
 #include "GameObject/CharacterSpriteAnimationRenderer.h"
 #include "Stages/SpawnScheduleFactory.h"
 #include "GameObject/UiBarRenderer.h"
+#include "GameObject/DebrisFactory.h"
 
 int main() {
 
@@ -55,6 +56,7 @@ int main() {
     ItemFactory itemFactory(&textureManager);
     UpgradeFactory upgradeFactory(&itemFactory);
     MenuFactory menuFactory(&textureManager, &stateManager);
+    DebrisFactory debrisFactory(&textureManager);
 
     AudioEngine audioEngine;
     if (!audioEngine.init()) {
@@ -72,6 +74,7 @@ int main() {
         &menuFactory,
         &upgradeFactory,
         &itemFactory,
+        &debrisFactory,
         &audioEngine
     };
 

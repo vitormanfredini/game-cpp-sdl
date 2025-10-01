@@ -39,6 +39,23 @@ public:
         }
     }
 
+    std::unique_ptr<GameObject> clone() {
+        auto copy = std::make_unique<GameObject>();
+
+        copy->x = x;
+        copy->y = y;
+        copy->z = z;
+        copy->width = width;
+        copy->height = height;
+
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
+            copy->addRenderComponent(std::move(clonedRenderComponent));
+        }
+
+        return copy;
+    }
+
     bool checkCollision(GameObject& other) {
         if (collisionComponent){
             return collisionComponent->checkCollision(*this, other);
