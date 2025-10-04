@@ -117,6 +117,9 @@ public:
         }
 
         for(int update=0;update<updatesNeeded;update++){
+            if(stateManager->shouldUpdateMainMenu()){
+                menu->update();
+            }
             if(stateManager->shouldUpdateIntro()){
                 intro.update();
             }

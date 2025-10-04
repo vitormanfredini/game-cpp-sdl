@@ -16,6 +16,7 @@
 #include "GameObject/ButtonRenderer.h"
 #include "StateManager/StateManager.h"
 #include "TextureManager.h"
+#include "GameObject/MainMenuBackgroundRenderer.h"
 
 class MenuFactory {
 
@@ -26,10 +27,28 @@ public:
         // Main Menu
         prototypes[MenuType::MainMenu] = std::make_unique<Menu>();
 
+        SDL_Color numbersTextColor = { 58, 58, 50, 255 };
+        int numberWidth = 19;
+        int numberHeight = 37;
+
         prototypes[MenuType::MainMenu]->setPosition(0.0f,0.0f);
         prototypes[MenuType::MainMenu]->setSize(1.0f,1.0f);
-        prototypes[MenuType::MainMenu]->addRenderComponent(std::make_unique<SpriteRenderer>(
-            textureManager->loadTexture("images/menu.png"),
+        prototypes[MenuType::MainMenu]->addRenderComponent(std::make_unique<MainMenuBackgroundRenderer>(
+            textureManager->loadTexture(0,0,0),
+            textureManager->drawTextOnTexture(
+                textureManager->loadTexture(0,0,0,0,numberWidth,numberHeight),
+                "0",
+                FontStyle::MainMenu,
+                &numbersTextColor,
+                TextRenderMethod::Centered
+            ),
+            textureManager->drawTextOnTexture(
+                textureManager->loadTexture(0,0,0,0,numberWidth,numberHeight),
+                "1",
+                FontStyle::MainMenu,
+                &numbersTextColor,
+                TextRenderMethod::Centered
+            ),
             Alignment::UI
         ));
 

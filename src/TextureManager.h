@@ -40,7 +40,7 @@ public:
 
     }
 
-    SDL_Texture* loadTexture(int r, int g, int b, int a){
+    SDL_Texture* loadTexture(int r, int g, int b, int a, int width, int height){
 
         std::string textureName = rgbaTextureName(r,g,b,a);
 
@@ -49,13 +49,13 @@ public:
             return cachedTexture;
         }
 
-        SDL_Texture* newTexture = SDLUtils::textureFromRGBA(sdl_renderer, r, g, b, a);
+        SDL_Texture* newTexture = SDLUtils::textureFromRGBA(sdl_renderer, r, g, b, a, width, height);
         texturesCache[textureName] = newTexture;
         return newTexture;
     }
 
     SDL_Texture* loadTexture(int r, int g, int b){
-        return loadTexture(r, g, b, 255);
+        return loadTexture(r, g, b, 255, 1, 1);
     }
 
     SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method) {

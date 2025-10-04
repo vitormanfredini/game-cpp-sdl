@@ -18,6 +18,7 @@ TODO:
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
 - destroy projectiles when they are significantly off screen
 - avoid rendering stuff off screen
+- update to SDL 3
 - separate .h and .cpp files
 - no texture is being unloaded. implement a way of telling the TextureManager the texture's context (menu, game world, in-game UI, etc) so we can unload them without unloading textures that are being used.
 - bug: sometimes it doesn't find the closest enemy and fires at an enemy far away

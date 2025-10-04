@@ -19,12 +19,12 @@ public:
         TTF_Init();
 
         fontSpecs[FontStyle::MainMenu] = {
-            "fonts/firasansregular.ttf",
-            34
+            "fonts/Cousine_Regular.ttf",
+            32
         };
 
         fontSpecs[FontStyle::UpgradeMenu] = {
-            "fonts/firasansregular.ttf",
+            "fonts/Cousine_Regular.ttf",
             22
         };
     }

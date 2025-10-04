@@ -28,6 +28,12 @@ public:
         }
     }
 
+    void update(){
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            renderComponent->update(*this);
+        }
+    }
+
     std::unique_ptr<Menu> clone() {
         std::unique_ptr<Menu> copy = std::make_unique<Menu>();
         copy->x = x;

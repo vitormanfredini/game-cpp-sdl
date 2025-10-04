@@ -40,9 +40,9 @@ public:
         return IMG_Load_RW(rw, 1);
     }
 
-    static SDL_Texture* textureFromRGBA(SDL_Renderer *renderer, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+    static SDL_Texture* textureFromRGBA(SDL_Renderer *renderer, Uint8 r, Uint8 g, Uint8 b, Uint8 a, int width, int height) {
 
-        SDL_Surface* surface = SDL_CreateRGBSurface(0,64,64,32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+        SDL_Surface* surface = SDL_CreateRGBSurface(0, width, height, 32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         bool noTransparency = a == 255;
         Uint32 color = noTransparency ? SDL_MapRGB(surface->format, r, g, b) : SDL_MapRGBA(surface->format, r, g, b, a);
         SDL_FillRect(surface, NULL, color);
