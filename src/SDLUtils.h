@@ -102,4 +102,36 @@ public:
         return pixelData;
     }
 
+    static void saveTextureToBMP(SDL_Renderer* renderer, SDL_Texture* texture, const std::string& filename) {
+        if (!texture || !renderer) {
+            std::cerr << "Invalid texture or renderer!" << std::endl;
+            return;
+        }
+
+        int width, height;
+        SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+
+        SDL_Surface* surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA8888);
+        if (!surface) {
+            std::cerr << "Failed to create surface! SDL Error: " << SDL_GetError() << std::endl;
+            return;
+        }
+
+        SDL_SetRenderTarget(renderer, texture);
+        if (SDL_RenderReadPixels(renderer, nullptr, surface->format->format, surface->pixels, surface->pitch) != 0) {
+            std::cerr << "Failed to read texture pixels! SDL Error: " << SDL_GetError() << std::endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+        SDL_SetRenderTarget(renderer, nullptr);
+
+        if (SDL_SaveBMP(surface, filename.c_str()) != 0) {
+            std::cerr << "Failed to save BMP file! SDL Error: " << SDL_GetError() << std::endl;
+            SDL_FreeSurface(surface);
+            return;
+        }
+
+        SDL_FreeSurface(surface);
+    }
+
 };

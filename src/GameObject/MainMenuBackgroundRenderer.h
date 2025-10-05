@@ -77,7 +77,7 @@ public:
             for(int numX=0;numX<numberColumns;numX++){
                 SDL_Rect rect = {
                     static_cast<int>(std::round(static_cast<float>(numX) * (width/numberColumns) * props.screenScale)),
-                    static_cast<int>(std::round(static_cast<float>(numY) * (width/numberColumns) * numberSizeRatio * 0.75 * props.screenScale)),
+                    static_cast<int>(std::round(static_cast<float>(numY) * (width/numberColumns) * numberSizeRatio * 0.9 * props.screenScale)),
                     static_cast<int>(std::round((width/numberColumns) * props.screenScale)),
                     static_cast<int>(std::round((width/numberColumns) * numberSizeRatio * props.screenScale)),
                 };

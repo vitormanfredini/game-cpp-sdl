@@ -42,7 +42,7 @@ public:
 
     SDL_Texture* loadTexture(int r, int g, int b, int a, int width, int height){
 
-        std::string textureName = rgbaTextureName(r,g,b,a);
+        std::string textureName = rgbaTextureName(r,g,b,a,width,height);
 
         SDL_Texture* cachedTexture = loadFromCache(textureName);
         if(cachedTexture != nullptr){
@@ -66,7 +66,11 @@ public:
 
         if(copyOriginalTexture){
             std::ostringstream oss;
-            oss << text << '_' << originalTexture;
+            oss << text << '_' << originalTexture << '_' 
+                << static_cast<int>(color->r) << '_'
+                << static_cast<int>(color->g) << '_'
+                << static_cast<int>(color->b) << '_'
+                << static_cast<int>(color->a);
             textureName = oss.str();
 
             SDL_Texture* cachedTexture = loadFromCache(textureName);
@@ -157,6 +161,56 @@ public:
         return textureToDrawOn;
     }
 
+    SDL_Texture* createButtonTexture(
+        int buttonWidth,
+        int buttonHeight,
+        std::string text,
+        FontStyle fontStyle,
+        SDL_Color& textColorIdle,
+        SDL_Color& textColorHover,
+        SDL_Color& textColorPressed,
+        SDL_Texture* backgroundIdle,
+        SDL_Texture* backgroundHover,
+        SDL_Texture* backgroundPressed
+    ){
+
+        SDL_Texture* idlePart = drawTextOnTexture(
+            backgroundIdle,
+            text.c_str(),
+            fontStyle,
+            &textColorIdle,
+            TextRenderMethod::Centered
+        );
+
+        SDL_Texture* hoverPart = drawTextOnTexture(
+            backgroundHover,
+            text.c_str(),
+            fontStyle,
+            &textColorHover,
+            TextRenderMethod::Centered
+        );
+
+        SDL_Texture* pressedPart = drawTextOnTexture(
+            backgroundPressed,
+            text.c_str(),
+            fontStyle,
+            &textColorPressed,
+            TextRenderMethod::Centered
+        );
+
+        SDL_Texture* idlePlusHover = joinTexturesVertically(idlePart, hoverPart);
+        SDL_Texture* completeTexture = joinTexturesVertically(idlePlusHover, pressedPart);
+
+        SDL_DestroyTexture(idlePart);
+        SDL_DestroyTexture(hoverPart);
+        SDL_DestroyTexture(pressedPart);
+        SDL_DestroyTexture(idlePlusHover);
+
+        SDLUtils::saveTextureToBMP(sdl_renderer, completeTexture, "complete.bmp");
+
+        return completeTexture;
+    }
+
     void clearCache() {
         for (auto& pair : texturesCache) {
             SDL_DestroyTexture(pair.second);
@@ -169,8 +223,8 @@ private:
     FontManager* fontManager;
     std::unordered_map<std::string, SDL_Texture*> texturesCache;
 
-    std::string rgbaTextureName(int r, int g, int b, int a){
-        return std::to_string(r) + "_" + std::to_string(g) + "_" + std::to_string(b) + "_" + std::to_string(a);
+    std::string rgbaTextureName(int r, int g, int b, int a, int width, int height){
+        return std::to_string(r) + "_" + std::to_string(g) + "_" + std::to_string(b) + "_" + std::to_string(a) + "_" + std::to_string(width) + "_" + std::to_string(height);
     }
 
     SDL_Texture* loadFromCache(const std::string& textureName){
@@ -208,6 +262,42 @@ private:
         SDL_SetTextureBlendMode(textTexture, SDL_BLENDMODE_BLEND);
     
         return textTexture;
+    }
+
+    SDL_Texture* joinTexturesVertically(SDL_Texture* texture1, SDL_Texture* texture2) {
+        if (!texture1 || !texture2) {
+            std::cerr << "joinTexturesVertically(): Invalid texture or renderer!" << std::endl;
+            return nullptr;
+        }
+
+        int width1, height1;
+        SDL_QueryTexture(texture1, nullptr, nullptr, &width1, &height1);
+
+        int width2, height2;
+        SDL_QueryTexture(texture2, nullptr, nullptr, &width2, &height2);
+
+        int newWidth = std::max(width1, width2);
+        int newHeight = height1 + height2;
+
+        SDL_Texture* combinedTexture = SDL_CreateTexture(sdl_renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, newWidth, newHeight);
+        if (!combinedTexture) {
+            std::cerr << "Unable to create target texture! SDL Error: " << SDL_GetError() << std::endl;
+            return nullptr;
+        }
+
+        SDL_SetRenderTarget(sdl_renderer, combinedTexture);
+        SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 0);
+        SDL_RenderClear(sdl_renderer);
+
+        SDL_Rect destRect1 = { 0, 0, width1, height1 };
+        SDL_RenderCopy(sdl_renderer, texture1, nullptr, &destRect1);
+
+        SDL_Rect destRect2 = { 0, height1, width2, height2 };
+        SDL_RenderCopy(sdl_renderer, texture2, nullptr, &destRect2);
+
+        SDL_SetRenderTarget(sdl_renderer, nullptr);
+
+        return combinedTexture;
     }
 
 };

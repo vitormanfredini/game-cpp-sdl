@@ -296,7 +296,7 @@ private:
     DebrisFactory* debrisFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
     
-    Intro intro { 3*60 };
+    Intro intro { 1*60 };
     GameObject pause;
 
     Character* mainChar;

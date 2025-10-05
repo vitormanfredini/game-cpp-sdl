@@ -52,18 +52,28 @@ public:
             Alignment::UI
         ));
 
-        SDL_Color mainMenuButtonTextColor = { 224, 210, 128, 255 };
+        int buttonHeight = 40;
+        int buttonWidth = 190;
+
+        SDL_Color mainMenuButtonTextColorIdle = { 255, 255, 255, 255 };
+        SDL_Color mainMenuButtonTextColorHover = { 29, 158, 20, 255 };
+        SDL_Color mainMenuButtonTextColorPressed = { 29, 158, 20, 255 };
 
         std::unique_ptr<Button> startButton = std::make_unique<Button>();
-        startButton->setPosition(0.33f, 0.3f);
-        startButton->setSize(0.33f, 0.166f);
+        startButton->setPosition(0.106f, 0.506f);
+        startButton->setSize(0.147f, 0.0305f);
         startButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->drawTextOnTexture(
-                textureManager->loadTexture("images/menu_button_base.png"),
-                "start",
+            textureManager->createButtonTexture(
+                buttonWidth,
+                buttonHeight,
+                "new game",
                 FontStyle::MainMenu,
-                &mainMenuButtonTextColor,
-                TextRenderMethod::ButtonCentered
+                mainMenuButtonTextColorIdle,
+                mainMenuButtonTextColorHover,
+                mainMenuButtonTextColorPressed,
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight)
             )
         ));
         startButton->setCallback([stateManager]() {
@@ -71,16 +81,43 @@ public:
         });
         prototypes[MenuType::MainMenu]->addButton(std::move(startButton));
 
+        std::unique_ptr<Button> optionsButton = std::make_unique<Button>();
+        optionsButton->setPosition(0.106f, 0.532f);
+        optionsButton->setSize(0.147f, 0.0305f);
+        optionsButton->addRenderComponent(std::make_unique<ButtonRenderer>(
+            textureManager->createButtonTexture(
+                buttonWidth,
+                buttonHeight,
+                "options",
+                FontStyle::MainMenu,
+                mainMenuButtonTextColorIdle,
+                mainMenuButtonTextColorHover,
+                mainMenuButtonTextColorPressed,
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight)
+            )
+        ));
+        optionsButton->setCallback([stateManager]() {
+            //
+        });
+        prototypes[MenuType::MainMenu]->addButton(std::move(optionsButton));
+
         std::unique_ptr<Button> exitButton = std::make_unique<Button>();
-        exitButton->setPosition(0.33f, 0.53f);
-        exitButton->setSize(0.33f, 0.166f);
+        exitButton->setPosition(0.106f, 0.584f);
+        exitButton->setSize(0.147f, 0.0305f);
         exitButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-            textureManager->drawTextOnTexture(
-                textureManager->loadTexture("images/menu_button_base.png"),
+            textureManager->createButtonTexture(
+                buttonWidth,
+                buttonHeight,
                 "exit",
                 FontStyle::MainMenu,
-                &mainMenuButtonTextColor,
-                TextRenderMethod::ButtonCentered
+                mainMenuButtonTextColorIdle,
+                mainMenuButtonTextColorHover,
+                mainMenuButtonTextColorPressed,
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
+                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight)
             )
         ));
         exitButton->setCallback([stateManager]() {
