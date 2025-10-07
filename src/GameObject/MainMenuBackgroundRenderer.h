@@ -55,7 +55,6 @@ public:
         if(sweepAnimation < numberColumns * 4){
             int xSweep = sweepAnimation / 2;
             int ySweep = 0;
-            bool finished = false;
             while(xSweep < numbers[0].size() * 2){
                 if(ySweep < numbers.size() && xSweep < numbers[0].size()){
                     numbers[ySweep][xSweep] = RandomGenerator::getInstance().getRandom() > 0.5 ? 1 : 0;
