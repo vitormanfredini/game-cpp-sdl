@@ -12,10 +12,11 @@ private:
     SDL_Texture* backgroundTexture;
     SDL_Texture* zeroTexture;
     SDL_Texture* oneTexture;
+    SDL_Texture* nameTexture;
     Alignment alignment;
 
     int numberColumns = 67;
-    int numberRows = numberColumns + 10;
+    int numberRows = numberColumns;
 
     std::vector<std::vector<int>> numbers;
 
@@ -24,10 +25,12 @@ public:
         SDL_Texture* backgroundTexture,
         SDL_Texture* zeroTexture,
         SDL_Texture* oneTexture,
+        SDL_Texture* nameTexture,
         Alignment alignment) : 
         backgroundTexture(backgroundTexture),
         zeroTexture(zeroTexture),
         oneTexture(oneTexture),
+        nameTexture(nameTexture),
         alignment(alignment) {
             for(int numY=0;numY<numberRows;numY++){
                 numbers.push_back({});
@@ -77,7 +80,7 @@ public:
             for(int numX=0;numX<numberColumns;numX++){
                 SDL_Rect rect = {
                     static_cast<int>(std::round(static_cast<float>(numX) * (width/numberColumns) * props.screenScale)),
-                    static_cast<int>(std::round(static_cast<float>(numY) * (width/numberColumns) * numberSizeRatio * 0.9 * props.screenScale)),
+                    static_cast<int>(std::round(static_cast<float>(numY) * (width/numberColumns) * numberSizeRatio * 1.0 * props.screenScale)),
                     static_cast<int>(std::round((width/numberColumns) * props.screenScale)),
                     static_cast<int>(std::round((width/numberColumns) * numberSizeRatio * props.screenScale)),
                 };
@@ -85,10 +88,49 @@ public:
                 SDL_RenderCopy(props.sdl_renderer, numbers[numY][numX] == 0 ? zeroTexture : oneTexture, NULL, &rect);
             }
         }
+
+        SDL_Rect nameBackgroundRect = {
+            static_cast<int>(std::round(0.089f * props.screenScale)),
+            static_cast<int>(std::round(0.150f * props.screenScale)),
+            static_cast<int>(std::round(0.463f * props.screenScale)),
+            static_cast<int>(std::round(0.0289f * props.screenScale)),
+        };
+        SDL_RenderCopy(props.sdl_renderer, backgroundTexture, NULL, &nameBackgroundRect);
         
+        SDL_Rect nameRect = {
+            static_cast<int>(std::round(0.105f * props.screenScale)),
+            static_cast<int>(std::round(0.146f * props.screenScale)),
+            static_cast<int>(std::round(0.432f * props.screenScale)),
+            static_cast<int>(std::round(0.0289f * props.screenScale)),
+        };
+        SDL_RenderCopy(props.sdl_renderer, nameTexture, NULL, &nameRect);
+
+        SDL_Rect button1BackgroundRect = {
+            static_cast<int>(std::round(0.089f * props.screenScale)),
+            static_cast<int>(std::round(0.320f * props.screenScale)),
+            static_cast<int>(std::round(0.149f * props.screenScale)),
+            static_cast<int>(std::round(0.0289f * props.screenScale)),
+        };
+        SDL_RenderCopy(props.sdl_renderer, backgroundTexture, NULL, &button1BackgroundRect);
+
+        SDL_Rect button2BackgroundRect = {
+            static_cast<int>(std::round(0.089f * props.screenScale)),
+            static_cast<int>(std::round(0.350f * props.screenScale)),
+            static_cast<int>(std::round(0.134f * props.screenScale)),
+            static_cast<int>(std::round(0.0289f * props.screenScale)),
+        };
+        SDL_RenderCopy(props.sdl_renderer, backgroundTexture, NULL, &button2BackgroundRect);
+
+        SDL_Rect button3BackgroundRect = {
+            static_cast<int>(std::round(0.089f * props.screenScale)),
+            static_cast<int>(std::round(0.410f * props.screenScale)),
+            static_cast<int>(std::round(0.090f * props.screenScale)),
+            static_cast<int>(std::round(0.0289f * props.screenScale)),
+        };
+        SDL_RenderCopy(props.sdl_renderer, backgroundTexture, NULL, &button3BackgroundRect);
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<MainMenuBackgroundRenderer>(backgroundTexture, zeroTexture, oneTexture, alignment);
+        return std::make_unique<MainMenuBackgroundRenderer>(backgroundTexture, zeroTexture, oneTexture, nameTexture, alignment);
     }
 };

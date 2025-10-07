@@ -98,32 +98,30 @@ public:
 
         SDL_SetTextureBlendMode(textureToDrawOn, SDL_BLENDMODE_BLEND);
 
-        // change renderer to the new texture
         SDL_SetRenderTarget(sdl_renderer, textureToDrawOn);
 
-        // copy texture from original to the copy
         if(copyOriginalTexture){
             SDL_RenderCopy(sdl_renderer, originalTexture, nullptr, nullptr);
         }
 
-        // create texture with text
         SDL_Texture* textureWithText = createTextTexture(text, fontStyle, color);
 
         int textTextureWidth, textTextureHeight;
         SDL_QueryTexture(textureWithText, nullptr, nullptr, &textTextureWidth, &textTextureHeight);
+
+        // std::cout << text << ": " << textTextureWidth  << "x"  << textTextureHeight << std::endl;
 
         std::vector<SDL_Rect> renderRects = {};
         switch (method) {
             case TextRenderMethod::Centered: {
                 int textX = std::round(static_cast<float>(originalTextureWidth)/2 - static_cast<float>(textTextureWidth)/2);
                 int textY = std::round(static_cast<float>(originalTextureHeight)/2 - static_cast<float>(textTextureHeight)/2);
-                SDL_Rect rect = {
+                renderRects.push_back({
                     textX,
                     textY,
                     textTextureWidth,
                     textTextureHeight,
-                };
-                renderRects.push_back(rect);
+                });
             }
             break;
             case TextRenderMethod::ButtonCentered: {
@@ -205,8 +203,6 @@ public:
         SDL_DestroyTexture(hoverPart);
         SDL_DestroyTexture(pressedPart);
         SDL_DestroyTexture(idlePlusHover);
-
-        SDLUtils::saveTextureToBMP(sdl_renderer, completeTexture, "complete.bmp");
 
         return completeTexture;
     }

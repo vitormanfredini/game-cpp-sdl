@@ -27,7 +27,9 @@ public:
         // Main Menu
         prototypes[MenuType::MainMenu] = std::make_unique<Menu>();
 
-        SDL_Color numbersTextColor = { 58, 58, 50, 255 };
+        SDL_Color whiteTextColor = { 255, 255, 255, 255 };
+
+        SDL_Color numbersTextColor = { 148, 148, 129, 255 };
         int numberWidth = 19;
         int numberHeight = 37;
 
@@ -49,31 +51,41 @@ public:
                 &numbersTextColor,
                 TextRenderMethod::Centered
             ),
+            textureManager->drawTextOnTexture(
+                textureManager->loadTexture(0,0,0,0,551,37),
+                "rage against the bad machines",
+                FontStyle::MainMenu,
+                &whiteTextColor,
+                TextRenderMethod::Centered
+            ),
             Alignment::UI
         ));
 
-        int buttonHeight = 40;
-        int buttonWidth = 190;
+        int buttonHeightPixels = 37;
+        float buttonHeight = 0.0289f;
+        float buttonPositionX = 0.105f;
 
         SDL_Color mainMenuButtonTextColorIdle = { 255, 255, 255, 255 };
         SDL_Color mainMenuButtonTextColorHover = { 29, 158, 20, 255 };
         SDL_Color mainMenuButtonTextColorPressed = { 29, 158, 20, 255 };
 
         std::unique_ptr<Button> startButton = std::make_unique<Button>();
-        startButton->setPosition(0.106f, 0.506f);
-        startButton->setSize(0.147f, 0.0305f);
+        float button1WidthRatio = 4.109;
+        int button1WidthPixels = std::round(static_cast<float>(buttonHeightPixels) * button1WidthRatio);
+        startButton->setPosition(buttonPositionX, 0.4865f);
+        startButton->setSize(buttonHeight * button1WidthRatio, buttonHeight);
         startButton->addRenderComponent(std::make_unique<ButtonRenderer>(
             textureManager->createButtonTexture(
-                buttonWidth,
-                buttonHeight,
+                button1WidthPixels,
+                buttonHeightPixels,
                 "new game",
                 FontStyle::MainMenu,
                 mainMenuButtonTextColorIdle,
                 mainMenuButtonTextColorHover,
                 mainMenuButtonTextColorPressed,
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight)
+                textureManager->loadTexture(0,0,0,255,button1WidthPixels,buttonHeightPixels),
+                textureManager->loadTexture(0,0,0,255,button1WidthPixels,buttonHeightPixels),
+                textureManager->loadTexture(0,0,0,255,button1WidthPixels,buttonHeightPixels)
             )
         ));
         startButton->setCallback([stateManager]() {
@@ -82,20 +94,22 @@ public:
         prototypes[MenuType::MainMenu]->addButton(std::move(startButton));
 
         std::unique_ptr<Button> optionsButton = std::make_unique<Button>();
-        optionsButton->setPosition(0.106f, 0.532f);
-        optionsButton->setSize(0.147f, 0.0305f);
+        float button2WidthRatio = 3.594;
+        int button2WidthPixels = std::round(static_cast<float>(buttonHeightPixels) * button2WidthRatio);
+        optionsButton->setPosition(buttonPositionX, 0.5155f);
+        optionsButton->setSize(buttonHeight * button2WidthRatio, buttonHeight);
         optionsButton->addRenderComponent(std::make_unique<ButtonRenderer>(
             textureManager->createButtonTexture(
-                buttonWidth,
-                buttonHeight,
+                button2WidthPixels,
+                buttonHeightPixels,
                 "options",
                 FontStyle::MainMenu,
                 mainMenuButtonTextColorIdle,
                 mainMenuButtonTextColorHover,
                 mainMenuButtonTextColorPressed,
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight)
+                textureManager->loadTexture(0,0,0,255,button2WidthPixels,buttonHeightPixels),
+                textureManager->loadTexture(0,0,0,255,button2WidthPixels,buttonHeightPixels),
+                textureManager->loadTexture(0,0,0,255,button2WidthPixels,buttonHeightPixels)
             )
         ));
         optionsButton->setCallback([stateManager]() {
@@ -104,20 +118,22 @@ public:
         prototypes[MenuType::MainMenu]->addButton(std::move(optionsButton));
 
         std::unique_ptr<Button> exitButton = std::make_unique<Button>();
-        exitButton->setPosition(0.106f, 0.584f);
-        exitButton->setSize(0.147f, 0.0305f);
+        float button3WidthRatio = 2.054;
+        int button3WidthPixels = std::round(static_cast<float>(buttonHeightPixels) * button3WidthRatio);
+        exitButton->setPosition(buttonPositionX, 0.5735f);
+        exitButton->setSize(buttonHeight * button3WidthRatio, buttonHeight);
         exitButton->addRenderComponent(std::make_unique<ButtonRenderer>(
             textureManager->createButtonTexture(
-                buttonWidth,
-                buttonHeight,
+                button3WidthPixels,
+                buttonHeightPixels,
                 "exit",
                 FontStyle::MainMenu,
                 mainMenuButtonTextColorIdle,
                 mainMenuButtonTextColorHover,
                 mainMenuButtonTextColorPressed,
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight),
-                textureManager->loadTexture(0,0,0,255,buttonWidth,buttonHeight)
+                textureManager->loadTexture(0,0,0,255,button3WidthPixels,buttonHeightPixels),
+                textureManager->loadTexture(0,0,0,255,button3WidthPixels,buttonHeightPixels),
+                textureManager->loadTexture(0,0,0,255,button3WidthPixels,buttonHeightPixels)
             )
         ));
         exitButton->setCallback([stateManager]() {
