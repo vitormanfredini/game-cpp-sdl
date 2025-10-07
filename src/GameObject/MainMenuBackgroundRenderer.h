@@ -18,6 +18,8 @@ private:
     int numberColumns = 67;
     int numberRows = numberColumns;
 
+    int sweepAnimation = 0;
+
     std::vector<std::vector<int>> numbers;
 
 public:
@@ -35,7 +37,7 @@ public:
             for(int numY=0;numY<numberRows;numY++){
                 numbers.push_back({});
                 for(int numX=0;numX<numberColumns;numX++){
-                    numbers[numY].push_back(RandomGenerator::getInstance().getRandom() > 0.5 ? 0 : 1);
+                    numbers[numY].push_back(-1);
                 }
             }
         }
@@ -45,7 +47,23 @@ public:
         for(int c=0;c<numberChangesPerUpdate;c++){
             int randomX = std::floor(static_cast<float>(numberColumns) * RandomGenerator::getInstance().getRandom());
             int randomY = std::floor(static_cast<float>(numberRows) * RandomGenerator::getInstance().getRandom());
-            numbers[randomY][randomX] = numbers[randomY][randomX] == 1 ? 0 : 1;
+            if(numbers[randomY][randomX] != -1){
+                numbers[randomY][randomX] = numbers[randomY][randomX] == 1 ? 0 : 1;
+            }
+        }
+
+        if(sweepAnimation < numberColumns * 4){
+            int xSweep = sweepAnimation / 2;
+            int ySweep = 0;
+            bool finished = false;
+            while(xSweep < numbers[0].size() * 2){
+                if(ySweep < numbers.size() && xSweep < numbers[0].size()){
+                    numbers[ySweep][xSweep] = RandomGenerator::getInstance().getRandom() > 0.5 ? 1 : 0;
+                }
+                xSweep -= 1;
+                ySweep += 1;
+            }
+            sweepAnimation += 1;
         }
     }
 
@@ -78,13 +96,16 @@ public:
 
         for(int numY=0;numY<numberRows;numY++){
             for(int numX=0;numX<numberColumns;numX++){
+                if(numbers[numY][numX] == -1){
+                    continue;
+                }
+
                 SDL_Rect rect = {
                     static_cast<int>(std::round(static_cast<float>(numX) * (width/numberColumns) * props.screenScale)),
                     static_cast<int>(std::round(static_cast<float>(numY) * (width/numberColumns) * numberSizeRatio * 1.0 * props.screenScale)),
                     static_cast<int>(std::round((width/numberColumns) * props.screenScale)),
                     static_cast<int>(std::round((width/numberColumns) * numberSizeRatio * props.screenScale)),
                 };
-
                 SDL_RenderCopy(props.sdl_renderer, numbers[numY][numX] == 0 ? zeroTexture : oneTexture, NULL, &rect);
             }
         }
