@@ -26,6 +26,7 @@
 #include "MouseEventType.h"
 #include "Audio/AudioEngine.h"
 #include "Maps/BlockObjectManager.h"
+#include "GameObject/IntroRenderer.h"
 
 class GameEngine {
 
@@ -58,11 +59,13 @@ public:
     {
         menu = std::move(menuFactory->createMainMenu());
 
-        intro.setPosition(0.0f,0.0f);
-        intro.setSize(1.0f,1.0f);
-        intro.addRenderComponent(std::make_unique<SpriteRenderer>(
+        intro.setPosition(0.5f,0.5f);
+        intro.setSize(0.3f,0.15f);
+        intro.addRenderComponent(std::make_unique<IntroRenderer>(
             textureManager->loadTexture("images/intro.png"),
-            Alignment::UI
+            textureManager->loadTexture(0,0,0),
+            1*300,
+            60
         ));
 
         pause.setPosition(0.0f,0.0f);
@@ -296,7 +299,7 @@ private:
     DebrisFactory* debrisFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
     
-    Intro intro { 1*60 };
+    Intro intro { 1*300 };
     GameObject pause;
 
     Character* mainChar;

@@ -14,6 +14,9 @@ public:
 
     void update(){
         howManyUpdates -= 1;
+        for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
+            renderComponent->update(*this);
+        }
     }
 
     bool finished(){
