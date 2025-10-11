@@ -48,7 +48,9 @@ public:
         copy->width = width;
         copy->height = height;
 
-        copy->setCollisionComponent(collisionComponent->clone());
+        if(collisionComponent){
+            copy->setCollisionComponent(collisionComponent->clone());
+        }
 
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
             std::unique_ptr<RenderComponent> clonedRenderComponent = renderComponent->clone();
