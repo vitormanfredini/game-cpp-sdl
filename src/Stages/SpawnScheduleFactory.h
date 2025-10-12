@@ -13,6 +13,7 @@ public:
         for(int c=0;c<100;c++){
             int framesOffset = c * 6800;
             stage->addKeyframe({ framesOffset + 240, 6 * (c+1), CharacterType::Furnace });
+            stage->addKeyframe({ framesOffset + 241, 6 * (c+1), CharacterType::DataCenterRack });
             stage->addKeyframe({ framesOffset + 250, 1 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 540, 3 * (c+1), CharacterType::Regular });
             stage->addKeyframe({ framesOffset + 650, 1 * (c+1), CharacterType::Boss });

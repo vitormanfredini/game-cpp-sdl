@@ -153,7 +153,7 @@ public:
         prototypes[CharacterType::Furnace]->setSize(heightEnemy5*widthRatioEnemy5,heightEnemy5);
         prototypes[CharacterType::Furnace]->setInitialBaseSpeed(0.6f);
         prototypes[CharacterType::Furnace]->setCollisionAttack(0.0035);
-        prototypes[CharacterType::Furnace]->setInitialMaxHealth(1.0f);
+        prototypes[CharacterType::Furnace]->setInitialMaxHealth(2.0f);
         prototypes[CharacterType::Furnace]->setInitialHealth(2.0f);
         prototypes[CharacterType::Furnace]->setWeight(0.5f);
         prototypes[CharacterType::Furnace]->addRenderComponent(std::make_unique<ShadowRenderer>(
@@ -173,6 +173,35 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Furnace]->setMovementComponent(std::make_unique<ZigZagMover>(60, 0.01));
+
+        float heightEnemy6 = 0.17;
+        float widthRatioEnemy6 = 0.56;
+        prototypes[CharacterType::DataCenterRack] = std::make_unique<Character>();
+        prototypes[CharacterType::DataCenterRack]->setSize(heightEnemy6*widthRatioEnemy6,heightEnemy6);
+        prototypes[CharacterType::DataCenterRack]->setInitialBaseSpeed(0.3f);
+        prototypes[CharacterType::DataCenterRack]->setCollisionAttack(0.008);
+        prototypes[CharacterType::DataCenterRack]->setInitialMaxHealth(3.0f);
+        prototypes[CharacterType::DataCenterRack]->setInitialHealth(3.0f);
+        prototypes[CharacterType::DataCenterRack]->setWeight(1.5f);
+        prototypes[CharacterType::DataCenterRack]->addRenderComponent(std::make_unique<ShadowRenderer>(
+            textureManager->loadTexture("images/chars/shadow.png"),
+            0.045
+        ));
+        prototypes[CharacterType::DataCenterRack]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            textureManager->loadTexture("images/chars/enemy6_horizontal_sprites.png"),
+            Alignment::BottomUpCentered,
+            5,
+            37
+        ));
+        prototypes[CharacterType::DataCenterRack]->addRenderComponent(defaultHealthBarRenderer->clone());
+        prototypes[CharacterType::DataCenterRack]->setCollisionComponent(std::make_unique<BoxCollider>(
+            heightEnemy6*widthRatioEnemy6,
+            heightEnemy6 / 3,
+            Alignment::Centered
+        ));
+        prototypes[CharacterType::DataCenterRack]->setMovementComponent(std::make_unique<StraightMover>());
+
+        
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {
