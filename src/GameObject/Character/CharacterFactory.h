@@ -180,8 +180,8 @@ public:
         prototypes[CharacterType::DataCenterRack]->setSize(heightEnemy6*widthRatioEnemy6,heightEnemy6);
         prototypes[CharacterType::DataCenterRack]->setInitialBaseSpeed(0.3f);
         prototypes[CharacterType::DataCenterRack]->setCollisionAttack(0.008);
-        prototypes[CharacterType::DataCenterRack]->setInitialMaxHealth(3.0f);
-        prototypes[CharacterType::DataCenterRack]->setInitialHealth(3.0f);
+        prototypes[CharacterType::DataCenterRack]->setInitialMaxHealth(6.0f);
+        prototypes[CharacterType::DataCenterRack]->setInitialHealth(6.0f);
         prototypes[CharacterType::DataCenterRack]->setWeight(1.5f);
         prototypes[CharacterType::DataCenterRack]->addRenderComponent(std::make_unique<ShadowRenderer>(
             textureManager->loadTexture("images/chars/shadow.png"),
@@ -200,6 +200,34 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::DataCenterRack]->setMovementComponent(std::make_unique<StraightMover>());
+
+        float heightEnemy7 = 0.055;
+        float widthRatioEnemy7 = 1.4545;
+        prototypes[CharacterType::NeuralNet] = std::make_unique<Character>();
+        prototypes[CharacterType::NeuralNet]->setSize(heightEnemy7*widthRatioEnemy7,heightEnemy7);
+        prototypes[CharacterType::NeuralNet]->setZ(heightEnemy7 * 0.2);
+        prototypes[CharacterType::NeuralNet]->setInitialBaseSpeed(0.5f);
+        prototypes[CharacterType::NeuralNet]->setCollisionAttack(0.02);
+        prototypes[CharacterType::NeuralNet]->setInitialMaxHealth(0.6f);
+        prototypes[CharacterType::NeuralNet]->setInitialHealth(0.6f);
+        prototypes[CharacterType::NeuralNet]->setWeight(0.66f);
+        prototypes[CharacterType::NeuralNet]->addRenderComponent(std::make_unique<ShadowRenderer>(
+            textureManager->loadTexture("images/chars/shadow.png"),
+            0.03
+        ));
+        prototypes[CharacterType::NeuralNet]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            textureManager->loadTexture("images/chars/enemy7_horizontal_sprites.png"),
+            Alignment::BottomUpCentered,
+            3,
+            48
+        ));
+        prototypes[CharacterType::NeuralNet]->addRenderComponent(defaultHealthBarRenderer->clone());
+        prototypes[CharacterType::NeuralNet]->setCollisionComponent(std::make_unique<BoxCollider>(
+            heightEnemy7*widthRatioEnemy7,
+            heightEnemy7 / 3,
+            Alignment::Centered
+        ));
+        prototypes[CharacterType::NeuralNet]->setMovementComponent(std::make_unique<StraightMover>());
 
         
     }
