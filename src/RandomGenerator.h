@@ -15,6 +15,12 @@ public:
         return m_dist(m_engine);
     }
 
+    int getRandomInt(int min, int max) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        std::uniform_int_distribution<int> dist(min, max);
+        return dist(m_engine);
+    }
+
 private:
 
     RandomGenerator()

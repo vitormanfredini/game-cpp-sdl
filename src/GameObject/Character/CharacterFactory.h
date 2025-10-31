@@ -63,6 +63,7 @@ public:
         ));
         prototypes[CharacterType::Regular]->setMovementComponent(std::make_unique<ZigZagMover>(45, 0.02));
         prototypes[CharacterType::Regular]->setFloatingComponent(std::make_unique<SineFloater<100>>(SineLookupTable<100>::table, 0.01f));
+        prototypes[CharacterType::Regular]->addDebrisType(DebrisFactory::Type::MetalSmall);
 
         float heightEnemy2 = 0.07;
         float widthRatioEnemy2 = 1.1562;
@@ -92,6 +93,9 @@ public:
         ));
         prototypes[CharacterType::Bigger]->setMovementComponent(std::make_unique<AngledMover>(45, 0.12, 0.25, 0.33, 0.5));
         prototypes[CharacterType::Bigger]->setFloatingComponent(std::make_unique<SineFloater<140>>(SineLookupTable<140>::table, 0.01f));
+        prototypes[CharacterType::Bigger]->addDebrisType(DebrisFactory::Type::MetalSmall);
+        prototypes[CharacterType::Bigger]->addDebrisType(DebrisFactory::Type::MetalSmall2);
+        prototypes[CharacterType::Bigger]->addDebrisType(DebrisFactory::Type::Oil);
 
         float heightEnemy3 = 0.14;
         float widthRatioEnemy3 = 0.66;
@@ -119,6 +123,11 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Boss]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::Boss]->addDebrisType(DebrisFactory::Type::MetalSmall);
+        prototypes[CharacterType::Boss]->addDebrisType(DebrisFactory::Type::MetalSmall2);
+        prototypes[CharacterType::Boss]->addDebrisType(DebrisFactory::Type::MetalBar);
+        prototypes[CharacterType::Boss]->addDebrisType(DebrisFactory::Type::Oil);
+        prototypes[CharacterType::Boss]->addDebrisType(DebrisFactory::Type::Oil2);
 
         float heightEnemy4 = 0.2;
         float widthRatioEnemy4 = 0.325;
@@ -146,6 +155,8 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Fire]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::Fire]->addDebrisType(DebrisFactory::Type::Oil);
+        prototypes[CharacterType::Fire]->addDebrisType(DebrisFactory::Type::Oil2);
 
         float heightEnemy5 = 0.11;
         float widthRatioEnemy5 = 0.4;
@@ -173,6 +184,7 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::Furnace]->setMovementComponent(std::make_unique<ZigZagMover>(60, 0.01));
+        prototypes[CharacterType::Furnace]->addDebrisType(DebrisFactory::Type::MetalSmall2);
 
         float heightEnemy6 = 0.17;
         float widthRatioEnemy6 = 0.56;
@@ -200,6 +212,8 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::DataCenterRack]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::DataCenterRack]->addDebrisType(DebrisFactory::Type::MetalSmall);
+        prototypes[CharacterType::DataCenterRack]->addDebrisType(DebrisFactory::Type::MetalSmall2);
 
         float heightEnemy7 = 0.055;
         float widthRatioEnemy7 = 1.4545;
@@ -228,8 +242,11 @@ public:
             Alignment::Centered
         ));
         prototypes[CharacterType::NeuralNet]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::NeuralNet]->addDebrisType(DebrisFactory::Type::MetalSmall);
+        prototypes[CharacterType::NeuralNet]->addDebrisType(DebrisFactory::Type::MetalSmall2);
+        prototypes[CharacterType::NeuralNet]->addDebrisType(DebrisFactory::Type::Oil);
+        prototypes[CharacterType::NeuralNet]->addDebrisType(DebrisFactory::Type::Oil2);
 
-        
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {

@@ -16,6 +16,7 @@
 #include "StatComponent.h"
 #include "LevelManager.h"
 #include "GameObject/Movement/Floating/FloatingComponent.h"
+#include "GameObject/DebrisFactory.h"
 
 class Character: public GameObject {
 
@@ -258,6 +259,14 @@ public:
         
     }
 
+    void addDebrisType(DebrisFactory::Type type){
+        possibleDebrisType.push_back(type);
+    }
+
+    std::vector<DebrisFactory::Type>& getPossibleDebris(){
+        return possibleDebrisType;
+    }
+
     std::unique_ptr<Character> clone() {
         auto copy = std::make_unique<Character>();
 
@@ -277,6 +286,10 @@ public:
 
         for (const auto &stat : stats) {
             copy->stats[stat.first] = std::move(stat.second->clone());
+        }
+
+        for (DebrisFactory::Type type : possibleDebrisType) {
+            copy->addDebrisType(type);
         }
     
         if (collisionComponent) {
@@ -317,6 +330,7 @@ private:
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;
     std::unique_ptr<FloatingComponent> floatingComponent;
+    std::vector<DebrisFactory::Type> possibleDebrisType = {};
 
     std::unique_ptr<LevelManager> levelManager;
 

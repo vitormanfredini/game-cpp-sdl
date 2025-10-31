@@ -421,14 +421,18 @@ private:
                     items.push_back(std::move(newHealthItem));
                 }
 
-                std::unique_ptr<GameObject> newDebris = debrisFactory->create();
-                newDebris->setPosition(enemies[e]->getX(), enemies[e]->getY());
-                debris.addItem(
-                    static_cast<int>(std::round(enemies[e]->getX())),
-                    static_cast<int>(std::round(enemies[e]->getY())),
-                    std::move(newDebris),
-                    true
-                );
+                std::vector<DebrisFactory::Type> possibleDebris = enemies[e]->getPossibleDebris();
+                if(possibleDebris.size() > 0){
+                    int debrisIndex = RandomGenerator::getInstance().getRandomInt(0, possibleDebris.size()-1);
+                    std::unique_ptr<GameObject> newDebris = debrisFactory->create(possibleDebris[debrisIndex]);
+                    newDebris->setPosition(enemies[e]->getX(), enemies[e]->getY());
+                    debris.addItem(
+                        static_cast<int>(std::round(enemies[e]->getX())),
+                        static_cast<int>(std::round(enemies[e]->getY())),
+                        std::move(newDebris),
+                        true
+                    );
+                }
 
                 diedEnemies.push_back(e);
             }

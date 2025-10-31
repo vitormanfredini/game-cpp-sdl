@@ -3,7 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- draw different types of debris (maybe specify what type of debris type in each enemy, so each type can drop a different type when they die)
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
 - add tiles dynamically (instead of loading all of them at once at the begining)
