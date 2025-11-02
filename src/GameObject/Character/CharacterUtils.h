@@ -11,7 +11,7 @@ class CharacterUtils {
 
 public:
 
-    static Character* getClosestCharacterIndex(std::vector<std::unique_ptr<Character>>& chars, Character* refChar) {
+    static Character* getClosestCharacter(std::vector<std::unique_ptr<Character>>& chars, Character* refChar) {
         if(chars.size() == 0){
             return nullptr;
         }

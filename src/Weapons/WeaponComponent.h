@@ -32,10 +32,10 @@ public:
         }
     }
 
-    std::vector<std::unique_ptr<Projectile>> fire(Character* originChar, Character* towardsChar){
+    std::vector<std::unique_ptr<Projectile>> fire(Character* originChar){
         std::vector<std::unique_ptr<Projectile>> newProjectiles = {};
         if(shouldFire()){
-            std::unique_ptr<Projectile> newProjectile = createProjectile(originChar, towardsChar);
+            std::unique_ptr<Projectile> newProjectile = createProjectile(originChar);
             newProjectile->setAttack(attack);
             newProjectile->setSound(fireSound);
             newProjectiles.push_back(std::move(newProjectile));
@@ -53,7 +53,7 @@ private:
     int countUp = 0;
     int fireSound = -1;
 
-    virtual std::unique_ptr<Projectile> createProjectile(Character* originChar, Character* towardsChar) = 0;
+    virtual std::unique_ptr<Projectile> createProjectile(Character* originChar) = 0;
 
     bool shouldFire(){
         return countUp == (updatesBetweenFires - 1);

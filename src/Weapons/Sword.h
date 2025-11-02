@@ -9,7 +9,7 @@ class Sword: public WeaponComponent {
 protected:
     SDL_Texture* texture;
 
-    std::unique_ptr<Projectile> createProjectile(Character* originChar, Character* towardsChar){
+    std::unique_ptr<Projectile> createProjectile(Character* originChar){
         std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>();
         projectile->setAttack(attack);
         projectile->setPosition(

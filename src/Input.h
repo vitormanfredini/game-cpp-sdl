@@ -17,7 +17,22 @@ private:
     MovingAverage horizontal {10};
     MovingAverage vertical {10};
 
+    float lastVirtualMouseX = 0.1f;
+    float lastVirtualMouseY = 0.1f;
+
 public:
+
+    void setAimMyMouseVirtualCoords(float virtualMouseX, float virtualMouseY){
+        lastVirtualMouseX = virtualMouseX;
+        lastVirtualMouseY = virtualMouseY;
+    }
+
+    MovementDirection getAimDirection(){
+        return {
+            lastVirtualMouseX - 0.5f,
+            lastVirtualMouseY - 0.5f
+        };
+    }
 
     void update(){
 
@@ -87,7 +102,7 @@ public:
         }
     }
 
-    MovementDirection getInputDirections(){
+    MovementDirection getInputDirection(){
         return {
             horizontal.getAverage(),
             vertical.getAverage()

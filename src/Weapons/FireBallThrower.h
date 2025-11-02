@@ -10,7 +10,7 @@ class FireBallThrower: public WeaponComponent {
 protected:
     SDL_Texture* texture;
 
-    std::unique_ptr<Projectile> createProjectile(Character* originChar, Character* towardsChar){
+    std::unique_ptr<Projectile> createProjectile(Character* originChar){
         std::unique_ptr<Projectile> projectile = std::make_unique<Projectile>();
         projectile->setAttack(attack);
         projectile->setPosition(
@@ -28,16 +28,6 @@ protected:
             0.03,
             Alignment::Centered
         ));
-        if(towardsChar == nullptr){
-            projectile->setDirection(
-                MovementDirection(
-                    RandomGenerator::getInstance().getRandom() - 0.5f,
-                    RandomGenerator::getInstance().getRandom() - 0.5f
-                ).normalized()
-            );
-        }else{
-            projectile->setDirection(originChar->getMovementDirectionTowards(towardsChar).normalized());
-        }
         projectile->setVelocity(0.005f);
         projectile->setDurationInUpdates(120);
         return projectile;

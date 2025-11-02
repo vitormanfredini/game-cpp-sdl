@@ -246,6 +246,7 @@ public:
                 break;
             case SDL_MOUSEMOTION:
                 renderer->getVirtualMouseCoords(&virtualMouseX, &virtualMouseY);
+                input->setAimMyMouseVirtualCoords(virtualMouseX, virtualMouseY);
                 if(stateManager->shouldUpdateMainMenu()){
                     menu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
                     break;
@@ -321,9 +322,10 @@ private:
     void doGameWorldUpdate(){
 
         input->update();
+        MovementDirection aim = input->getAimDirection();
 
         mainChar->update();
-        mainChar->moveByInput(input->getInputDirections().normalized());
+        mainChar->moveByInput(input->getInputDirection().normalized());
 
         for(std::unique_ptr<Item>& item : items){
             item->update();
@@ -351,9 +353,7 @@ private:
         mapComponent->update(camera->getPositionX(),camera->getPositionY());
         debris.update(camera->getPositionX(),camera->getPositionY());
 
-        std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(
-            CharacterUtils::getClosestCharacterIndex(enemies, mainChar)
-        );
+        std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(aim.normalized());
 
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
             scheduleSoundToNextUpdate(projectile->getSound());
