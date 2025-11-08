@@ -10,7 +10,9 @@
 #include <vector>
 #include <random>
 #include <algorithm>
-#include "Weapons/WeaponStat.h"
+#include "GameObject/Character/Weapons/WeaponStat.h"
+#include "GameObject/Character/Weapons/WeaponFactory.h"
+#include "Audio/AudioEngine.h"
 
 #include "StatUpgrade.h"
 
@@ -18,7 +20,7 @@ class UpgradeFactory {
 
 public:
 
-    UpgradeFactory(ItemFactory* itemFactory): itemFactory(itemFactory) {
+    UpgradeFactory(ItemFactory* itemFactory, WeaponFactory* weaponFactory): itemFactory(itemFactory) {
 
         prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.2), 1, "Aumenta a vida máxima em 20%"));
         prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.1), 2, "Aumenta a vida máxima em 20%"));
@@ -41,8 +43,11 @@ public:
         prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
         prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
 
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f), 1, "Atirar mais rápido"));
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f), 2, "Atirar mais rápido"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f), 1, "Atirar mais rápido"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f), 2, "Atirar mais rápido"));
+
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponFactory::Id::FireBall), 1, "Lança bolas de fogo"));
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponFactory::Id::FireBall), 2, "Lança bolas de fogo 222"));
 
         availableUpgradeIds = {};
         for (const auto & [ upgradeId, value ] : prototypes) {

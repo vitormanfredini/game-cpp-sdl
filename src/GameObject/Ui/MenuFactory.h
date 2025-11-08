@@ -190,8 +190,10 @@ public:
                     charReceivesReward->consumeStatUpgrade(upgrade->getStatUpgrade());
                 }else if(upgrade->getType() == UpgradeComponent::Type::Item){
                     charReceivesReward->consumeItem(upgrade->getItem());
-                }else if(upgrade->getType() == UpgradeComponent::Type::Weapon){
+                }else if(upgrade->getType() == UpgradeComponent::Type::WeaponUpgrade){
                     charReceivesReward->consumeWeaponUpgrade(upgrade->getWeaponUpgrade());
+                }else if(upgrade->getType() == UpgradeComponent::Type::Weapon){
+                    charReceivesReward->addWeapon(upgrade->getWeaponComponent());
                 }else{
                     std::cerr << "optionButton->setCallback(): upgrade type not implemented" << std::endl;
                 }

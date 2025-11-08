@@ -1,5 +1,5 @@
 #pragma once
-#include "Weapons/WeaponStat.h"
+#include "GameObject/Character/Weapons/WeaponStat.h"
 #include <memory>
 
 class WeaponUpgrade {

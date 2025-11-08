@@ -12,6 +12,7 @@ class UpgradeComponent {
 public:
     enum class Type {
         Stat,
+        WeaponUpgrade,
         Weapon,
         Item
     };
@@ -21,6 +22,7 @@ private:
     std::unique_ptr<StatUpgrade> statUpgrade;
     std::unique_ptr<WeaponUpgrade> weaponUpgrade;
     std::unique_ptr<Item> item;
+    std::unique_ptr<WeaponComponent> weaponComponent;
     UpgradeId id;
     int level;
     std::string description;
@@ -31,10 +33,13 @@ public:
         : type(Type::Stat), statUpgrade(std::move(statUpgrade)), id(id), level(level), description(description) {}
 
     explicit UpgradeComponent(UpgradeId id, std::unique_ptr<WeaponUpgrade> weaponUpgrade, int level, std::string description)
-        : type(Type::Weapon), weaponUpgrade(std::move(weaponUpgrade)), id(id), level(level), description(description) {}
+        : type(Type::WeaponUpgrade), weaponUpgrade(std::move(weaponUpgrade)), id(id), level(level), description(description) {}
 
     explicit UpgradeComponent(UpgradeId id, std::unique_ptr<Item> item, int level, std::string description)
         : type(Type::Item), item(std::move(item)), id(id), level(level), description(description) {}
+    
+    explicit UpgradeComponent(UpgradeId id, std::unique_ptr<WeaponComponent> weapon, int level, std::string description)
+        : type(Type::Weapon), weaponComponent(std::move(weapon)), id(id), level(level), description(description) {}
     
 
     UpgradeComponent(UpgradeComponent&& other) noexcept
@@ -42,6 +47,7 @@ public:
           statUpgrade(std::move(other.statUpgrade)),
           weaponUpgrade(std::move(other.weaponUpgrade)),
           item(std::move(other.item)),
+          weaponComponent(std::move(other.weaponComponent)),
           id(other.id),
           level(other.level),
           description(other.description)
@@ -55,6 +61,10 @@ public:
 
     WeaponUpgrade* getWeaponUpgrade() const {
         return weaponUpgrade.get();
+    }
+
+    std::unique_ptr<WeaponComponent> getWeaponComponent() {
+        return std::move(weaponComponent);
     }
 
     Item* getItem() const {
@@ -75,8 +85,11 @@ public:
         if(type == Type::Stat){
             return std::make_unique<UpgradeComponent>(id, statUpgrade->clone(), level, description);
         }
-        if(type == Type::Weapon){
+        if(type == Type::WeaponUpgrade){
             return std::make_unique<UpgradeComponent>(id, weaponUpgrade->clone(), level, description);
+        }
+        if(type == Type::Weapon){
+            return std::make_unique<UpgradeComponent>(id, weaponComponent->clone(), level, description);
         }
         if(type == Type::Item){
             return std::make_unique<UpgradeComponent>(id, item->clone(), level, description);

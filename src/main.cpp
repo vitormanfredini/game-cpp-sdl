@@ -9,14 +9,15 @@
 #include "Input.h"
 #include "DeltaTime.h"
 #include "GameObject/Ui/Menu.h"
-#include "Weapons/Projectile.h"
 #include "GameObject/Character/Character.h"
 #include "Renderer.h"
 #include "Camera.h"
 #include "Maps/MapComponent.h"
 #include "GameEngine.h"
-#include "Weapons/FireBallThrower.h"
-#include "Weapons/Sword.h"
+#include "GameObject/Character/Weapons/WeaponFactory.h"
+#include "GameObject/Character/Weapons/Projectile.h"
+#include "GameObject/Character/Weapons/FireBallThrower.h"
+#include "GameObject/Character/Weapons/Sword.h"
 #include "GameObject/SpriteRenderer.h"
 #include "GameObject/ButtonRenderer.h"
 #include "TextureManager.h"
@@ -50,19 +51,21 @@ int main() {
         0.0f
     };
 
-    FontManager fontManager;
-    TextureManager textureManager {renderer.getSDLRenderer(), &fontManager};
-    StateManager stateManager;
-    ItemFactory itemFactory(&textureManager);
-    UpgradeFactory upgradeFactory(&itemFactory);
-    MenuFactory menuFactory(&textureManager, &stateManager);
-    DebrisFactory debrisFactory(&textureManager);
-
     AudioEngine audioEngine;
     if (!audioEngine.init()) {
         std::cerr << "Couldn't initialize Audio Engine" << std::endl;
         return -1;
     }
+
+    FontManager fontManager;
+    TextureManager textureManager {renderer.getSDLRenderer(), &fontManager};
+    StateManager stateManager;
+    WeaponFactory weaponFactory(&textureManager, &audioEngine);
+    ItemFactory itemFactory(&textureManager);
+    UpgradeFactory upgradeFactory(&itemFactory, &weaponFactory);
+    MenuFactory menuFactory(&textureManager, &stateManager);
+    DebrisFactory debrisFactory(&textureManager);
+    
 
     GameEngine engine {
         &renderer,
@@ -124,20 +127,7 @@ int main() {
     });
     mainChar.setLevelManager(std::move(mainCharLevelManager));
     
-
-    std::unique_ptr<FireBallThrower> weaponFireDogThrower = std::make_unique<FireBallThrower>();
-    weaponFireDogThrower->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
-    weaponFireDogThrower->setAttack(0.5f);
-    weaponFireDogThrower->setFireFrequency(20);
-    weaponFireDogThrower->setFireSound(audioEngine.loadSound("audio/pew.wav"));
-    mainChar.addWeapon(std::move(weaponFireDogThrower));
-
-    std::unique_ptr<Sword> weaponSword = std::make_unique<Sword>();
-    weaponSword->setProjectileTexture(textureManager.loadTexture("images/projectile.png"));
-    weaponSword->setAttack(2.0f);
-    weaponSword->setFireFrequency(87);
-    weaponSword->setFireSound(audioEngine.loadSound("audio/fu.wav"));
-    mainChar.addWeapon(std::move(weaponSword));
+    mainChar.addWeapon(weaponFactory.create(WeaponFactory::Id::Sword));
 
     engine.setMainChar(&mainChar);
 

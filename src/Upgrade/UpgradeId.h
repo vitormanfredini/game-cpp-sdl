@@ -6,5 +6,6 @@ enum class UpgradeId {
   RegenerateHealthAmount,
   BaseSpeed,
   Item,
+  WeaponUpgrade,
   Weapon
 };
