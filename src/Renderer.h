@@ -50,6 +50,8 @@ public:
             return false;
         }
 
+        SDL_ShowCursor(SDL_DISABLE);
+
         return true;
     }
 

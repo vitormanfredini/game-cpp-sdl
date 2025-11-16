@@ -186,6 +186,17 @@ int main() {
     ));
     engine.setGemValueBar(&gemValueBar);
 
+    GameObject mousePointer {};
+    float mouseHeight = 0.03f;
+    float mouseWidthRatio = 0.58f;
+    mousePointer.setPosition(99.0f,99.0f);
+    mousePointer.setSize(mouseHeight*mouseWidthRatio, mouseHeight);
+    mousePointer.addRenderComponent(std::make_unique<SpriteRenderer>(
+        textureManager.loadTexture("images/ui/pointer.png"),
+        Alignment::UI
+    ));
+    engine.setMousePointer(&mousePointer);
+
     SDL_Event event;
     while (true) {
         while (SDL_PollEvent(&event)) {

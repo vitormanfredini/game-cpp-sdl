@@ -108,6 +108,10 @@ public:
         stateManager = newStateManager;
     }
 
+    void setMousePointer(GameObject* newMousePointer){
+        mousePointer = newMousePointer;
+    }
+
     void update(){
 
         deltatime->update();
@@ -195,6 +199,8 @@ public:
             renderer->addRenderable(upgradeMenu.get());
         }
 
+        renderer->addRenderable(mousePointer);
+
         renderer->render(
             camera->getPositionX(),
             camera->getPositionY()
@@ -247,6 +253,7 @@ public:
             case SDL_MOUSEMOTION:
                 renderer->getVirtualMouseCoords(&virtualMouseX, &virtualMouseY);
                 input->setAimMyMouseVirtualCoords(virtualMouseX, virtualMouseY);
+                mousePointer->setPosition(virtualMouseX, virtualMouseY);
                 if(stateManager->shouldUpdateMainMenu()){
                     menu->handleMouseEvent(virtualMouseX, virtualMouseY, MouseEventType::Motion);
                     break;
@@ -290,6 +297,7 @@ private:
     Input* input = nullptr;
     GameObject* healthBar = nullptr;
     GameObject* gemValueBar = nullptr;
+    GameObject* mousePointer = nullptr;
     std::unique_ptr<SpawnSchedule> spawnSchedule;
     TextureManager* textureManager = nullptr;
     CharacterFactory characterFactory;
