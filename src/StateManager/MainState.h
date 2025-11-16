@@ -3,5 +3,6 @@
 enum class MainState {
   Intro,
   MainMenu,
-  Gameplay
+  Gameplay,
+  GameOver
 };

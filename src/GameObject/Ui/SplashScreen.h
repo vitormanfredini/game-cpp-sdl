@@ -2,14 +2,18 @@
 
 #include "GameObject/GameObject.h"
 
-class Intro: public GameObject {
+class SplashScreen: public GameObject {
 
 private:
     int howManyUpdates;
 
 public:
-    Intro(int howManyUpdates): howManyUpdates(howManyUpdates) {
+    SplashScreen(int howManyUpdates): howManyUpdates(howManyUpdates) {
         //
+    }
+
+    int getTotalUpdates(){
+        return howManyUpdates;
     }
 
     void update(){

@@ -20,13 +20,13 @@
 #include "Maps/MapComponent.h"
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Ui/MenuFactory.h"
-#include "GameObject/Ui/Intro.h"
+#include "GameObject/Ui/SplashScreen.h"
 #include "Stages/SpawnSchedule.h"
 #include "StateManager/StateManager.h"
 #include "MouseEventType.h"
 #include "Audio/AudioEngine.h"
 #include "Maps/BlockObjectManager.h"
-#include "GameObject/IntroRenderer.h"
+#include "GameObject/SplashScreenRenderer.h"
 
 class GameEngine {
 
@@ -61,10 +61,24 @@ public:
 
         intro.setPosition(0.5f,0.5f);
         intro.setSize(0.3f,0.15f);
-        intro.addRenderComponent(std::make_unique<IntroRenderer>(
+        intro.addRenderComponent(std::make_unique<SplashScreenRenderer>(
             textureManager->loadTexture("images/intro.png"),
             textureManager->loadTexture(0,0,0),
-            1*300,
+            60
+        ));
+
+        SDL_Color numbersTextColor = { 148, 148, 129, 255 };
+        gameover.setPosition(0.5f,0.5f);
+        gameover.setSize(0.3f,0.05f);
+        gameover.addRenderComponent(std::make_unique<SplashScreenRenderer>(
+            textureManager->drawTextOnTexture(
+                textureManager->loadTexture(0,0,0,0,200,30),
+                "game over",
+                FontStyle::MainMenu,
+                &numbersTextColor,
+                TextRenderMethod::Centered
+            ),
+            textureManager->loadTexture(0,0,0),
             60
         ));
 
@@ -123,12 +137,21 @@ public:
             }
         }
 
+        if(stateManager->shouldUpdateGameOver()){
+            if(gameover.finished()){
+                stateManager->setMainState(MainState::MainMenu);
+            }
+        }
+
         for(int update=0;update<updatesNeeded;update++){
             if(stateManager->shouldUpdateMainMenu()){
                 menu->update();
             }
             if(stateManager->shouldUpdateIntro()){
                 intro.update();
+            }
+            if(stateManager->shouldUpdateGameOver()){
+                gameover.update();
             }
             if(stateManager->shouldUpdateGameWorld()){
                 doGameWorldUpdate();
@@ -140,10 +163,6 @@ public:
             }
         }
 
-        if(mainChar->isDead()){
-            stateManager->triggerQuit();
-        }
-
     }
 
     void render(){
@@ -152,6 +171,10 @@ public:
 
         if(stateManager->shouldRenderIntro()){
             renderer->addRenderable(&intro);
+        }
+
+        if(stateManager->shouldRenderGameOver()){
+            renderer->addRenderable(&gameover);
         }
 
         if(stateManager->shouldRenderGameWorld()){
@@ -308,7 +331,8 @@ private:
     DebrisFactory* debrisFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
     
-    Intro intro { 1*300 };
+    SplashScreen intro { 1*300 };
+    SplashScreen gameover { 1*400 };
     GameObject pause;
 
     Character* mainChar;
@@ -447,6 +471,10 @@ private:
         }
         for(int index : diedEnemies){
             enemies.erase(enemies.begin() + index);
+        }
+
+        if(mainChar->isDead()){
+            stateManager->setMainState(MainState::GameOver);
         }
 
     }

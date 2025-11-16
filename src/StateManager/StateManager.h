@@ -76,12 +76,12 @@ public:
         return shouldUpdateGameplayUi();
     }
 
-    bool shouldRenderIntro(){
+    bool shouldUpdateIntro(){
         return mainState == MainState::Intro;
     }
 
-    bool shouldUpdateIntro(){
-        return shouldRenderIntro();
+    bool shouldRenderIntro(){
+        return shouldUpdateIntro();
     }
 
     bool shouldUpdateMainMenu(){
@@ -90,6 +90,15 @@ public:
 
     bool shouldRenderMainMenu(){
         return shouldUpdateMainMenu();
+    }
+
+
+    bool shouldUpdateGameOver(){
+        return mainState == MainState::GameOver;
+    }
+
+    bool shouldRenderGameOver(){
+        return shouldUpdateGameOver();
     }
 
     bool shouldUpdateUpgradeMenu(){

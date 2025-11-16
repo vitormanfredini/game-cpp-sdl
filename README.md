@@ -3,7 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- make something when main char dies
 - make enemies flash white when they get hit
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing

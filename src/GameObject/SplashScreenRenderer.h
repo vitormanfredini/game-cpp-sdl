@@ -6,32 +6,38 @@
 #include "RenderComponent.h"
 #include "Alignment.h"
 #include "RandomGenerator.h"
+#include "GameObject/Ui/SplashScreen.h"
 
-class IntroRenderer : public RenderComponent {
+class SplashScreenRenderer : public RenderComponent {
 private:
     SDL_Texture* logoTexture;
     SDL_Texture* backgroundTexture;
-    int totalUpdates;
+    int totalUpdates = -1;
     int fadeUpdates;
     int currentUpdates = -1;
     Uint8 alpha;
 
 public:
-    IntroRenderer(
+    SplashScreenRenderer(
         SDL_Texture* logoTexture,
         SDL_Texture* backgroundTexture,
-        int totalUpdates,
         int fadeUpdates
     ):
         logoTexture(logoTexture),
         backgroundTexture(backgroundTexture),
-        totalUpdates(totalUpdates),
         fadeUpdates(fadeUpdates) {
         //
     }
 
     void update(GameObject& gameObject) override {
         currentUpdates += 1;
+
+        if(totalUpdates == -1){
+            SplashScreen* splashScreen = dynamic_cast<SplashScreen*>(&gameObject);
+            if(splashScreen){
+                totalUpdates = splashScreen->getTotalUpdates();
+            }
+        }
 
         if(currentUpdates < fadeUpdates){
             float fadeInPercentage = static_cast<float>(currentUpdates) / static_cast<float>(fadeUpdates);
@@ -77,6 +83,6 @@ public:
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<IntroRenderer>(logoTexture, backgroundTexture, totalUpdates, fadeUpdates);
+        return std::make_unique<SplashScreenRenderer>(logoTexture, backgroundTexture, fadeUpdates);
     }
 };
