@@ -40,13 +40,9 @@ public:
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 4, "Diminui o tempo para regenerar"));
 
         prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, "Lança bolas de fogo"));
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 2, "Lança bolas de fogo 2 teste"));
 
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f, WeaponId::Sword), 2, "Espada mais rápida"));
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f, WeaponId::Sword), 3, "Espada MUITO rápida"));
-
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f, WeaponId::FireBall), 2, "Fireball mais rápida"));
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::Attack, 1.0f, WeaponId::FireBall), 3, "Fireball mais forte"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 2, "Espada mais rápida"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 3, "Espada MUITO rápida"));
     }
 
     std::vector<UpgradeOption> createRandomUpgradeOptions(size_t max){
@@ -119,6 +115,14 @@ public:
         prototypes[upgradeId].erase(prototypes[upgradeId].begin() + internalIndex);
 
         return redeemedUpgrade;
+    }
+
+    void enableUpgradesForWeapon(WeaponId weaponId){
+        if(weaponId == WeaponId::FireBall){
+            prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f, WeaponId::FireBall), 2, "Fireball mais rápida"));
+            prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::Attack, 1.0f, WeaponId::FireBall), 3, "Fireball mais forte"));
+            prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -5.0f, WeaponId::FireBall), 4, "Fireball MUITO rápida"));
+        }
     }
 
 private:

@@ -49,6 +49,9 @@ public:
         }
 
         for (const std::unique_ptr<WeaponComponent>& weapon : weapons) {
+            if(upgrade->getWeaponId() != weapon->getId()){
+                continue;
+            }
             weapon->setFireFrequency(weapon->getFireFrequency() + std::round(upgrade->getValue()));
         }
     }

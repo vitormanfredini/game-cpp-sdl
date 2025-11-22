@@ -4,8 +4,6 @@ This is a game!!!!!!!1
 
 TODO:
 - UpgradeFactory: se for upgrade de arma, escolhe uma das armas dentro do array (precisa ver quais armas o mainChar tem)
-- UpgradeFactory: adicionar upgrades de armas somente quando o usuário pegar a arma correspondente.
-- WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector) I already added the weaponId, just need to apply correctly.
 
 - make enemies flash white when they get hit
 - make debris animate when enemies die

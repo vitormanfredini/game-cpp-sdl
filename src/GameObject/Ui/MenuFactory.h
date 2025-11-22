@@ -193,7 +193,9 @@ public:
                 }else if(upgrade->getType() == UpgradeComponent::Type::WeaponUpgrade){
                     charReceivesReward->consumeWeaponUpgrade(upgrade->getWeaponUpgrade());
                 }else if(upgrade->getType() == UpgradeComponent::Type::Weapon){
-                    charReceivesReward->addWeapon(upgrade->getWeaponComponent());
+                    std::unique_ptr<WeaponComponent> newWeapon = upgrade->getWeaponComponent();
+                    upgradeFactory->enableUpgradesForWeapon(newWeapon->getId());
+                    charReceivesReward->addWeapon(std::move(newWeapon));
                 }else{
                     std::cerr << "optionButton->setCallback(): upgrade type not implemented" << std::endl;
                 }
