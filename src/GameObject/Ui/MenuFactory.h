@@ -158,8 +158,11 @@ public:
 
     std::unique_ptr<Menu> createUpgradeMenu(Character* charReceivesReward, UpgradeFactory* upgradeFactory) {
         std::unique_ptr<Menu> upgradeMenu = prototypes[MenuType::UpgradeMenu]->clone();
-        
-        std::vector<UpgradeOption> options = upgradeFactory->createRandomUpgradeOptions(3);
+
+        std::vector<UpgradeOption> options = upgradeFactory->createRandomUpgradeOptions(
+            3,
+            charReceivesReward->getWeaponIds()
+        );
 
         if(options.size() == 0){
             std::cerr << "options.size() == 0" << std::endl;

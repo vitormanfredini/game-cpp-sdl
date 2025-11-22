@@ -3,8 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- UpgradeFactory: se for upgrade de arma, escolhe uma das armas dentro do array (precisa ver quais armas o mainChar tem)
-
 - make enemies flash white when they get hit
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing

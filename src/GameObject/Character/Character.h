@@ -33,6 +33,14 @@ public:
         weapons.push_back(std::move(weapon));
     }
 
+    std::vector<WeaponId> getWeaponIds(){
+        std::vector<WeaponId> weaponIds = {};
+        for (const std::unique_ptr<WeaponComponent>& weapon : weapons) {
+            weaponIds.push_back(weapon->getId());
+        }
+        return weaponIds;
+    }
+
     void consumeStatUpgrade(StatUpgrade* upgrade){
         if (stats.find(upgrade->getType()) == stats.end()) {
             std::cerr << "addStatUpgrade(): Character doesn't have the Stat for this Upgrade" << std::endl;

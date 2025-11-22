@@ -105,7 +105,8 @@ int main() {
     mainChar.setSize(height*widthRatio,height);
     mainChar.setZ(height*0.01);
     mainChar.setInitialBaseSpeed(0.5f);
-    mainChar.setInitialMaxHealth(1.0f);
+    mainChar.setInitialMaxHealth(3.0f);
+    mainChar.setInitialHealth(3.0f);
     mainChar.setCollisionAttack(0.03f);
     mainChar.setCollisionSound(audioEngine.loadSound("audio/collision.wav"));
     mainChar.addRenderComponent(std::make_unique<ShadowRenderer>(

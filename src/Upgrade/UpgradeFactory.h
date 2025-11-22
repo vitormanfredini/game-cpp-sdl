@@ -45,7 +45,7 @@ public:
         prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 3, "Espada MUITO rápida"));
     }
 
-    std::vector<UpgradeOption> createRandomUpgradeOptions(size_t max){
+    std::vector<UpgradeOption> createRandomUpgradeOptions(size_t max, std::vector<WeaponId> weaponIds){
 
         auto& itemsVector = prototypes[UpgradeId::Item];
         while (itemsVector.size() < max) {
@@ -77,13 +77,29 @@ public:
         size_t maxUpgrades = std::min(allAvailableUpgradeIds.size(), static_cast<size_t>(max));
         for(size_t c=0; c<maxUpgrades; c++){
 
-            // TODO: se for upgrade de arma, escolhe uma das armas dentro do array (precisa ver quais armas o mainChar tem)
+            size_t internalIndex = 0;
+            if(allAvailableUpgradeIds[c] == UpgradeId::WeaponUpgrade){
+                std::vector<size_t> possibleInternalIndex = {};
+                WeaponId lastWeaponId;
+                for(size_t d=0; d<prototypes[UpgradeId::WeaponUpgrade].size(); d++){
+                    WeaponId weaponId = prototypes[UpgradeId::WeaponUpgrade][d]->getWeaponUpgrade()->getWeaponId();
+                    if(possibleInternalIndex.empty() || lastWeaponId != weaponId){
+                        lastWeaponId = weaponId;
+                        possibleInternalIndex.push_back(d);
+                    }
+                }
+
+                if(possibleInternalIndex.size() > 0){
+                    std::shuffle(std::begin(possibleInternalIndex), std::end(possibleInternalIndex), randomEngine);
+                    internalIndex = possibleInternalIndex[0];
+                }
+            }
 
             options.push_back({
                 allAvailableUpgradeIds[c],
-                0,
-                prototypes[allAvailableUpgradeIds[c]].front()->getType(),
-                prototypes[allAvailableUpgradeIds[c]].front()->getDescription()
+                internalIndex,
+                prototypes[allAvailableUpgradeIds[c]][internalIndex]->getType(),
+                prototypes[allAvailableUpgradeIds[c]][internalIndex]->getDescription()
             });
         }
 
@@ -111,7 +127,7 @@ public:
             std::cerr << "Trying to redeem upgrade with invalid index" << std::endl;
         }
 
-        std::unique_ptr<UpgradeComponent> redeemedUpgrade = std::move(prototypes[upgradeId].front());
+        std::unique_ptr<UpgradeComponent> redeemedUpgrade = std::move(prototypes[upgradeId][internalIndex]);
         prototypes[upgradeId].erase(prototypes[upgradeId].begin() + internalIndex);
 
         return redeemedUpgrade;
