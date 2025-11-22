@@ -7,5 +7,6 @@ enum class UpgradeId {
   BaseSpeed,
   Item,
   WeaponUpgrade,
-  Weapon
+  Weapon,
+  COUNT
 };

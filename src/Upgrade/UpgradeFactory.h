@@ -39,35 +39,64 @@ public:
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 3, "Diminui o tempo para regenerar"));
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 4, "Diminui o tempo para regenerar"));
 
-        prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
-        prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
-        prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
-
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f), 1, "Atirar mais rápido"));
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f), 2, "Atirar mais rápido"));
-
         prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, "Lança bolas de fogo"));
         prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 2, "Lança bolas de fogo 2 teste"));
 
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f, WeaponId::Sword), 2, "Espada mais rápida"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f, WeaponId::Sword), 3, "Espada MUITO rápida"));
+
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f, WeaponId::FireBall), 2, "Fireball mais rápida"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::Attack, 1.0f, WeaponId::FireBall), 3, "Fireball mais forte"));
     }
 
-    std::vector<UpgradeOption> createRandomUpgradeOptions(int max){
+    std::vector<UpgradeOption> createRandomUpgradeOptions(size_t max){
+
+        auto& itemsVector = prototypes[UpgradeId::Item];
+        while (itemsVector.size() < max) {
+            itemsVector.push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
+            itemsVector.push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
+        }
 
         std::shuffle(std::begin(prototypes[UpgradeId::Weapon]), std::end(prototypes[UpgradeId::Weapon]), randomEngine);
 
-        std::vector<int> upgradeIdIndexes(prototypes.size());
-        std::iota(upgradeIdIndexes.begin(), upgradeIdIndexes.end(), 0);
-        std::shuffle(upgradeIdIndexes.begin(), upgradeIdIndexes.end(), randomEngine);
+        std::vector<UpgradeId> allAvailableUpgradeIds = {};
+        for (int c = 0; c < (int)UpgradeId::COUNT; c++) {
+            UpgradeId id = static_cast<UpgradeId>(c);
+            if(id == UpgradeId::Item){
+                continue;
+            }
+            if(prototypes.find(id) == prototypes.end()){
+                continue;
+            }
+            if(prototypes[id].size() == 0){
+                continue;
+            }
+            allAvailableUpgradeIds.push_back(id);
+        }
+
+        std::shuffle(std::begin(allAvailableUpgradeIds), std::end(allAvailableUpgradeIds), randomEngine);
 
         std::vector<UpgradeOption> options = {};
 
-        size_t maxUpgrades = std::min(upgradeIdIndexes.size(), static_cast<size_t>(max));
-        for(size_t c=0; c < maxUpgrades; c++){
-            UpgradeId upgradeId = static_cast<UpgradeId>(upgradeIdIndexes[c]);
+        size_t maxUpgrades = std::min(allAvailableUpgradeIds.size(), static_cast<size_t>(max));
+        for(size_t c=0; c<maxUpgrades; c++){
+
+            // TODO: se for upgrade de arma, escolhe uma das armas dentro do array (precisa ver quais armas o mainChar tem)
+
             options.push_back({
-                upgradeId,
-                prototypes[upgradeId].front()->getType(),
-                prototypes[upgradeId].front()->getDescription()
+                allAvailableUpgradeIds[c],
+                0,
+                prototypes[allAvailableUpgradeIds[c]].front()->getType(),
+                prototypes[allAvailableUpgradeIds[c]].front()->getDescription()
+            });
+        }
+
+        for(size_t c=0;options.size() < max; c++){
+            options.push_back({
+                UpgradeId::Item,
+                c,
+                prototypes[UpgradeId::Item].front()->getType(),
+                prototypes[UpgradeId::Item].front()->getDescription()
             });
         }
 
@@ -81,8 +110,13 @@ public:
             std::cerr << "Trying to redeem upgrade from an empty vector" << std::endl;
         }
 
+        size_t internalIndex = option.internalIndex;
+        if(internalIndex >= prototypes[upgradeId].size()){
+            std::cerr << "Trying to redeem upgrade with invalid index" << std::endl;
+        }
+
         std::unique_ptr<UpgradeComponent> redeemedUpgrade = std::move(prototypes[upgradeId].front());
-        prototypes[upgradeId].erase(prototypes[upgradeId].begin());
+        prototypes[upgradeId].erase(prototypes[upgradeId].begin() + internalIndex);
 
         return redeemedUpgrade;
     }
@@ -91,4 +125,5 @@ private:
     std::unordered_map<UpgradeId,std::vector<std::unique_ptr<UpgradeComponent>>> prototypes;
     ItemFactory* itemFactory;
     std::default_random_engine randomEngine = {};
+
 };

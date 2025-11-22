@@ -5,8 +5,17 @@
 
 struct UpgradeOption {
     UpgradeId id;
+    size_t internalIndex;
     UpgradeComponent::Type type;
     std::string description;
 
-    UpgradeOption(UpgradeId id, UpgradeComponent::Type type, std::string description) : id(id), type(type), description(description) {}
+    UpgradeOption(
+        UpgradeId id,
+        size_t internalIndex,
+        UpgradeComponent::Type type,
+        std::string description
+    ) : id(id),
+        internalIndex(internalIndex),
+        type(type),
+        description(description) {}
 };

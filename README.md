@@ -3,6 +3,10 @@
 This is a game!!!!!!!1
 
 TODO:
+- UpgradeFactory: se for upgrade de arma, escolhe uma das armas dentro do array (precisa ver quais armas o mainChar tem)
+- UpgradeFactory: adicionar upgrades de armas somente quando o usuário pegar a arma correspondente.
+- WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector) I already added the weaponId, just need to apply correctly.
+
 - make enemies flash white when they get hit
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
@@ -14,7 +18,7 @@ TODO:
 - reorder renderables (enemies, items and maybe projectiles) from bottom to top to make sure they don't render in front of others that are in the the front.
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
-- WeaponUpgrade needs to specify which weapon (it's currently applying to all weapons in the vector)
+
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
