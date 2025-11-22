@@ -3,6 +3,7 @@
 #include <memory>
 #include "WeaponComponent.h"
 #include "Sword.h"
+#include "WeaponId.h"
 #include "FireBallThrower.h"
 // #include <iostream>
 #include <unordered_map>
@@ -12,31 +13,28 @@ class WeaponFactory {
 
 public:
 
-    enum class Id {
-        Sword,
-        FireBall
-    };
-
     WeaponFactory(TextureManager* textureManager, AudioEngine* audioEngine) {
         std::unique_ptr<Sword> sword = std::make_unique<Sword>();
+        sword->setId(WeaponId::Sword);
         sword->setProjectileTexture(textureManager->loadTexture("images/projectile.png"));
         sword->setAttack(2.0f);
         sword->setFireFrequency(100);
         sword->setFireSound(audioEngine->loadSound("audio/fu.wav"));
-        prototypes[Id::Sword] = std::move(sword);
+        prototypes[WeaponId::Sword] = std::move(sword);
 
         std::unique_ptr<FireBallThrower> fireBallThrower = std::make_unique<FireBallThrower>();
+        fireBallThrower->setId(WeaponId::FireBall);
         fireBallThrower->setProjectileTexture(textureManager->loadTexture("images/projectile.png"));
         fireBallThrower->setAttack(0.5f);
         fireBallThrower->setFireFrequency(20);
         fireBallThrower->setFireSound(audioEngine->loadSound("audio/pew.wav"));
-        prototypes[Id::FireBall] = std::move(fireBallThrower);
+        prototypes[WeaponId::FireBall] = std::move(fireBallThrower);
     }
 
-    std::unique_ptr<WeaponComponent> create(Id weaponId){
+    std::unique_ptr<WeaponComponent> create(WeaponId weaponId){
         return prototypes[weaponId]->clone();
     }
 
 private:
-    std::unordered_map<Id,std::unique_ptr<WeaponComponent>> prototypes;
+    std::unordered_map<WeaponId,std::unique_ptr<WeaponComponent>> prototypes;
 };

@@ -10,10 +10,10 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include "GameObject/Character/Weapons/WeaponId.h"
 #include "GameObject/Character/Weapons/WeaponStat.h"
 #include "GameObject/Character/Weapons/WeaponFactory.h"
 #include "Audio/AudioEngine.h"
-
 #include "StatUpgrade.h"
 
 class UpgradeFactory {
@@ -46,54 +46,49 @@ public:
         prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -4.0f), 1, "Atirar mais rápido"));
         prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -3.0f), 2, "Atirar mais rápido"));
 
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponFactory::Id::FireBall), 1, "Lança bolas de fogo"));
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponFactory::Id::FireBall), 2, "Lança bolas de fogo 222"));
-
-        availableUpgradeIds = {};
-        for (const auto & [ upgradeId, value ] : prototypes) {
-            availableUpgradeIds.push_back(upgradeId);
-            upgradesTimesConsumed[upgradeId] = 0;
-        }
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, "Lança bolas de fogo"));
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 2, "Lança bolas de fogo 2 teste"));
 
     }
 
-    std::vector<std::unique_ptr<UpgradeOption>> createRandomUpgradeOptions(int max){
-        auto rng = std::default_random_engine {};
-        std::shuffle(std::begin(availableUpgradeIds), std::end(availableUpgradeIds), rng);
+    std::vector<UpgradeOption> createRandomUpgradeOptions(int max){
 
-        std::vector<UpgradeId> limitedAvailableUpgradeIds = availableUpgradeIds;
-        if (static_cast<int>(limitedAvailableUpgradeIds.size()) > max) {
-            limitedAvailableUpgradeIds.erase(limitedAvailableUpgradeIds.begin() + max, limitedAvailableUpgradeIds.end());
-        }
+        std::shuffle(std::begin(prototypes[UpgradeId::Weapon]), std::end(prototypes[UpgradeId::Weapon]), randomEngine);
 
-        std::vector<std::unique_ptr<UpgradeOption>> options = {};
-        for(UpgradeId upgradeId : limitedAvailableUpgradeIds){
-            options.push_back(std::make_unique<UpgradeOption>(
+        std::vector<int> upgradeIdIndexes(prototypes.size());
+        std::iota(upgradeIdIndexes.begin(), upgradeIdIndexes.end(), 0);
+        std::shuffle(upgradeIdIndexes.begin(), upgradeIdIndexes.end(), randomEngine);
+
+        std::vector<UpgradeOption> options = {};
+
+        size_t maxUpgrades = std::min(upgradeIdIndexes.size(), static_cast<size_t>(max));
+        for(size_t c=0; c < maxUpgrades; c++){
+            UpgradeId upgradeId = static_cast<UpgradeId>(upgradeIdIndexes[c]);
+            options.push_back({
                 upgradeId,
-                prototypes[upgradeId][upgradesTimesConsumed[upgradeId]]->getType(),
-                prototypes[upgradeId][upgradesTimesConsumed[upgradeId]]->getDescription()
-            ));
+                prototypes[upgradeId].front()->getType(),
+                prototypes[upgradeId].front()->getDescription()
+            });
         }
 
         return options;
     }
 
-    std::unique_ptr<UpgradeComponent> redeemUpgrade(UpgradeOption* option){
+    std::unique_ptr<UpgradeComponent> redeemUpgrade(UpgradeOption option){
 
-        UpgradeId upgradeId = option->id;
-        upgradesTimesConsumed[upgradeId] += 1;
-
-        if(upgradesTimesConsumed[upgradeId] >= static_cast<int>(prototypes[upgradeId].size())){
-            availableUpgradeIds.erase(std::remove(availableUpgradeIds.begin(), availableUpgradeIds.end(), upgradeId), availableUpgradeIds.end());
+        UpgradeId upgradeId = option.id;
+        if(prototypes[upgradeId].empty()){
+            std::cerr << "Trying to redeem upgrade from an empty vector" << std::endl;
         }
 
-        return prototypes[upgradeId][upgradesTimesConsumed[upgradeId]-1]->clone();
+        std::unique_ptr<UpgradeComponent> redeemedUpgrade = std::move(prototypes[upgradeId].front());
+        prototypes[upgradeId].erase(prototypes[upgradeId].begin());
+
+        return redeemedUpgrade;
     }
 
 private:
     std::unordered_map<UpgradeId,std::vector<std::unique_ptr<UpgradeComponent>>> prototypes;
-    std::unordered_map<UpgradeId,int> upgradesTimesConsumed;
-    std::vector<UpgradeId> availableUpgradeIds;
-
     ItemFactory* itemFactory;
+    std::default_random_engine randomEngine = {};
 };

@@ -7,6 +7,7 @@
 #include "SDLUtils.h"
 #include "BinaryResourceLoader.h"
 #include "Input.h"
+#include "GameObject/Character/Weapons/WeaponId.h"
 #include "DeltaTime.h"
 #include "GameObject/Ui/Menu.h"
 #include "GameObject/Character/Character.h"
@@ -127,7 +128,7 @@ int main() {
     });
     mainChar.setLevelManager(std::move(mainCharLevelManager));
     
-    mainChar.addWeapon(weaponFactory.create(WeaponFactory::Id::Sword));
+    mainChar.addWeapon(weaponFactory.create(WeaponId::Sword));
 
     engine.setMainChar(&mainChar);
 

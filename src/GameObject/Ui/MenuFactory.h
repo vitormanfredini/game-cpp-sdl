@@ -159,7 +159,7 @@ public:
     std::unique_ptr<Menu> createUpgradeMenu(Character* charReceivesReward, UpgradeFactory* upgradeFactory) {
         std::unique_ptr<Menu> upgradeMenu = prototypes[MenuType::UpgradeMenu]->clone();
         
-        std::vector<std::unique_ptr<UpgradeOption>> options = upgradeFactory->createRandomUpgradeOptions(3);
+        std::vector<UpgradeOption> options = upgradeFactory->createRandomUpgradeOptions(3);
 
         if(options.size() == 0){
             std::cerr << "options.size() == 0" << std::endl;
@@ -169,7 +169,7 @@ public:
         SDL_Color upgradeMenuButtonTextColor = { 155, 198, 150, 255 };
 
         for(size_t c=0; c<options.size(); c++){
-            std::shared_ptr<UpgradeOption> upgradeOption = std::move(options[c]);
+            UpgradeOption upgradeOption = options[c];
 
             std::unique_ptr<Button> optionButton = std::make_unique<Button>();
             optionButton->setPosition(0.166f, 0.2f + (c * 0.2f));
@@ -177,7 +177,7 @@ public:
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
                 textureManager->drawTextOnTexture(
                     textureManager->loadTexture("images/upgrademenu_button_base.png"),
-                    upgradeOption->description.c_str(),
+                    upgradeOption.description.c_str(),
                     FontStyle::UpgradeMenu,
                     &upgradeMenuButtonTextColor,
                     TextRenderMethod::ButtonCentered
@@ -185,7 +185,7 @@ public:
             ));
             
             optionButton->setCallback([this, charReceivesReward, upgradeOption, upgradeFactory]() {
-                std::unique_ptr<UpgradeComponent> upgrade = upgradeFactory->redeemUpgrade(upgradeOption.get());
+                std::unique_ptr<UpgradeComponent> upgrade = upgradeFactory->redeemUpgrade(upgradeOption);
                 if(upgrade->getType() == UpgradeComponent::Type::Stat){
                     charReceivesReward->consumeStatUpgrade(upgrade->getStatUpgrade());
                 }else if(upgrade->getType() == UpgradeComponent::Type::Item){
