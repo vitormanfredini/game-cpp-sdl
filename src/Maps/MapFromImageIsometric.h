@@ -12,9 +12,9 @@ class MapFromImageIsometric : public MapComponent {
 
 public:
 
-    MapFromImageIsometric(TextureManager* textureManager, const char* mapImageFile, float tileWidth, float tileHeight, float tileHorizontalOffset, float tileVerticalOffset, float tileAdditionalHorizontalOffsetPerRow, float tileAdditionalVerticalOffsetPerColumn): tileWidth(tileWidth), tileHeight(tileHeight), tileHorizontalOffset(tileHorizontalOffset), tileVerticalOffset(tileVerticalOffset), tileAdditionalHorizontalOffsetPerRow(tileAdditionalHorizontalOffsetPerRow), tileAdditionalVerticalOffsetPerColumn(tileAdditionalVerticalOffsetPerColumn) {
+    MapFromImageIsometric(TextureManager* textureManager, const std::string& mapImageFile, float tileWidth, float tileHeight, float tileHorizontalOffset, float tileVerticalOffset, float tileAdditionalHorizontalOffsetPerRow, float tileAdditionalVerticalOffsetPerColumn): tileWidth(tileWidth), tileHeight(tileHeight), tileHorizontalOffset(tileHorizontalOffset), tileVerticalOffset(tileVerticalOffset), tileAdditionalHorizontalOffsetPerRow(tileAdditionalHorizontalOffsetPerRow), tileAdditionalVerticalOffsetPerColumn(tileAdditionalVerticalOffsetPerColumn) {
 
-        imagePixels = BinaryResourceLoader::toRGBAPixelData(mapImageFile);
+        imagePixels = textureManager->toRGBAPixelData(mapImageFile);
 
         renderComponentsPrototypes[MapTileType::Ground] = std::make_unique<SpriteRenderer>(
             textureManager->loadTexture("images/stage1/floor_gray.png"),

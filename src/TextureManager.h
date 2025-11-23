@@ -27,12 +27,16 @@ public:
 
     SDL_Texture* loadTexture(const std::string& filename){
 
-        SDL_Texture* cachedTexture = loadFromCache(filename);
+        SDL_Texture* cachedTexture = loadTextureFromCache(filename);
         if(cachedTexture != nullptr){
             return cachedTexture;
         }
 
-        SDL_Texture* texture = BinaryResourceLoader::toTexture(sdl_renderer, filename.c_str());
+        BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
+        SDL_Surface* surface = SDLUtils::loadSurfaceFromBinary(sdl_renderer, binaryResource.data, binaryResource.length);
+        SDL_Texture* texture = SDLUtils::loadTextureFromSurface(sdl_renderer, surface);
+        SDL_FreeSurface(surface);
+        
         if (texture) {
             texturesCache[filename] = texture;
         }
@@ -42,20 +46,28 @@ public:
 
     SDL_Texture* loadTexture(int r, int g, int b, int a, int width, int height){
 
-        std::string textureName = rgbaTextureName(r,g,b,a,width,height);
+        std::string textureName = generateCacheName(r,g,b,a,width,height);
 
-        SDL_Texture* cachedTexture = loadFromCache(textureName);
+        SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
         if(cachedTexture != nullptr){
             return cachedTexture;
         }
 
-        SDL_Texture* newTexture = SDLUtils::textureFromRGBA(sdl_renderer, r, g, b, a, width, height);
+        SDL_Texture* newTexture = SDLUtils::createTextureFromRGBA(sdl_renderer, r, g, b, a, width, height);
         texturesCache[textureName] = newTexture;
         return newTexture;
     }
 
     SDL_Texture* loadTexture(int r, int g, int b){
         return loadTexture(r, g, b, 255, 1, 1);
+    }
+
+    std::vector<std::vector<RGBAPixel>> toRGBAPixelData(const std::string& filename) {
+        BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
+        SDL_Surface* surface = SDLUtils::loadSurfaceFromBinary(sdl_renderer, binaryResource.data, binaryResource.length);
+        std::vector<std::vector<RGBAPixel>> pixels = SDLUtils::getRGBAPixelDataFromSurface(surface);
+        SDL_FreeSurface(surface);
+        return pixels;
     }
 
     SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method) {
@@ -73,7 +85,7 @@ public:
                 << static_cast<int>(color->a);
             textureName = oss.str();
 
-            SDL_Texture* cachedTexture = loadFromCache(textureName);
+            SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
             if(cachedTexture != nullptr){
                 return cachedTexture;
             }
@@ -218,15 +230,26 @@ private:
     SDL_Renderer* sdl_renderer;
     FontManager* fontManager;
     std::unordered_map<std::string, SDL_Texture*> texturesCache;
+    std::unordered_map<std::string, SDL_Surface*> surfacesCache;
 
-    std::string rgbaTextureName(int r, int g, int b, int a, int width, int height){
+    std::string generateCacheName(int r, int g, int b, int a, int width, int height){
         return std::to_string(r) + "_" + std::to_string(g) + "_" + std::to_string(b) + "_" + std::to_string(a) + "_" + std::to_string(width) + "_" + std::to_string(height);
     }
 
-    SDL_Texture* loadFromCache(const std::string& textureName){
+    SDL_Texture* loadTextureFromCache(const std::string& textureName){
         auto it = texturesCache.find(textureName);
         if (it != texturesCache.end()) {
-            // std::cout << "loadFromCache: " << textureName << std::endl;
+            // std::cout << "loadTextureFromCache: " << textureName << std::endl;
+            return it->second;
+        }
+
+        return nullptr;
+    }
+
+    SDL_Surface* loadSurfaceFromCache(const std::string& surfaceName){
+        auto it = surfacesCache.find(surfaceName);
+        if (it != surfacesCache.end()) {
+            // std::cout << "loadSurfaceFromCache: " << surfaceName << std::endl;
             return it->second;
         }
 
