@@ -66,8 +66,6 @@ public:
     static std::vector<std::vector<RGBAPixel>> getRGBAPixelDataFromSurface(SDL_Surface* surface){
         SDL_LockSurface(surface);
 
-        std::cout << SDL_GetPixelFormatName(surface->format->format) << std::endl;
-
         std::vector<std::vector<RGBAPixel>> pixelData(surface->h);
 
         for (int y = 0; y < surface->h; y++) {
@@ -92,6 +90,26 @@ public:
 
         SDL_UnlockSurface(surface);
         return pixelData;
+    }
+
+    static void setSurfaceColorExceptAlpha(SDL_Surface* surface, Uint8 r, Uint8 g, Uint8 b){
+        SDL_LockSurface(surface);
+
+        for (int y = 0; y < surface->h; y++) {
+            Uint32* row = (Uint32*)((Uint8*)surface->pixels + y * surface->pitch);
+
+            for (int x = 0; x < surface->w; x++) {
+
+                Uint8* p = (Uint8*)&row[x];
+
+                p[0] = r;
+                p[1] = g;
+                p[2] = b;
+                // p[3];
+            }
+        }
+
+        SDL_UnlockSurface(surface);
     }
 
     static void saveTextureToBMP(SDL_Renderer* renderer, SDL_Texture* texture, const std::string& filename) {

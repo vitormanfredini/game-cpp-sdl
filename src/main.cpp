@@ -98,6 +98,12 @@ int main() {
     mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/drums1.wav"));
     audioEngine.setStageSong(&mission1Song);
 
+
+    SDL_Surface* mainCharSurface = textureManager.loadSurface("images/chars/vitor_sprites.png");
+    SDLUtils::setSurfaceColorExceptAlpha(mainCharSurface,255,255,255);
+    SDL_Texture* mainCharTexture = textureManager.loadTexture(mainCharSurface);
+    SDL_FreeSurface(mainCharSurface);
+
     Character mainChar;
     mainChar.setPosition(0.0f,0.0f);
     float widthRatio = 0.45;
@@ -114,7 +120,7 @@ int main() {
         0.017
     ));
     mainChar.addRenderComponent(std::make_unique<CharacterSpriteAnimationRenderer>(
-        textureManager.loadTexture("images/chars/vitor_sprites.png"),
+        mainCharTexture,
         Alignment::BottomUpCentered
     ));
     mainChar.setCollisionComponent(std::make_unique<BoxCollider>(

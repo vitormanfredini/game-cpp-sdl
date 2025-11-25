@@ -25,6 +25,43 @@ public:
         clearCache();
     }
 
+    SDL_Surface* loadSurface(const std::string& filename){
+
+        SDL_Surface* cachedSurface = loadSurfaceFromCache(filename);
+        if(cachedSurface != nullptr){
+            return cachedSurface;
+        }
+
+        BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
+        SDL_Surface* surface = SDLUtils::loadSurfaceFromBinary(sdl_renderer, binaryResource.data, binaryResource.length);
+        
+        if (surface) {
+            surfacesCache[filename] = surface;
+        }
+        return surface;
+
+    }
+
+    SDL_Texture* loadTexture(SDL_Surface* surface){
+
+        std::ostringstream oss;
+        oss << surface << "_textureFromSurface";
+        std::string textureName = oss.str();
+
+        SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
+        if(cachedTexture != nullptr){
+            return cachedTexture;
+        }
+
+        SDL_Texture* texture = SDLUtils::loadTextureFromSurface(sdl_renderer, surface);
+
+        if (texture) {
+            texturesCache[textureName] = texture;
+        }
+        return texture;
+
+    }
+
     SDL_Texture* loadTexture(const std::string& filename){
 
         SDL_Texture* cachedTexture = loadTextureFromCache(filename);
@@ -32,8 +69,7 @@ public:
             return cachedTexture;
         }
 
-        BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
-        SDL_Surface* surface = SDLUtils::loadSurfaceFromBinary(sdl_renderer, binaryResource.data, binaryResource.length);
+        SDL_Surface* surface = loadSurface(filename);
         SDL_Texture* texture = SDLUtils::loadTextureFromSurface(sdl_renderer, surface);
         SDL_FreeSurface(surface);
         
@@ -63,8 +99,7 @@ public:
     }
 
     std::vector<std::vector<RGBAPixel>> toRGBAPixelData(const std::string& filename) {
-        BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
-        SDL_Surface* surface = SDLUtils::loadSurfaceFromBinary(sdl_renderer, binaryResource.data, binaryResource.length);
+        SDL_Surface* surface = loadSurface(filename);
         std::vector<std::vector<RGBAPixel>> pixels = SDLUtils::getRGBAPixelDataFromSurface(surface);
         SDL_FreeSurface(surface);
         return pixels;
