@@ -42,20 +42,24 @@ public:
 
     }
 
-    SDL_Texture* loadTexture(SDL_Surface* surface){
+    SDL_Texture* loadTexture(SDL_Surface* surface, bool useCache = true){
 
         std::ostringstream oss;
-        oss << surface << "_textureFromSurface";
-        std::string textureName = oss.str();
+        std::string textureName;
 
-        SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
-        if(cachedTexture != nullptr){
-            return cachedTexture;
+        if(useCache){
+            oss << surface << "_textureFromSurface";
+            textureName = oss.str();
+
+            SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
+            if(cachedTexture != nullptr){
+                return cachedTexture;
+            }
         }
 
         SDL_Texture* texture = SDLUtils::loadTextureFromSurface(sdl_renderer, surface);
 
-        if (texture) {
+        if (texture && useCache) {
             texturesCache[textureName] = texture;
         }
         return texture;
@@ -252,6 +256,14 @@ public:
         SDL_DestroyTexture(idlePlusHover);
 
         return completeTexture;
+    }
+
+    void loadTextureAndBeenHitTexture(const std::string& filename, SDL_Texture*& texture, SDL_Texture*& beenHitTexture){
+        SDL_Surface* surface = loadSurface(filename);
+        texture = loadTexture(surface);
+        SDLUtils::setSurfaceColorExceptAlpha(surface,191,191,173);
+        beenHitTexture = loadTexture(surface, false);
+        SDL_FreeSurface(surface);
     }
 
     void clearCache() {

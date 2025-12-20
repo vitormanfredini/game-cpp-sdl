@@ -86,6 +86,13 @@ public:
             z = z + floatingComponent->getDelta();
         }
 
+        if(beenHit){
+            beenHitEffectCurrentUpdate -= 1;
+            if(beenHitEffectCurrentUpdate < 0){
+                beenHit = false;
+            }
+        }
+        
         for(std::unique_ptr<RenderComponent>& renderComponent : renderComponents){
             renderComponent->update(*this);
         }
@@ -138,9 +145,6 @@ public:
         health += value;
         if(health > stats[CharacterStat::MaxHealth]->getValue()){
             health = stats[CharacterStat::MaxHealth]->getValue();
-        }
-        if(health >= 0.0f){
-            
         }
     }
 
@@ -216,6 +220,7 @@ public:
         }
         addHealth(-projectile->getAttack());
         projectile->takeHit();
+        triggerBeenHitEffect();
     }
 
     void takeCollisionDamageFrom(Character* other){
@@ -223,7 +228,19 @@ public:
             return;
         }
         addHealth(-other->getCollisionAttack());
+        triggerBeenHitEffect();
     }
+
+    void triggerBeenHitEffect(){
+        beenHit = true;
+        beenHitEffectCurrentUpdate = beenHitEffectTotalUpdates;
+    }
+
+    bool hasBeenHit(){
+        return beenHit;
+    }
+
+    
 
     void setMovementComponent(std::unique_ptr<MovementComponent> mover) {
         movementComponent = std::move(mover);
@@ -336,8 +353,12 @@ private:
 
     std::unordered_map<CharacterStat, std::unique_ptr<StatComponent>> stats;
     float health = 1.0f;
-
+    
     int regenerateHealthUpdateCount = 0;
+
+    int beenHitEffectTotalUpdates = 10;
+    bool beenHit = false;
+    int beenHitEffectCurrentUpdate = 0;
 
     std::vector<std::unique_ptr<WeaponComponent>> weapons = {};
     std::unique_ptr<MovementComponent> movementComponent;

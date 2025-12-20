@@ -49,8 +49,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.017
         ));
+        SDL_Texture* enemy1Texture = nullptr;
+        SDL_Texture* enemy1TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy2_horizontal_sprites.png", enemy1Texture, enemy1TextureBeenHit);
         prototypes[CharacterType::Regular]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy2_horizontal_sprites.png"),
+            enemy1Texture,
+            enemy1TextureBeenHit,
             Alignment::BottomUpCentered,
             5,
             18
@@ -79,8 +83,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.02
         ));
+        SDL_Texture* enemy2Texture = nullptr;
+        SDL_Texture* enemy2TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy1_horizontal_sprites.png", enemy2Texture, enemy2TextureBeenHit);
         prototypes[CharacterType::Bigger]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy1_horizontal_sprites.png"),
+            enemy2Texture,
+            enemy2TextureBeenHit,
             Alignment::BottomUpCentered,
             5,
             37
@@ -110,8 +118,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.025
         ));
+        SDL_Texture* enemy3Texture = nullptr;
+        SDL_Texture* enemy3TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy3_horizontal_sprites.png", enemy3Texture, enemy3TextureBeenHit);
         prototypes[CharacterType::Boss]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy3_horizontal_sprites.png"),
+            enemy3Texture,
+            enemy3TextureBeenHit,
             Alignment::BottomUpCentered,
             8,
             34
@@ -142,8 +154,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.025
         ));
+        SDL_Texture* enemy4Texture = nullptr;
+        SDL_Texture* enemy4TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy4_horizontal_sprites.png", enemy4Texture, enemy4TextureBeenHit);
         prototypes[CharacterType::Fire]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy4_horizontal_sprites.png"),
+            enemy4Texture,
+            enemy4TextureBeenHit,
             Alignment::BottomUpCentered,
             6,
             28
@@ -171,8 +187,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.025
         ));
+        SDL_Texture* enemy5Texture = nullptr;
+        SDL_Texture* enemy5TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy5_horizontal_sprites.png", enemy5Texture, enemy5TextureBeenHit);
         prototypes[CharacterType::Furnace]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy5_horizontal_sprites.png"),
+            enemy5Texture,
+            enemy5TextureBeenHit,
             Alignment::BottomUpCentered,
             6,
             24
@@ -199,8 +219,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.045
         ));
+        SDL_Texture* enemy6Texture = nullptr;
+        SDL_Texture* enemy6TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy6_horizontal_sprites.png", enemy6Texture, enemy6TextureBeenHit);
         prototypes[CharacterType::DataCenterRack]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy6_horizontal_sprites.png"),
+            enemy6Texture,
+            enemy6TextureBeenHit,
             Alignment::BottomUpCentered,
             5,
             37
@@ -229,8 +253,12 @@ public:
             textureManager->loadTexture("images/chars/shadow.png"),
             0.03
         ));
+        SDL_Texture* enemy7Texture = nullptr;
+        SDL_Texture* enemy7TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy7_horizontal_sprites.png", enemy7Texture, enemy7TextureBeenHit);
         prototypes[CharacterType::NeuralNet]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
-            textureManager->loadTexture("images/chars/enemy7_horizontal_sprites.png"),
+            enemy7Texture,
+            enemy7TextureBeenHit,
             Alignment::BottomUpCentered,
             3,
             48

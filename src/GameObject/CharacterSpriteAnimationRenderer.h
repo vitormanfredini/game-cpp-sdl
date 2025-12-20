@@ -10,7 +10,10 @@
 class CharacterSpriteAnimationRenderer : public RenderComponent {
 private:
     SDL_Texture* texture;
+    SDL_Texture* beenHitTexture;
     Alignment alignment;
+
+    bool useBeenHitTexture = false;
 
     int frameWidth;
     int frameHeight;
@@ -29,7 +32,7 @@ private:
     MovementState movementState = MovementState::Idle;
 
 public:
-    CharacterSpriteAnimationRenderer(SDL_Texture* texture, Alignment alignment) : texture(texture), alignment(alignment) {
+    CharacterSpriteAnimationRenderer(SDL_Texture* texture, SDL_Texture* beenHitTexture, Alignment alignment) : texture(texture), beenHitTexture(beenHitTexture), alignment(alignment) {
         int textureWidth, textureHeight;
         SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
         if(textureHeight == 0){
@@ -41,6 +44,10 @@ public:
         }
         frameWidth = textureWidth / 4;
         frameHeight = textureHeight / 2;
+
+        if(beenHitTexture == nullptr){
+            beenHitTexture = texture;
+        }
     }
 
     void update(GameObject& gameObject) override {
@@ -71,6 +78,8 @@ public:
         }else if(movementState == MovementState::Idle){
             idleFrameStepper.update();
         }
+
+        useBeenHitTexture = character->hasBeenHit();
 
     }
 
@@ -125,7 +134,7 @@ public:
 
         SDL_RenderCopyEx(
             props.sdl_renderer,
-            texture,
+            useBeenHitTexture ? beenHitTexture : texture,
             &srcRect,
             &dstRect,
             0.0,
@@ -135,6 +144,6 @@ public:
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<CharacterSpriteAnimationRenderer>(texture, alignment);
+        return std::make_unique<CharacterSpriteAnimationRenderer>(texture, beenHitTexture, alignment);
     }
 };

@@ -10,15 +10,18 @@
 class HorizontalSpriteAnimationRenderer : public RenderComponent {
 private:
     SDL_Texture* texture;
+    SDL_Texture* textureBeenHit;
     Alignment alignment;
     int updatesPerFrame;
+
+    bool useBeenHitTexture = false;
 
     int frameWidth;
     int frameHeight;
     std::unique_ptr<FrameStepper> frameStepper;
 
 public:
-    HorizontalSpriteAnimationRenderer(SDL_Texture* texture, Alignment alignment, int updatesPerFrame, int frameWidth) : texture(texture), alignment(alignment), updatesPerFrame(updatesPerFrame), frameWidth(frameWidth) {
+    HorizontalSpriteAnimationRenderer(SDL_Texture* texture, SDL_Texture* textureBeenHit, Alignment alignment, int updatesPerFrame, int frameWidth) : texture(texture), textureBeenHit(textureBeenHit), alignment(alignment), updatesPerFrame(updatesPerFrame), frameWidth(frameWidth) {
         int textureWidth, textureHeight;
         SDL_QueryTexture(texture, nullptr, nullptr, &textureWidth, &textureHeight);
         if(textureHeight == 0){
@@ -32,10 +35,19 @@ public:
         }
         frameHeight = textureHeight;
         frameStepper = std::make_unique<FrameStepper>(textureWidth / frameWidth, updatesPerFrame);
+
+        if(textureBeenHit == nullptr){
+            textureBeenHit = texture;
+        }
     }
 
     void update(GameObject& gameObject) override {
         frameStepper->update();
+
+        Character* character = dynamic_cast<Character*>(&gameObject);
+        if (character){
+            useBeenHitTexture = character->hasBeenHit();
+        };
     }
 
     void render(GameObject& gameObject, RenderProps props) override {
@@ -82,7 +94,7 @@ public:
 
         SDL_RenderCopyEx(
             props.sdl_renderer,
-            texture,
+            useBeenHitTexture ? textureBeenHit : texture,
             &srcRect,
             &dstRect,
             0.0,
@@ -92,6 +104,6 @@ public:
     }
 
     std::unique_ptr<RenderComponent> clone() const override {
-        return std::make_unique<HorizontalSpriteAnimationRenderer>(texture, alignment, frameStepper->getUpdatesPerFrame(), frameWidth);
+        return std::make_unique<HorizontalSpriteAnimationRenderer>(texture, textureBeenHit, alignment, frameStepper->getUpdatesPerFrame(), frameWidth);
     }
 };
