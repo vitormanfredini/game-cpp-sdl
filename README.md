@@ -3,7 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- make enemies flash white when they get hit
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
 - add tiles dynamically (instead of loading all of them at once at the begining)
