@@ -180,10 +180,10 @@ public:
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
                 textureManager->drawTextOnTexture(
                     textureManager->loadTexture("images/upgrademenu_button_base.png"),
-                    upgradeOption.description.c_str(),
+                    upgradeOption.description,
                     FontStyle::UpgradeMenu,
                     &upgradeMenuButtonTextColor,
-                    TextRenderMethod::ButtonCentered
+                    TextRenderMethod::ButtonTopCentered
                 )
             ));
             

@@ -39,7 +39,7 @@ public:
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 3, "Diminui o tempo para regenerar"));
         prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 4, "Diminui o tempo para regenerar"));
 
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, "Lança bolas de fogo"));
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, bolaDeFogoText));
 
         prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 2, "Espada mais rápida"));
         prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 3, "Espada MUITO rápida"));
@@ -145,5 +145,43 @@ private:
     std::unordered_map<UpgradeId,std::vector<std::unique_ptr<UpgradeComponent>>> prototypes;
     ItemFactory* itemFactory;
     std::default_random_engine randomEngine = {};
+
+    std::string bolaDeFogoText = trim(R"(
+(1) ` `___'  Bolas de fogo        
+     '/   \`                      
+     |     | dano       ▓▓▓▒▒▒▒▒▒▒
+      \___/  frequência ▓▓▓▓▓▓▓▒▒▒
+)");
+
+    std::string trim(std::string str){
+        size_t stringHead = 0;
+        while(true){
+            size_t lineBreakPos = str.find("\n", stringHead);
+            size_t spacePos = str.find(" ", stringHead);
+            if(lineBreakPos == 0 || spacePos == 0){
+                stringHead += 1;
+                str = str.substr(stringHead, str.length() - stringHead);
+            }else{
+                break;
+            }
+        }
+
+        stringHead = str.length() - 1;
+
+        while(true){
+            size_t lineBreakPos = str.rfind("\n", stringHead);
+            size_t spacePos = str.rfind(" ", stringHead);
+            if(lineBreakPos == 0 || spacePos == 0){
+                stringHead -= 1;
+                str = str.substr(0, stringHead);
+            }else{
+                break;
+            }
+        }
+
+        std::cout << str << str << str << std::endl;
+
+        return str;
+    }
 
 };

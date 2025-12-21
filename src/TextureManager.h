@@ -12,7 +12,7 @@
 
 enum class TextRenderMethod {
     Centered,
-    ButtonCentered,
+    ButtonTopCentered
 };
 
 class TextureManager {
@@ -109,7 +109,17 @@ public:
         return pixels;
     }
 
-    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, const char *text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method) {
+    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, std::string text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method, int line = 0) {
+
+        if(text == ""){
+            return originalTexture;
+        }
+ 
+        size_t lineBreakPos = text.find("\n");
+        if(lineBreakPos != std::string::npos){
+            SDL_Texture* tmp = drawTextOnTexture(originalTexture, text.substr(0, lineBreakPos), fontStyle, color, method, line);
+            return drawTextOnTexture(tmp, text.substr(lineBreakPos+1, text.length() - lineBreakPos+1), fontStyle, color, method, line + 1);
+        }
 
         bool copyOriginalTexture = true;
 
@@ -155,12 +165,14 @@ public:
             SDL_RenderCopy(sdl_renderer, originalTexture, nullptr, nullptr);
         }
 
-        SDL_Texture* textureWithText = createTextTexture(text, fontStyle, color);
+        SDL_Texture* textureWithText = createTextTexture(text.c_str(), fontStyle, color);
 
         int textTextureWidth, textTextureHeight;
         SDL_QueryTexture(textureWithText, nullptr, nullptr, &textTextureWidth, &textTextureHeight);
 
         // std::cout << text << ": " << textTextureWidth  << "x"  << textTextureHeight << std::endl;
+
+        int lineYOffset = textTextureHeight * line;
 
         std::vector<SDL_Rect> renderRects = {};
         switch (method) {
@@ -169,22 +181,23 @@ public:
                 int textY = std::round(static_cast<float>(originalTextureHeight)/2 - static_cast<float>(textTextureHeight)/2);
                 renderRects.push_back({
                     textX,
-                    textY,
+                    textY + lineYOffset,
                     textTextureWidth,
                     textTextureHeight,
                 });
             }
             break;
-            case TextRenderMethod::ButtonCentered: {
+            case TextRenderMethod::ButtonTopCentered: {
                 int xAllStates = std::round(static_cast<float>(originalTextureWidth)/2 - static_cast<float>(textTextureWidth)/2);
-                int yCenteredFirstState = std::round(static_cast<float>(originalTextureHeight)/6 - static_cast<float>(textTextureHeight)/2);
+                // int yFirstState = std::round(static_cast<float>(originalTextureHeight)/6 - static_cast<float>(textTextureHeight)/2);
+                int yFirstState = 0;
                 int heightEachState = std::round(static_cast<float>(originalTextureHeight)/3);
                 
                 for(int c=0;c<3;c++){
                     int offset = c==2 ? (textTextureWidth / 40) : 0;
                     SDL_Rect rect = {
                         xAllStates + offset,
-                        yCenteredFirstState + (c * heightEachState) + offset,
+                        yFirstState + (c * heightEachState) + offset + lineYOffset,
                         textTextureWidth,
                         textTextureHeight,
                     };
@@ -225,7 +238,7 @@ public:
 
         SDL_Texture* idlePart = drawTextOnTexture(
             backgroundIdle,
-            text.c_str(),
+            text,
             fontStyle,
             &textColorIdle,
             TextRenderMethod::Centered
@@ -233,7 +246,7 @@ public:
 
         SDL_Texture* hoverPart = drawTextOnTexture(
             backgroundHover,
-            text.c_str(),
+            text,
             fontStyle,
             &textColorHover,
             TextRenderMethod::Centered
@@ -241,7 +254,7 @@ public:
 
         SDL_Texture* pressedPart = drawTextOnTexture(
             backgroundPressed,
-            text.c_str(),
+            text,
             fontStyle,
             &textColorPressed,
             TextRenderMethod::Centered
