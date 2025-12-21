@@ -179,8 +179,6 @@ private:
             }
         }
 
-        std::cout << str << str << str << std::endl;
-
         return str;
     }
 
