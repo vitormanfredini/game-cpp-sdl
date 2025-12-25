@@ -12,7 +12,7 @@
 
 enum class TextRenderMethod {
     Centered,
-    ButtonTopCentered
+    ButtonCentered
 };
 
 class TextureManager {
@@ -109,17 +109,7 @@ public:
         return pixels;
     }
 
-    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, std::string text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method, int line = 0) {
-
-        if(text == ""){
-            return originalTexture;
-        }
- 
-        size_t lineBreakPos = text.find("\n");
-        if(lineBreakPos != std::string::npos){
-            SDL_Texture* tmp = drawTextOnTexture(originalTexture, text.substr(0, lineBreakPos), fontStyle, color, method, line);
-            return drawTextOnTexture(tmp, text.substr(lineBreakPos+1, text.length() - lineBreakPos+1), fontStyle, color, method, line + 1);
-        }
+    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, std::string text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method) {
 
         bool copyOriginalTexture = true;
 
@@ -157,7 +147,7 @@ public:
             textureToDrawOn = copyTex;
         }
 
-        SDL_SetTextureBlendMode(textureToDrawOn, SDL_BLENDMODE_BLEND);
+        SDL_SetTextureBlendMode(textureToDrawOn, SDL_BLENDMODE_ADD);
 
         SDL_SetRenderTarget(sdl_renderer, textureToDrawOn);
 
@@ -172,8 +162,6 @@ public:
 
         // std::cout << text << ": " << textTextureWidth  << "x"  << textTextureHeight << std::endl;
 
-        int lineYOffset = textTextureHeight * line;
-
         std::vector<SDL_Rect> renderRects = {};
         switch (method) {
             case TextRenderMethod::Centered: {
@@ -181,23 +169,23 @@ public:
                 int textY = std::round(static_cast<float>(originalTextureHeight)/2 - static_cast<float>(textTextureHeight)/2);
                 renderRects.push_back({
                     textX,
-                    textY + lineYOffset,
+                    textY,
                     textTextureWidth,
                     textTextureHeight,
                 });
             }
             break;
-            case TextRenderMethod::ButtonTopCentered: {
+            case TextRenderMethod::ButtonCentered: {
                 int xAllStates = std::round(static_cast<float>(originalTextureWidth)/2 - static_cast<float>(textTextureWidth)/2);
-                // int yFirstState = std::round(static_cast<float>(originalTextureHeight)/6 - static_cast<float>(textTextureHeight)/2);
-                int yFirstState = 0;
+                int yFirstState = std::round(static_cast<float>(originalTextureHeight)/6 - static_cast<float>(textTextureHeight)/2);
+                // int yFirstState = 0;
                 int heightEachState = std::round(static_cast<float>(originalTextureHeight)/3);
                 
                 for(int c=0;c<3;c++){
                     int offset = c==2 ? (textTextureWidth / 40) : 0;
                     SDL_Rect rect = {
                         xAllStates + offset,
-                        yFirstState + (c * heightEachState) + offset + lineYOffset,
+                        yFirstState + (c * heightEachState) + offset,
                         textTextureWidth,
                         textTextureHeight,
                     };
@@ -324,7 +312,7 @@ private:
             return nullptr;
         }
 
-        SDL_Surface* textSurface = TTF_RenderUTF8_Blended(font, text, *color);
+        SDL_Surface* textSurface = TTF_RenderUTF8_Blended_Wrapped(font, text, *color, 0);
         if (!textSurface) {
             SDL_Log("TTF_RenderUTF8_Blended failed: %s", TTF_GetError());
             return nullptr;

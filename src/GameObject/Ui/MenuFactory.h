@@ -146,7 +146,7 @@ public:
         prototypes[MenuType::UpgradeMenu]->setPosition(0.0f,0.0f);
         prototypes[MenuType::UpgradeMenu]->setSize(1.0f,1.0f);
         prototypes[MenuType::UpgradeMenu]->addRenderComponent(std::make_unique<SpriteRenderer>(
-            textureManager->loadTexture("images/menu.png"),
+            textureManager->loadTexture(22,33,21),
             Alignment::UI
         ));
 
@@ -166,24 +166,26 @@ public:
 
         if(options.size() == 0){
             std::cerr << "options.size() == 0" << std::endl;
-            // provavelmente acabaram os upgrades. implementar itens no submenu para colocar no lugar
+            // provavelmente acabaram os upgrades. implementar itens no upgrade menu para colocar no lugar
         }
 
-        SDL_Color upgradeMenuButtonTextColor = { 155, 198, 150, 255 };
+        SDL_Color upgradeMenuButtonTextColor = { 191, 191, 173, 255 };
 
         for(size_t c=0; c<options.size(); c++){
             UpgradeOption upgradeOption = options[c];
 
+            float buttonHeightRatio = 0.259f;
+
             std::unique_ptr<Button> optionButton = std::make_unique<Button>();
             optionButton->setPosition(0.166f, 0.2f + (c * 0.2f));
-            optionButton->setSize(0.66f, 0.166f);
+            optionButton->setSize(0.66f, 0.66f*buttonHeightRatio);
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
                 textureManager->drawTextOnTexture(
-                    textureManager->loadTexture("images/upgrademenu_button_base.png"),
+                    textureManager->loadTexture(22,33,21,0,348,348*buttonHeightRatio*3),
                     upgradeOption.description,
                     FontStyle::UpgradeMenu,
                     &upgradeMenuButtonTextColor,
-                    TextRenderMethod::ButtonTopCentered
+                    TextRenderMethod::ButtonCentered
                 )
             ));
             

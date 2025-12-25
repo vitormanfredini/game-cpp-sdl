@@ -25,7 +25,7 @@ public:
 
         fontSpecs[FontStyle::UpgradeMenu] = {
             "fonts/Cousine_Regular.ttf",
-            22
+            17
         };
     }
 
