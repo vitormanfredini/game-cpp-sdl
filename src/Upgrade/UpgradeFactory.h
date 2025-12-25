@@ -153,33 +153,20 @@ private:
       \___/  frequência ▓▓▓▓▓▓▓▒▒▒
 )");
 
-    std::string trim(std::string str){
-        size_t stringHead = 0;
-        while(true){
-            size_t lineBreakPos = str.find("\n", stringHead);
-            size_t spacePos = str.find(" ", stringHead);
-            if(lineBreakPos == 0 || spacePos == 0){
-                stringHead += 1;
-                str = str.substr(stringHead, str.length() - stringHead);
-            }else{
-                break;
-            }
+    std::string trim(std::string str) {
+        size_t startIndex = 0;
+        while (startIndex < str.size() && (str[startIndex] == ' ' || str[startIndex] == '\n')) {
+            startIndex += 1;
         }
 
-        stringHead = str.length() - 1;
+        if (startIndex == str.size()) return "";
 
-        while(true){
-            size_t lineBreakPos = str.rfind("\n", stringHead);
-            size_t spacePos = str.rfind(" ", stringHead);
-            if(lineBreakPos == 0 || spacePos == 0){
-                stringHead -= 1;
-                str = str.substr(0, stringHead);
-            }else{
-                break;
-            }
+        size_t endIndex = str.size() - 1;
+        while (endIndex > startIndex && (str[endIndex] == ' ' || str[endIndex] == '\n')) {
+            endIndex -= 1;
         }
 
-        return str;
+        return str.substr(startIndex, endIndex - startIndex + 1);
     }
 
 };
