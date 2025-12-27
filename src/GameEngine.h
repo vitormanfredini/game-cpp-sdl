@@ -75,7 +75,7 @@ public:
                 textureManager->loadTexture(0,0,0,0,200,30),
                 "game over",
                 FontStyle::MainMenu,
-                &numbersTextColor,
+                numbersTextColor,
                 TextRenderMethod::Centered
             ),
             textureManager->loadTexture(0,0,0),

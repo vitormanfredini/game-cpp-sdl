@@ -41,21 +41,21 @@ public:
                 textureManager->loadTexture(0,0,0,0,numberWidth,numberHeight),
                 "0",
                 FontStyle::MainMenu,
-                &numbersTextColor,
+                numbersTextColor,
                 TextRenderMethod::Centered
             ),
             textureManager->drawTextOnTexture(
                 textureManager->loadTexture(0,0,0,0,numberWidth,numberHeight),
                 "1",
                 FontStyle::MainMenu,
-                &numbersTextColor,
+                numbersTextColor,
                 TextRenderMethod::Centered
             ),
             textureManager->drawTextOnTexture(
                 textureManager->loadTexture(0,0,0,0,551,37),
                 "rage against the bad machines",
                 FontStyle::MainMenu,
-                &whiteTextColor,
+                whiteTextColor,
                 TextRenderMethod::Centered
             ),
             Alignment::UI
@@ -170,6 +170,7 @@ public:
         }
 
         SDL_Color upgradeMenuButtonTextColor = { 191, 191, 173, 255 };
+        SDL_Color upgradeMenuButtonHoverTextColor = { 255, 255, 255, 255 };
 
         for(size_t c=0; c<options.size(); c++){
             UpgradeOption upgradeOption = options[c];
@@ -180,12 +181,17 @@ public:
             optionButton->setPosition(0.166f, 0.2f + (c * 0.2f));
             optionButton->setSize(0.66f, 0.66f*buttonHeightRatio);
             optionButton->addRenderComponent(std::make_unique<ButtonRenderer>(
-                textureManager->drawTextOnTexture(
-                    textureManager->loadTexture(22,33,21,0,348,348*buttonHeightRatio*3),
+                textureManager->createButtonTexture(
+                    348,
+                    348*buttonHeightRatio,
                     upgradeOption.description,
                     FontStyle::UpgradeMenu,
-                    &upgradeMenuButtonTextColor,
-                    TextRenderMethod::ButtonCentered
+                    upgradeMenuButtonTextColor,
+                    upgradeMenuButtonHoverTextColor,
+                    upgradeMenuButtonHoverTextColor,
+                    textureManager->loadTexture(22,33,21,255,348,348*buttonHeightRatio),
+                    textureManager->loadTexture(22,33,21,255,348,348*buttonHeightRatio),
+                    textureManager->loadTexture(22,33,21,255,348,348*buttonHeightRatio)
                 )
             ));
             

@@ -109,7 +109,7 @@ public:
         return pixels;
     }
 
-    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, std::string text, FontStyle fontStyle, SDL_Color* color, TextRenderMethod method) {
+    SDL_Texture* drawTextOnTexture(SDL_Texture* originalTexture, std::string text, FontStyle fontStyle, SDL_Color& color, TextRenderMethod method) {
 
         bool copyOriginalTexture = true;
 
@@ -118,10 +118,10 @@ public:
         if(copyOriginalTexture){
             std::ostringstream oss;
             oss << text << '_' << originalTexture << '_' 
-                << static_cast<int>(color->r) << '_'
-                << static_cast<int>(color->g) << '_'
-                << static_cast<int>(color->b) << '_'
-                << static_cast<int>(color->a);
+                << static_cast<int>(color.r) << '_'
+                << static_cast<int>(color.g) << '_'
+                << static_cast<int>(color.b) << '_'
+                << static_cast<int>(color.a);
             textureName = oss.str();
 
             SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
@@ -147,7 +147,7 @@ public:
             textureToDrawOn = copyTex;
         }
 
-        SDL_SetTextureBlendMode(textureToDrawOn, SDL_BLENDMODE_ADD);
+        SDL_SetTextureBlendMode(textureToDrawOn, SDL_BLENDMODE_BLEND);
 
         SDL_SetRenderTarget(sdl_renderer, textureToDrawOn);
 
@@ -228,7 +228,7 @@ public:
             backgroundIdle,
             text,
             fontStyle,
-            &textColorIdle,
+            textColorIdle,
             TextRenderMethod::Centered
         );
 
@@ -236,7 +236,7 @@ public:
             backgroundHover,
             text,
             fontStyle,
-            &textColorHover,
+            textColorHover,
             TextRenderMethod::Centered
         );
 
@@ -244,7 +244,7 @@ public:
             backgroundPressed,
             text,
             fontStyle,
-            &textColorPressed,
+            textColorPressed,
             TextRenderMethod::Centered
         );
 
@@ -304,7 +304,7 @@ private:
         return nullptr;
     }
 
-    SDL_Texture* createTextTexture(const char* text, FontStyle fontStyle, SDL_Color* color) {
+    SDL_Texture* createTextTexture(const char* text, FontStyle fontStyle, SDL_Color& color) {
 
         TTF_Font* font = fontManager->getFont(fontStyle);
         if(font == nullptr){
@@ -312,7 +312,7 @@ private:
             return nullptr;
         }
 
-        SDL_Surface* textSurface = TTF_RenderUTF8_Blended_Wrapped(font, text, *color, 0);
+        SDL_Surface* textSurface = TTF_RenderUTF8_Blended_Wrapped(font, text, color, 0);
         if (!textSurface) {
             SDL_Log("TTF_RenderUTF8_Blended failed: %s", TTF_GetError());
             return nullptr;
@@ -351,6 +351,10 @@ private:
             std::cerr << "Unable to create target texture! SDL Error: " << SDL_GetError() << std::endl;
             return nullptr;
         }
+
+        SDL_SetTextureBlendMode(texture1, SDL_BLENDMODE_NONE);
+        SDL_SetTextureBlendMode(texture2, SDL_BLENDMODE_NONE);
+        SDL_SetTextureBlendMode(combinedTexture, SDL_BLENDMODE_BLEND);
 
         SDL_SetRenderTarget(sdl_renderer, combinedTexture);
         SDL_SetRenderDrawColor(sdl_renderer, 0, 0, 0, 0);

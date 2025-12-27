@@ -15,6 +15,7 @@
 #include "GameObject/Character/Weapons/WeaponFactory.h"
 #include "Audio/AudioEngine.h"
 #include "StatUpgrade.h"
+#include "AsciiArt.h"
 
 class UpgradeFactory {
 
@@ -22,27 +23,27 @@ public:
 
     UpgradeFactory(ItemFactory* itemFactory, WeaponFactory* weaponFactory): itemFactory(itemFactory) {
 
-        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.2), 1, "Aumenta a vida máxima em 20%"));
-        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.1), 2, "Aumenta a vida máxima em 20%"));
-        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.08), 3, "Aumenta a vida máxima em 20%"));
+        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.2), 1, asciiArt.get(AsciiArt::Id::MaxHealth)));
+        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.1), 2, asciiArt.get(AsciiArt::Id::MaxHealth)));
+        prototypes[UpgradeId::MaxHealth].push_back(std::make_unique<UpgradeComponent>(UpgradeId::MaxHealth, std::make_unique<StatUpgrade>(CharacterStat::MaxHealth, 0.08), 3, asciiArt.get(AsciiArt::Id::MaxHealth)));
 
-        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(CharacterStat::BaseSpeed, 0.1), 1, "Aumenta a velocidade em 10%"));
-        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(CharacterStat::BaseSpeed, 0.06), 2, "Aumenta a velocidade em 6%"));
-        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(CharacterStat::BaseSpeed, 0.03), 3, "Aumenta a velocidade em 3%"));
+        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(CharacterStat::BaseSpeed, 0.1), 1, asciiArt.get(AsciiArt::Id::RunFaster)));
+        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(CharacterStat::BaseSpeed, 0.06), 2, asciiArt.get(AsciiArt::Id::RunFaster)));
+        prototypes[UpgradeId::BaseSpeed].push_back(std::make_unique<UpgradeComponent>(UpgradeId::BaseSpeed, std::make_unique<StatUpgrade>(CharacterStat::BaseSpeed, 0.03), 3, asciiArt.get(AsciiArt::Id::RunFaster)));
 
-        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthAmount, 0.03), 1, "Aumenta a regeneração em 3"));
-        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthAmount, 0.02), 2, "Aumenta a regeneração em 2"));
-        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthAmount, 0.01), 3, "Aumenta a regeneração em 1"));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthAmount, 0.03), 1, asciiArt.get(AsciiArt::Id::HealthRegenerateMore)));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthAmount, 0.02), 2, asciiArt.get(AsciiArt::Id::HealthRegenerateMore)));
+        prototypes[UpgradeId::RegenerateHealthAmount].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthAmount, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthAmount, 0.01), 3, asciiArt.get(AsciiArt::Id::HealthRegenerateMore)));
 
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 30.0), 1, "Diminui o tempo para regenerar"));
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 30.0), 2, "Diminui o tempo para regenerar"));
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 3, "Diminui o tempo para regenerar"));
-        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 4, "Diminui o tempo para regenerar"));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 30.0), 1, asciiArt.get(AsciiArt::Id::HealthRegenerateFaster)));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 30.0), 2, asciiArt.get(AsciiArt::Id::HealthRegenerateFaster)));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 3, asciiArt.get(AsciiArt::Id::HealthRegenerateFaster)));
+        prototypes[UpgradeId::RegenerateHealthFasterInUpdates].push_back(std::make_unique<UpgradeComponent>(UpgradeId::RegenerateHealthFasterInUpdates, std::make_unique<StatUpgrade>(CharacterStat::RegenerateHealthFasterInUpdates, 20.0), 4, asciiArt.get(AsciiArt::Id::HealthRegenerateFaster)));
 
-        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, bolaDeFogoText));
+        prototypes[UpgradeId::Weapon].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Weapon, weaponFactory->create(WeaponId::FireBall), 1, asciiArt.get(AsciiArt::Id::FireBalls)));
 
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 2, "Espada mais rápida"));
-        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 3, "Espada MUITO rápida"));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 2, asciiArt.get(AsciiArt::Id::LowCutUpgradeFireRate)));
+        prototypes[UpgradeId::WeaponUpgrade].push_back(std::make_unique<UpgradeComponent>(UpgradeId::WeaponUpgrade, std::make_unique<WeaponUpgrade>(WeaponStat::FiringRate, -13.0f, WeaponId::Sword), 3, asciiArt.get(AsciiArt::Id::LowCutUpgradeFireRate2)));
     }
 
     std::vector<UpgradeOption> createRandomUpgradeOptions(size_t max, std::vector<WeaponId> weaponIds){
@@ -99,7 +100,7 @@ public:
                 allAvailableUpgradeIds[c],
                 internalIndex,
                 prototypes[allAvailableUpgradeIds[c]][internalIndex]->getType(),
-                prototypes[allAvailableUpgradeIds[c]][internalIndex]->getDescription()
+                prototypes[allAvailableUpgradeIds[c]][internalIndex]->getDescription(options.size()+1)
             });
         }
 
@@ -108,7 +109,7 @@ public:
                 UpgradeId::Item,
                 c,
                 prototypes[UpgradeId::Item].front()->getType(),
-                prototypes[UpgradeId::Item].front()->getDescription()
+                prototypes[UpgradeId::Item].front()->getDescription(options.size()+1)
             });
         }
 
@@ -145,28 +146,5 @@ private:
     std::unordered_map<UpgradeId,std::vector<std::unique_ptr<UpgradeComponent>>> prototypes;
     ItemFactory* itemFactory;
     std::default_random_engine randomEngine = {};
-
-    std::string bolaDeFogoText = trim(R"(
-(1) ` `___'  Bolas de fogo        
-     '/   \`                      
-     |     | dano       ▓▓▓▒▒▒▒▒▒▒
-      \___/  frequência ▓▓▓▓▓▓▓▒▒▒
-)");
-
-    std::string trim(std::string str) {
-        size_t startIndex = 0;
-        while (startIndex < str.size() && (str[startIndex] == ' ' || str[startIndex] == '\n')) {
-            startIndex += 1;
-        }
-
-        if (startIndex == str.size()) return "";
-
-        size_t endIndex = str.size() - 1;
-        while (endIndex > startIndex && (str[endIndex] == ' ' || str[endIndex] == '\n')) {
-            endIndex -= 1;
-        }
-
-        return str.substr(startIndex, endIndex - startIndex + 1);
-    }
-
+    AsciiArt asciiArt;
 };

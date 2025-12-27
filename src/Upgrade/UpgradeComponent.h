@@ -7,6 +7,8 @@
 #include <memory>
 #include <variant>
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 class UpgradeComponent {
 public:
@@ -77,8 +79,12 @@ public:
     int getLevel(){
         return level;
     }
-    std::string& getDescription(){
+    std::string& getDescription(size_t optionNumber = 0){
+        if(optionNumber > 0 && optionNumber <= 9){
+            description[1] = std::to_string(optionNumber).c_str()[0];
+        }
         return description;
+        
     }
     ~UpgradeComponent() = default;
     std::unique_ptr<UpgradeComponent> clone() {
