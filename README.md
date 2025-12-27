@@ -13,7 +13,7 @@ TODO:
 - reorder renderables (enemies, items and maybe projectiles) from bottom to top to make sure they don't render in front of others that are in the the front.
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
-
+- fix text rendering thinner on transparent background
 - make a weapon factory with prototype pattern
 - MenuFactory edge case: when no upgrades are available. (implement regular items to replace the upgrades)
 - MenuFactory: implement a way to calculate buttons sizes and positions base an area for them to fill.
