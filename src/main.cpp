@@ -47,7 +47,6 @@ int main() {
     DeltaTime deltaTime { 60 };
 
     Camera camera {
-        20,
         0.0f,
         0.0f
     };

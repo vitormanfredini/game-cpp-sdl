@@ -9,6 +9,7 @@ public:
     void addValue(float newValue);
     float getAverage();
     void fill(float value);
+    void resize(size_t newSize);
 
 private:
     std::vector<float> values;

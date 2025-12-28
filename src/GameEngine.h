@@ -156,6 +156,25 @@ public:
             if(stateManager->shouldUpdateGameWorld()){
                 doGameWorldUpdate();
                 stageUpdatesCountUnpaused += 1;
+
+                bool startCutscene = stageUpdatesCountUnpaused == unpausedUpdatesTriggerBossCutscene;
+                if(startCutscene){
+
+                    std::cout << "startCutscene" << std::endl;
+                    stateManager->setLevelState(LevelState::BossCutscene);
+
+                    std::unique_ptr<Character> newEnemy = characterFactory.create(CharacterType::FinalBoss);
+                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+                    enemies.push_back(std::move(newEnemy));
+
+                    camera->changeSpeed(Camera::Speed::Slow);
+                }
+                bool endCutscene = stageUpdatesCountUnpaused == unpausedUpdatesEndBossCutscene;
+                if(endCutscene){
+                    std::cout << "endCutscene" << std::endl;
+                    stateManager->setLevelState(LevelState::Regular);
+                    camera->changeSpeed(Camera::Speed::Regular);
+                }
             }
             if(stateManager->isInsideStage()){
                 audioEngine->onUpdateFinished(stageUpdatesCountTotal);
@@ -247,7 +266,7 @@ public:
                 stateManager->triggerQuit();
                 break;
             case SDL_KEYDOWN:
-                if(stateManager->shouldUpdateGameWorld()){
+                if(stateManager->shouldUpdateGameWorld() && !stateManager->isBossCutscene()){
                     input->handleKeyDown(event.key.keysym.sym);
                     if(event.key.keysym.sym==SDLK_ESCAPE){
                         stateManager->pauseToggle();
@@ -351,12 +370,30 @@ private:
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
 
-    void doGameWorldUpdate(){
+    const int unpausedUpdatesTriggerBossCutscene = 1000;
+    const int unpausedUpdatesEndBossCutscene = 1180;
 
+    void doGameWorldUpdate(){
+        if(stateManager->isBossCutscene()){
+            bossCustsceneUpdate();
+        }else{
+            regularGameWorldUpdate();
+        }
+
+        mapComponent->update(camera->getPositionX(),camera->getPositionY());
+        debris.update(camera->getPositionX(),camera->getPositionY());
+    }
+
+    void bossCustsceneUpdate(){
+        camera->pointTo(enemies.back().get());
+    }
+
+    void regularGameWorldUpdate(){
         input->update();
         MovementDirection aim = input->getAimDirection();
 
         mainChar->update();
+        
         mainChar->moveByInput(input->getInputDirection().normalized());
 
         for(std::unique_ptr<Item>& item : items){
@@ -381,9 +418,6 @@ private:
                 enemies.push_back(std::move(newEnemy));
             }
         }
-
-        mapComponent->update(camera->getPositionX(),camera->getPositionY());
-        debris.update(camera->getPositionX(),camera->getPositionY());
 
         std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(aim.normalized());
 

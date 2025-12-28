@@ -38,3 +38,10 @@ void MovingAverage::fill(float value){
         values[c] = value;
     }
 }
+
+void MovingAverage::resize(size_t newSize){
+    values.resize(newSize);
+    if(head >= newSize){
+        head = 0;
+    }
+}

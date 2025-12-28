@@ -4,19 +4,34 @@
 #include "GameObject/Character/Character.h"
 
 class Camera {
-
-private:
-    int samplesAverage;
-    MovingAverage averagePosX;
-    MovingAverage averagePosY;
-    float averagePosXCache = 0.0f;
-    float averagePosYCache = 0.0f;
-
 public:
 
-    Camera(int samplesForSmoothing, float startX, float startY): samplesAverage(samplesForSmoothing), averagePosX(samplesForSmoothing), averagePosY(samplesForSmoothing) {
+    enum class Speed {
+        Regular = 20,
+        Slow = 120
+    };
+
+    Camera(float startX, float startY):
+        averagePosX(static_cast<int>(Speed::Regular)),
+        averagePosY(static_cast<int>(Speed::Regular))
+    {
         averagePosX.fill(startX);
         averagePosY.fill(startY);
+    }
+
+    void changeSpeed(Speed newSpeed){
+        if(newSpeed == currentSpeed){
+            return;
+        }
+        currentSpeed = newSpeed;
+
+        float averageX = averagePosX.getAverage();
+        averagePosX.resize(static_cast<size_t>(newSpeed));
+        averagePosX.fill(averageX);
+
+        float averageY = averagePosY.getAverage();
+        averagePosY.resize(static_cast<size_t>(newSpeed));
+        averagePosY.fill(averageY);
     }
 
     void pointTo(Character* character){
@@ -39,5 +54,13 @@ public:
     float getPositionY(){
         return averagePosYCache;
     }
+
+private:
+    Speed currentSpeed = Speed::Regular;
+    MovingAverage averagePosX;
+    MovingAverage averagePosY;
+    float averagePosXCache = 0.0f;
+    float averagePosYCache = 0.0f;
+    Speed speed = Speed::Regular;
 
 };

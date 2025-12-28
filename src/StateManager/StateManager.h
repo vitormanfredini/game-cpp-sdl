@@ -2,12 +2,14 @@
 
 #include "MainState.h"
 #include "GameplayState.h"
+#include "LevelState.h"
 
 class StateManager {
 
 private:
     MainState mainState = MainState::Intro;
     GameplayState gameplayState = GameplayState::Play;
+    LevelState levelState = LevelState::Regular;
     bool paused = false;
     bool quitTrigger = false;
     std::function<void()> onStartLevelCallback;
@@ -21,6 +23,14 @@ public:
             }
         }
         mainState = newMainState;
+    }
+
+    void setLevelState(LevelState newLevelState){
+        levelState = newLevelState;
+    }
+
+    bool isBossCutscene(){
+        return mainState == MainState::Gameplay && levelState == LevelState::BossCutscene;
     }
 
     void setGamePlayState(GameplayState newGamePlayState){

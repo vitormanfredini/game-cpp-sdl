@@ -1,3 +1,13 @@
 #pragma once
 
-enum CharacterType { Main, Regular, Bigger, Fire, Boss, Furnace, DataCenterRack, NeuralNet };
+enum CharacterType {
+  Main,
+  Regular,
+  Bigger,
+  Fire,
+  Boss,
+  Furnace,
+  DataCenterRack,
+  NeuralNet,
+  FinalBoss
+};

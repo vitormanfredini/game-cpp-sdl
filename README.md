@@ -3,6 +3,7 @@
 This is a game!!!!!!!1
 
 TODO:
+- Camera should move with exponential moving average to get a sigmoid like curve when it switches from main char to final boss.
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
 - add tiles dynamically (instead of loading all of them at once at the begining)

@@ -25,41 +25,40 @@ public:
         clearCache();
     }
 
-    SDL_Surface* loadSurface(const std::string& filename){
-
-        SDL_Surface* cachedSurface = loadSurfaceFromCache(filename);
-        if(cachedSurface != nullptr){
-            return cachedSurface;
+    SDL_Surface* loadSurface(const std::string& filename, bool useCache = true){
+        if(useCache){
+            SDL_Surface* cachedSurface = loadSurfaceFromCache(filename);
+            if(cachedSurface != nullptr){
+                return cachedSurface;
+            }
         }
 
         BinaryResource binaryResource = BinaryResourceLoader::getBinaryResource(filename.c_str());
         SDL_Surface* surface = SDLUtils::loadSurfaceFromBinary(sdl_renderer, binaryResource.data, binaryResource.length);
         
-        if (surface) {
+        if (surface && useCache) {
             surfacesCache[filename] = surface;
         }
         return surface;
 
     }
 
-    SDL_Texture* loadTexture(SDL_Surface* surface, bool useCache = true){
+    SDL_Texture* loadTexture(SDL_Surface* surface){
 
         std::ostringstream oss;
         std::string textureName;
 
-        if(useCache){
-            oss << surface << "_textureFromSurface";
-            textureName = oss.str();
+        oss << surface << "_textureFromSurface";
+        textureName = oss.str();
 
-            SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
-            if(cachedTexture != nullptr){
-                return cachedTexture;
-            }
+        SDL_Texture* cachedTexture = loadTextureFromCache(textureName);
+        if(cachedTexture != nullptr){
+            return cachedTexture;
         }
 
         SDL_Texture* texture = SDLUtils::loadTextureFromSurface(sdl_renderer, surface);
 
-        if (texture && useCache) {
+        if (texture) {
             texturesCache[textureName] = texture;
         }
         return texture;
@@ -260,10 +259,10 @@ public:
     }
 
     void loadTextureAndBeenHitTexture(const std::string& filename, SDL_Texture*& texture, SDL_Texture*& beenHitTexture){
-        SDL_Surface* surface = loadSurface(filename);
+        SDL_Surface* surface = loadSurface(filename, false);
         texture = loadTexture(surface);
         SDLUtils::setSurfaceColorExceptAlpha(surface,191,191,173);
-        beenHitTexture = loadTexture(surface, false);
+        beenHitTexture = loadTexture(surface);
         SDL_FreeSurface(surface);
     }
 

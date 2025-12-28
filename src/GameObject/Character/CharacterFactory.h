@@ -275,6 +275,42 @@ public:
         prototypes[CharacterType::NeuralNet]->addDebrisType(DebrisFactory::Type::Oil);
         prototypes[CharacterType::NeuralNet]->addDebrisType(DebrisFactory::Type::Oil2);
 
+        float heightEnemy8 = 0.1;
+        float widthRatioEnemy8 = 1.4545;
+        prototypes[CharacterType::FinalBoss] = std::make_unique<Character>();
+        prototypes[CharacterType::FinalBoss]->setSize(heightEnemy8*widthRatioEnemy8,heightEnemy8);
+        prototypes[CharacterType::FinalBoss]->setZ(heightEnemy8 * 0.2);
+        prototypes[CharacterType::FinalBoss]->setInitialBaseSpeed(0.5f);
+        prototypes[CharacterType::FinalBoss]->setCollisionAttack(0.02);
+        prototypes[CharacterType::FinalBoss]->setInitialMaxHealth(0.6f);
+        prototypes[CharacterType::FinalBoss]->setInitialHealth(0.6f);
+        prototypes[CharacterType::FinalBoss]->setWeight(0.66f);
+        prototypes[CharacterType::FinalBoss]->addRenderComponent(std::make_unique<ShadowRenderer>(
+            textureManager->loadTexture("images/chars/shadow.png"),
+            0.03
+        ));
+        SDL_Texture* enemy8Texture = nullptr;
+        SDL_Texture* enemy8TextureBeenHit = nullptr;
+        textureManager->loadTextureAndBeenHitTexture("images/chars/enemy7_horizontal_sprites.png", enemy8Texture, enemy8TextureBeenHit);
+        prototypes[CharacterType::FinalBoss]->addRenderComponent(std::make_unique<HorizontalSpriteAnimationRenderer>(
+            enemy8Texture,
+            enemy8TextureBeenHit,
+            Alignment::BottomUpCentered,
+            3,
+            48
+        ));
+        prototypes[CharacterType::FinalBoss]->addRenderComponent(defaultHealthBarRenderer->clone());
+        prototypes[CharacterType::FinalBoss]->setCollisionComponent(std::make_unique<BoxCollider>(
+            heightEnemy8*widthRatioEnemy8,
+            heightEnemy8 / 3,
+            Alignment::Centered
+        ));
+        prototypes[CharacterType::FinalBoss]->setMovementComponent(std::make_unique<StraightMover>());
+        prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::MetalSmall);
+        prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::MetalSmall2);
+        prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::Oil);
+        prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::Oil2);
+
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {
