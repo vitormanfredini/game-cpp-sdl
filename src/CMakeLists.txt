@@ -1,2 +1,2 @@
 add_library(MovingAverage_lib MovingAverage.h MovingAverage.cpp)
-
+add_library(ExponentialMovingAverage_lib ExponentialMovingAverage.h ExponentialMovingAverage.cpp)

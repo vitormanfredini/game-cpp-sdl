@@ -15,9 +15,6 @@ MovingAverage::MovingAverage(int sampleSize) {
 }
 
 void MovingAverage::addValue(float newValue){
-    if(values.size() == 0){
-        return;
-    }
     values[head] = newValue;
     head++;
     if(head >= values.size()){
@@ -25,7 +22,7 @@ void MovingAverage::addValue(float newValue){
     }
 }
 
-float MovingAverage::getAverage(){
+float MovingAverage::getAverage() const {
     float sum = 0;
     for(size_t c = 0; c < values.size(); c++){
         sum += values[c];

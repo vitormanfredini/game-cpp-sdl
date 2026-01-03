@@ -7,7 +7,7 @@ class MovingAverage {
 public:
     MovingAverage(int sampleSize);
     void addValue(float newValue);
-    float getAverage();
+    float getAverage() const;
     void fill(float value);
     void resize(size_t newSize);
 

@@ -1,43 +1,35 @@
 #pragma once
 
-#include "MovingAverage.h"
+#include "ExponentialMovingAverage.h"
 #include "GameObject/Character/Character.h"
 
 class Camera {
 public:
 
-    enum class Speed {
-        Regular = 20,
-        Slow = 120
+    struct SpeedAlpha {
+        static constexpr float Regular = 0.1f;
+        static constexpr float Slow    = 0.01f;
     };
 
     Camera(float startX, float startY):
-        averagePosX(static_cast<int>(Speed::Regular)),
-        averagePosY(static_cast<int>(Speed::Regular))
-    {
-        averagePosX.fill(startX);
-        averagePosY.fill(startY);
+        averagePosX(SpeedAlpha::Regular, startX),
+        averagePosY(SpeedAlpha::Regular, startY)
+    {}
+
+    void changeSpeed(float newSpeedAlpha){
+        averagePosX.setAlpha(newSpeedAlpha);
+        averagePosY.setAlpha(newSpeedAlpha);
     }
 
-    void changeSpeed(Speed newSpeed){
-        if(newSpeed == currentSpeed){
-            return;
-        }
-        currentSpeed = newSpeed;
-
-        float averageX = averagePosX.getAverage();
-        averagePosX.resize(static_cast<size_t>(newSpeed));
-        averagePosX.fill(averageX);
-
-        float averageY = averagePosY.getAverage();
-        averagePosY.resize(static_cast<size_t>(newSpeed));
-        averagePosY.fill(averageY);
-    }
-
-    void pointTo(Character* character){
+    void pointTo(Character* character, bool hardMove = false){
         float x = character->getX();
         float y = character->getY() - (character->getHeight() / 2);
-        pointTo(x, y);
+        if(hardMove){
+            averagePosX.fill(x);
+            averagePosY.fill(y);
+        }else{
+            pointTo(x, y);
+        }
     }
 
     void pointTo(float positionX, float positionY){
@@ -56,11 +48,11 @@ public:
     }
 
 private:
-    Speed currentSpeed = Speed::Regular;
-    MovingAverage averagePosX;
-    MovingAverage averagePosY;
+    ExponentialMovingAverage averagePosX;
+    ExponentialMovingAverage averagePosY;
     float averagePosXCache = 0.0f;
     float averagePosYCache = 0.0f;
-    Speed speed = Speed::Regular;
+    float offsetX = 0.0f;
+    float offsetY = 0.0f;
 
 };

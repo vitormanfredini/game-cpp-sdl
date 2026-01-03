@@ -96,6 +96,7 @@ public:
 
     void onLevelStart(){
         audioEngine->startBeat();
+        camera->pointTo(mainChar, true);
     }
 
     void setMainChar(Character* newMainChar){
@@ -167,13 +168,13 @@ public:
                     newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
                     enemies.push_back(std::move(newEnemy));
 
-                    camera->changeSpeed(Camera::Speed::Slow);
+                    camera->changeSpeed(Camera::SpeedAlpha::Slow);
                 }
                 bool endCutscene = stageUpdatesCountUnpaused == unpausedUpdatesEndBossCutscene;
                 if(endCutscene){
                     std::cout << "endCutscene" << std::endl;
                     stateManager->setLevelState(LevelState::Regular);
-                    camera->changeSpeed(Camera::Speed::Regular);
+                    camera->changeSpeed(Camera::SpeedAlpha::Regular);
                 }
             }
             if(stateManager->isInsideStage()){
@@ -370,8 +371,8 @@ private:
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
 
-    const int unpausedUpdatesTriggerBossCutscene = 1000;
-    const int unpausedUpdatesEndBossCutscene = 1180;
+    const int unpausedUpdatesTriggerBossCutscene = 200;
+    const int unpausedUpdatesEndBossCutscene = 400;
 
     void doGameWorldUpdate(){
         if(stateManager->isBossCutscene()){
@@ -503,8 +504,9 @@ private:
                 diedEnemies.push_back(e);
             }
         }
-        for(int index : diedEnemies){
-            enemies.erase(enemies.begin() + index);
+
+        for (auto it = diedEnemies.rbegin(); it != diedEnemies.rend(); ++it) {
+            enemies.erase(enemies.begin() + *it);
         }
 
         if(mainChar->isDead()){

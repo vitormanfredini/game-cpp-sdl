@@ -3,7 +3,6 @@
 This is a game!!!!!!!1
 
 TODO:
-- Camera should move with exponential moving average to get a sigmoid like curve when it switches from main char to final boss.
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
 - add tiles dynamically (instead of loading all of them at once at the begining)
@@ -35,7 +34,11 @@ But when the screen isn't a perfect square, it scales the virtual square to the 
 # Compiling and running
 
 ```bash
-sudo apt-get install libsdl2-mixer-dev
+# ubuntu
+sudo apt-get install libsdl2-mixer-dev cmake
+
+# arch
+sudo pacman -S sdl2 sdl2_image sdl2_mixer sdl2_ttf
 ```
 
 ```bash

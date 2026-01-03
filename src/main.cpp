@@ -36,8 +36,8 @@
 int main() {
 
     Renderer renderer {
-        1200 * 2,
-        800 * 2
+        1200,
+        800
     };
     if(!renderer.init()){
         return -1;
