@@ -8,7 +8,7 @@ public:
 
     struct SpeedAlpha {
         static constexpr float Regular = 0.1f;
-        static constexpr float Slow    = 0.01f;
+        static constexpr float Slow    = 0.04f;
     };
 
     Camera(float startX, float startY):
