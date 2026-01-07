@@ -56,7 +56,7 @@ foreach(RESOURCE ${RESOURCE_FILES})
         OUTPUT ${HEADER_NAME}
         COMMAND xxd -i ${RESOURCE} > ${HEADER_NAME}.tmp
         COMMAND sed "s/unsigned char .* =/unsigned char ${BINARY_VAR_NAME}[] =/g" ${HEADER_NAME}.tmp > ${HEADER_NAME}
-        COMMAND sed "s/unsigned int .*_len =/unsigned int ${BINARY_VAR_NAME}_len =/g" ${HEADER_NAME} -i
+        COMMAND sed -i '' "s/unsigned int .*_len =/unsigned int ${BINARY_VAR_NAME}_len =/g" ${HEADER_NAME}
         COMMAND rm -f ${HEADER_NAME}.tmp
         DEPENDS ${RESOURCE}
         COMMENT "Embedding ${RESOURCE} as ${HEADER_NAME}"
