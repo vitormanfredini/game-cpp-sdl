@@ -156,25 +156,17 @@ public:
             }
             if(stateManager->shouldUpdateGameWorld()){
                 doGameWorldUpdate();
-                stageUpdatesCountUnpaused += 1;
-
-                bool startCutscene = stageUpdatesCountUnpaused == unpausedUpdatesTriggerBossCutscene;
-                if(startCutscene){
-
-                    std::cout << "startCutscene" << std::endl;
-                    stateManager->setLevelState(LevelState::BossCutscene);
-
-                    std::unique_ptr<Character> newEnemy = characterFactory.create(CharacterType::FinalBoss);
-                    newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
-                    enemies.push_back(std::move(newEnemy));
-
-                    camera->changeSpeed(Camera::SpeedAlpha::Slow);
+                if(stateManager->isBossCutscene()){
+                    bossCutsceneCurrentUpdate += 1;
+                }else{
+                    stageUpdatesCountUnpaused += 1;
                 }
-                bool endCutscene = stageUpdatesCountUnpaused == unpausedUpdatesEndBossCutscene;
-                if(endCutscene){
-                    std::cout << "endCutscene" << std::endl;
-                    stateManager->setLevelState(LevelState::Regular);
-                    camera->changeSpeed(Camera::SpeedAlpha::Regular);
+                
+                if(!stateManager->isBossCutscene() && stageUpdatesCountUnpaused == unpausedUpdatesTriggerBossCutscene){
+                    triggerCutscene();
+                }
+                if(bossCutsceneCurrentUpdate >= updatesEndBossCutscene){
+                    endBossCutscene();
                 }
             }
             if(stateManager->isInsideStage()){
@@ -183,6 +175,29 @@ public:
             }
         }
 
+    }
+
+    void triggerCutscene(){
+        if(stateManager->isBossCutscene()){
+            return;
+        }
+
+        stateManager->setLevelState(LevelState::BossCutscene);
+
+        std::unique_ptr<Character> finalBoss = characterFactory.create(CharacterType::FinalBoss);
+        finalBoss->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+        enemies.push_back(std::move(finalBoss));
+
+        camera->changeSpeed(Camera::SpeedAlpha::Slow);
+    }
+
+    void endBossCutscene(){
+        if(!stateManager->isBossCutscene()){
+            return;
+        }
+
+        stateManager->setLevelState(LevelState::Regular);
+        camera->changeSpeed(Camera::SpeedAlpha::Regular);
     }
 
     void render(){
@@ -372,7 +387,8 @@ private:
     std::unique_ptr<Menu> upgradeMenu = nullptr;
 
     const int unpausedUpdatesTriggerBossCutscene = 200;
-    const int unpausedUpdatesEndBossCutscene = 400;
+    const int updatesEndBossCutscene = 200;
+    int bossCutsceneCurrentUpdate = 0;
 
     void doGameWorldUpdate(){
         if(stateManager->isBossCutscene()){
