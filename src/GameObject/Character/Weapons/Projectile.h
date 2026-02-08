@@ -13,8 +13,17 @@ private:
     int remainingHitsBeforeDisappearing = 1;
     int durationInUpdates = 10;
     int soundId = -1;
+    bool fromMainChar = true;
 
 public:
+
+    bool isFromMainChar(){
+        return fromMainChar;
+    }
+
+    void setFromMainChar(bool newFromMainChar){
+        fromMainChar = newFromMainChar;
+    }
 
     void takeHit(){
         remainingHitsBeforeDisappearing--;

@@ -2,5 +2,6 @@
 
 enum class WeaponId {
     Sword,
-    FireBall
+    FireBall,
+    BossGun
 };

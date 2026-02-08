@@ -13,6 +13,7 @@
 #include "CharacterUtils.h"
 #include "CharacterType.h"
 #include "TextureManager.h"
+#include "GameObject/Character/Weapons/WeaponFactory.h"
 #include "GameObject/BoxCollider.h"
 #include "GameObject/CharacterHealthBarRenderer.h"
 #include "GameObject/SpriteRenderer.h"
@@ -28,7 +29,7 @@ class CharacterFactory {
 
 public:
 
-    CharacterFactory(TextureManager* textureManager){
+    CharacterFactory(TextureManager* textureManager, WeaponFactory* weaponFactory){
 
         std::unique_ptr<CharacterHealthBarRenderer> defaultHealthBarRenderer = std::make_unique<CharacterHealthBarRenderer>(
             textureManager->loadTexture(87, 45, 53),
@@ -310,7 +311,7 @@ public:
         prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::MetalSmall2);
         prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::Oil);
         prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::Oil2);
-
+        prototypes[CharacterType::FinalBoss]->addWeapon(weaponFactory->create(WeaponId::FireBall));
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {

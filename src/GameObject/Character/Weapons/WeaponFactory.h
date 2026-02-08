@@ -5,6 +5,7 @@
 #include "Sword.h"
 #include "WeaponId.h"
 #include "FireBallThrower.h"
+#include "BossGun.h"
 // #include <iostream>
 #include <unordered_map>
 #include "Audio/AudioEngine.h"
@@ -29,6 +30,15 @@ public:
         fireBallThrower->setFireFrequency(20);
         fireBallThrower->setFireSound(audioEngine->loadSound("audio/pew.wav"));
         prototypes[WeaponId::FireBall] = std::move(fireBallThrower);
+
+        std::unique_ptr<BossGun> bossGun = std::make_unique<BossGun>();
+        bossGun->setId(WeaponId::BossGun);
+        bossGun->setProjectileTexture(textureManager->loadTexture("images/dog.png"));
+        bossGun->setAttack(0.5f);
+        bossGun->setFireFrequency(20);
+        bossGun->setFireSound(audioEngine->loadSound("audio/pew.wav"));
+        prototypes[WeaponId::FireBall] = std::move(bossGun);
+
     }
 
     std::unique_ptr<WeaponComponent> create(WeaponId weaponId){

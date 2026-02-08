@@ -42,20 +42,22 @@ public:
         UpgradeFactory* upgradeFactory,
         ItemFactory* itemFactory,
         DebrisFactory* debrisFactory,
-        AudioEngine* audioEngine
+        AudioEngine* audioEngine,
+        WeaponFactory* weaponFactory
     ):
     renderer(renderer),
     camera(camera),
     deltatime(deltatime),
     input(input),
     textureManager(textureManager),
-    characterFactory(textureManager),
+    characterFactory(textureManager,weaponFactory),
     stateManager(stateManager),
     itemFactory(itemFactory),
     audioEngine(audioEngine),
     menuFactory(menuFactory),
     debrisFactory(debrisFactory),
-    upgradeFactory(upgradeFactory)
+    upgradeFactory(upgradeFactory),
+    weaponFactory(weaponFactory)
     {
         menu = std::move(menuFactory->createMainMenu());
 
@@ -184,9 +186,10 @@ public:
 
         stateManager->setLevelState(LevelState::BossCutscene);
 
-        std::unique_ptr<Character> finalBoss = characterFactory.create(CharacterType::FinalBoss);
-        finalBoss->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
-        enemies.push_back(std::move(finalBoss));
+        std::unique_ptr<Character> bossEnemy = characterFactory.create(CharacterType::FinalBoss);
+        bossEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+        enemies.push_back(std::move(bossEnemy));
+        finalBoss = enemies.back().get();
 
         camera->changeSpeed(Camera::SpeedAlpha::Slow);
     }
@@ -365,12 +368,14 @@ private:
     MenuFactory* menuFactory = nullptr;
     DebrisFactory* debrisFactory = nullptr;
     UpgradeFactory* upgradeFactory = nullptr;
+    WeaponFactory* weaponFactory = nullptr;
     
     SplashScreen intro { 1*300 };
     SplashScreen gameover { 1*400 };
     GameObject pause;
 
     Character* mainChar;
+    Character* finalBoss = nullptr;
     std::vector<std::unique_ptr<Character>> enemies;
     std::vector<std::unique_ptr<Projectile>> projectiles;
     std::vector<std::unique_ptr<Item>> items;
@@ -437,10 +442,18 @@ private:
         }
 
         std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(aim.normalized());
-
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
             scheduleSoundToNextUpdate(projectile->getSound());
             projectiles.push_back(std::move(projectile));
+        }
+
+        if(finalBoss){
+            std::vector<std::unique_ptr<Projectile>> bossProjectiles = finalBoss->fire(aim.normalized());
+            for(std::unique_ptr<Projectile>& projectile : bossProjectiles){
+                scheduleSoundToNextUpdate(projectile->getSound());
+                projectile->setFromMainChar(false);
+                projectiles.push_back(std::move(projectile));
+            }
         }
 
         for(size_t e=0; e<enemies.size(); e++){
@@ -464,11 +477,23 @@ private:
             }
 
             for(size_t p=0; p<projectiles.size(); p++){
+                if(projectiles[p]->isFromMainChar() == false){
+                    continue;
+                }
                 if(projectiles[p]->checkCollision(*enemies[e])){
                     enemies[e]->takeDamageFrom(projectiles[p].get());
                 }
             }
 
+        }
+
+        for(size_t p=0; p<projectiles.size(); p++){
+            if(projectiles[p]->isFromMainChar()){
+                continue;
+            }
+            if(projectiles[p]->checkCollision(*mainChar)){
+                mainChar->takeDamageFrom(projectiles[p].get());
+            }
         }
 
         std::vector<int> diedProjectiles = {};
@@ -493,32 +518,38 @@ private:
 
         std::vector<int> diedEnemies = {};
         for(size_t e=0; e<enemies.size(); e++){
-            if(enemies[e]->isDead()){
-                if(RandomGenerator::getInstance().getRandom() > 0.1f){
-                    std::unique_ptr<Item> newGemItem = itemFactory->create(ItemId::Gem);
-                    newGemItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
-                    items.push_back(std::move(newGemItem));
-                }else{
-                    std::unique_ptr<Item> newHealthItem = itemFactory->create(ItemId::Health);
-                    newHealthItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
-                    items.push_back(std::move(newHealthItem));
-                }
-
-                std::vector<DebrisFactory::Type> possibleDebris = enemies[e]->getPossibleDebris();
-                if(possibleDebris.size() > 0){
-                    int debrisIndex = RandomGenerator::getInstance().getRandomInt(0, possibleDebris.size()-1);
-                    std::unique_ptr<GameObject> newDebris = debrisFactory->create(possibleDebris[debrisIndex]);
-                    newDebris->setPosition(enemies[e]->getX(), enemies[e]->getY());
-                    debris.addItem(
-                        static_cast<int>(std::round(enemies[e]->getX())),
-                        static_cast<int>(std::round(enemies[e]->getY())),
-                        std::move(newDebris),
-                        true
-                    );
-                }
-
-                diedEnemies.push_back(e);
+            if(enemies[e]->isDead() == false){
+                continue;
             }
+
+            if(RandomGenerator::getInstance().getRandom() > 0.1f){
+                std::unique_ptr<Item> newGemItem = itemFactory->create(ItemId::Gem);
+                newGemItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
+                items.push_back(std::move(newGemItem));
+            }else{
+                std::unique_ptr<Item> newHealthItem = itemFactory->create(ItemId::Health);
+                newHealthItem->setPosition(enemies[e]->getX(),enemies[e]->getY());
+                items.push_back(std::move(newHealthItem));
+            }
+
+            std::vector<DebrisFactory::Type> possibleDebris = enemies[e]->getPossibleDebris();
+            if(possibleDebris.size() > 0){
+                int debrisIndex = RandomGenerator::getInstance().getRandomInt(0, possibleDebris.size()-1);
+                std::unique_ptr<GameObject> newDebris = debrisFactory->create(possibleDebris[debrisIndex]);
+                newDebris->setPosition(enemies[e]->getX(), enemies[e]->getY());
+                debris.addItem(
+                    static_cast<int>(std::round(enemies[e]->getX())),
+                    static_cast<int>(std::round(enemies[e]->getY())),
+                    std::move(newDebris),
+                    true
+                );
+            }
+
+            diedEnemies.push_back(e);
+        }
+
+        if(finalBoss && finalBoss->isDead()){
+            finalBoss = nullptr;
         }
 
         for (auto it = diedEnemies.rbegin(); it != diedEnemies.rend(); ++it) {

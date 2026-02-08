@@ -65,7 +65,6 @@ int main() {
     UpgradeFactory upgradeFactory(&itemFactory, &weaponFactory);
     MenuFactory menuFactory(&textureManager, &stateManager);
     DebrisFactory debrisFactory(&textureManager);
-    
 
     GameEngine engine {
         &renderer,
@@ -78,7 +77,8 @@ int main() {
         &upgradeFactory,
         &itemFactory,
         &debrisFactory,
-        &audioEngine
+        &audioEngine,
+        &weaponFactory
     };
 
     StageSong mission1Song;
