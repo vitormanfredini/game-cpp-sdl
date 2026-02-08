@@ -3,6 +3,7 @@
 This is a game!!!!!!!1
 
 TODO:
+- clean up spaghetti code in BossGun.h, it can be turned into a "Weapon of Weapons". Waves and Rotating can be individual Weapons managed by it.
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
 - add tiles dynamically (instead of loading all of them at once at the begining)

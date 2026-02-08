@@ -98,11 +98,10 @@ public:
         }
     }
 
-    std::vector<std::unique_ptr<Projectile>> fire(const MovementDirection& direction){
+    std::vector<std::unique_ptr<Projectile>> fireWeapons(){
         std::vector<std::unique_ptr<Projectile>> newProjectiles = {};
         for(std::unique_ptr<WeaponComponent>& weapon : weapons){
             for(std::unique_ptr<Projectile>& projectile : weapon->fire(this)){
-                projectile->setDirection(direction);
                 newProjectiles.push_back(std::move(projectile));
             }
         }

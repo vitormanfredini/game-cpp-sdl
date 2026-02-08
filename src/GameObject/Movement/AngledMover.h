@@ -3,6 +3,7 @@
 #include <math.h>
 #include <iostream>
 #include "MovementComponent.h"
+#include "Utils.h"
 
 class AngledMover : public MovementComponent {
 
@@ -19,7 +20,7 @@ public:
     AngledMover(double angle, double distance90Degrees, double distance90DegreesToCustomAngle, double distanceAngle, double distanceCustomAngleTo90Degrees)
         : 
         angle(angle),
-        angleInRadians(angle * (M_PI / 180)),
+        angleInRadians(Utils::degreesToRadians(angle)),
         distance90Degrees(distance90Degrees),
         distance90DegreesToCustomAngle(distance90DegreesToCustomAngle),
         distanceAngle(distanceAngle),

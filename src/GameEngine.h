@@ -441,14 +441,15 @@ private:
             }
         }
 
-        std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fire(aim.normalized());
+        std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fireWeapons();
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
+            projectile->setDirection(aim.normalized());
             scheduleSoundToNextUpdate(projectile->getSound());
             projectiles.push_back(std::move(projectile));
         }
 
         if(finalBoss){
-            std::vector<std::unique_ptr<Projectile>> bossProjectiles = finalBoss->fire(aim.normalized());
+            std::vector<std::unique_ptr<Projectile>> bossProjectiles = finalBoss->fireWeapons();
             for(std::unique_ptr<Projectile>& projectile : bossProjectiles){
                 scheduleSoundToNextUpdate(projectile->getSound());
                 projectile->setFromMainChar(false);

@@ -18,18 +18,6 @@ public:
         Weapon,
         Item
     };
-private:
-
-    Type type;
-    std::unique_ptr<StatUpgrade> statUpgrade;
-    std::unique_ptr<WeaponUpgrade> weaponUpgrade;
-    std::unique_ptr<Item> item;
-    std::unique_ptr<WeaponComponent> weaponComponent;
-    UpgradeId id;
-    int level;
-    std::string description;
-
-public:
 
     explicit UpgradeComponent(UpgradeId id, std::unique_ptr<StatUpgrade> statUpgrade, int level, std::string description)
         : type(Type::Stat), statUpgrade(std::move(statUpgrade)), id(id), level(level), description(description) {}
@@ -103,4 +91,15 @@ public:
         std::cerr << "std::unique_ptr<UpgradeComponent> clone(): unsupported Type" << std::endl;
         return nullptr;
     };
+    
+private:
+
+    Type type;
+    std::unique_ptr<StatUpgrade> statUpgrade;
+    std::unique_ptr<WeaponUpgrade> weaponUpgrade;
+    std::unique_ptr<Item> item;
+    std::unique_ptr<WeaponComponent> weaponComponent;
+    UpgradeId id;
+    int level;
+    std::string description;
 };

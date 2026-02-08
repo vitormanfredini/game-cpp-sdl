@@ -3,6 +3,7 @@
 #include <math.h>
 #include <iostream>
 #include "MovementComponent.h"
+#include "Utils.h"
 
 class ZigZagMover : public MovementComponent {
 
@@ -16,7 +17,7 @@ private:
 
 public:
 
-    ZigZagMover(double maxAngle, double cycleStep): maxAngle(maxAngle), maxAngleInRadians(maxAngle * (M_PI / 180)), sinCycleStep(cycleStep) { };
+    ZigZagMover(double maxAngle, double cycleStep): maxAngle(maxAngle), maxAngleInRadians(Utils::degreesToRadians(maxAngle)), sinCycleStep(cycleStep) { };
 
     MovementDirection getMovementDirection(GameObject& self, GameObject& target) override {
         return getNormalizedDirectionTowardsTarget(self, target).rotated(maxAngleInRadians * sinCurrentValue);

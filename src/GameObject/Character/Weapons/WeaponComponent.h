@@ -34,14 +34,14 @@ public:
         attack = newAttack;
     }
 
-    void update(){
+    virtual void update(){
         countUp += 1;
         if(countUp >= updatesBetweenFires){
             countUp = 0; 
         }
     }
 
-    std::vector<std::unique_ptr<Projectile>> fire(Character* originChar){
+    virtual std::vector<std::unique_ptr<Projectile>> fire(Character* originChar){
         std::vector<std::unique_ptr<Projectile>> newProjectiles = {};
         if(shouldFire()){
             std::unique_ptr<Projectile> newProjectile = createProjectile(originChar);
@@ -56,11 +56,11 @@ public:
 
 protected:
     float attack = 0.0f;
+    int fireSound = -1;
 
 private:
     int updatesBetweenFires = 30;
     int countUp = 0;
-    int fireSound = -1;
 
     WeaponId id;
 
