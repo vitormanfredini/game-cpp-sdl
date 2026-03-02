@@ -101,9 +101,9 @@ private:
         if(currentFiringModeUpdates == (updatesBetweenFires - 1)){
 
             if(currentFiringMode == FiringMode::Rotating){
-                firingRotationAngle += 5.0d;
-                if(firingRotationAngle > 360.0d){
-                    firingRotationAngle = firingRotationAngle - 360.0d;
+                firingRotationAngle += 5.0;
+                if(firingRotationAngle > 360.0){
+                    firingRotationAngle = firingRotationAngle - 360.0;
                 }
 
                 std::unique_ptr<Projectile> newProjectile = createProjectile(originChar);
@@ -117,17 +117,17 @@ private:
             if(currentFiringMode == FiringMode::Waves){
                 firingWavesIsVertical = !firingWavesIsVertical;
 
-                double angleRange = 360.0d / 4.0d;
+                double angleRange = 360.0 / 4.0;
                 size_t rangeProjectiles = 10;
                 double anglePerProjectile = angleRange / static_cast<double>(rangeProjectiles - 1);
 
                 std::vector<double> angles = {};
 
                 for(size_t c=0; c<rangeProjectiles; c++){
-                    angles.push_back( (firingWavesIsVertical ? -45.0d : 45.0d ) + (static_cast<double>(c)*anglePerProjectile) );
+                    angles.push_back( (firingWavesIsVertical ? -45.0 : 45.0 ) + (static_cast<double>(c)*anglePerProjectile) );
                 }
                 for(size_t c=0; c<rangeProjectiles; c++){
-                    angles.push_back( (firingWavesIsVertical ? 135.0d : 225.0d ) + (static_cast<double>(c)*anglePerProjectile) );
+                    angles.push_back( (firingWavesIsVertical ? 135.0 : 225.0 ) + (static_cast<double>(c)*anglePerProjectile) );
                 }
 
                 for(double angle : angles){

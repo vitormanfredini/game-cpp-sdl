@@ -187,7 +187,7 @@ public:
         stateManager->setLevelState(LevelState::BossCutscene);
 
         std::unique_ptr<Character> bossEnemy = characterFactory.create(CharacterType::FinalBoss);
-        bossEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+        bossEnemy->setPosition(camera->getRandomPositionRightOutsideScreen());
         enemies.push_back(std::move(bossEnemy));
         finalBoss = enemies.back().get();
 
@@ -391,7 +391,7 @@ private:
     std::unique_ptr<Menu> menu = nullptr;
     std::unique_ptr<Menu> upgradeMenu = nullptr;
 
-    const int unpausedUpdatesTriggerBossCutscene = 200;
+    const int unpausedUpdatesTriggerBossCutscene = 60*60*5;
     const int updatesEndBossCutscene = 200;
     int bossCutsceneCurrentUpdate = 0;
 
@@ -436,7 +436,7 @@ private:
         for(SpawnScheduleKeyFrame keyFrame : keyFrames){
             for(int c=0;c<keyFrame.enemies;c++){
                 std::unique_ptr<Character> newEnemy = characterFactory.create(keyFrame.characterType);
-                newEnemy->setPosition(CharacterUtils::getRandomPositionOutsideScreen(camera->getPositionX(), camera->getPositionY()));
+                newEnemy->setPosition(camera->getRandomPositionRightOutsideScreen());
                 enemies.push_back(std::move(newEnemy));
             }
         }
@@ -484,6 +484,10 @@ private:
                 if(projectiles[p]->checkCollision(*enemies[e])){
                     enemies[e]->takeDamageFrom(projectiles[p].get());
                 }
+            }
+
+            if(enemies[e]->isPositionFarOutsideScreen(camera->getPositionX(), camera->getPositionY())){
+                enemies[e]->setPosition(camera->getRandomPositionRightOutsideScreen());
             }
 
         }

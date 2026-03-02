@@ -98,4 +98,18 @@ public:
         width = newWidth;
         height = newHeight;
     }
+
+    const bool isPositionFarOutsideScreen(float cameraX, float cameraY){
+        float distanceThreshold = 1.5f;
+
+        if(abs(cameraX - x) > distanceThreshold){
+            return true;
+        }
+
+        if(abs(cameraY - y) > distanceThreshold){
+            return true;
+        }
+
+        return false;
+    }
 };

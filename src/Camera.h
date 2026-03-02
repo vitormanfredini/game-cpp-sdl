@@ -2,6 +2,7 @@
 
 #include "ExponentialMovingAverage.h"
 #include "GameObject/Character/Character.h"
+#include "RandomGenerator.h"
 
 class Camera {
 public:
@@ -45,6 +46,25 @@ public:
 
     float getPositionY(){
         return averagePosYCache;
+    }
+
+    const std::vector<float> getRandomPositionRightOutsideScreen(){
+
+        float offsetX = getPositionX() - 0.5f;
+        float offsetY = getPositionY() - 0.5f;
+
+        if(RandomGenerator::getInstance().getRandom() > 0.5){
+            return {
+                RandomGenerator::getInstance().getRandom() > 0.5 ? (offsetX + 1.1f) : (offsetX - 0.1f),
+                offsetY + RandomGenerator::getInstance().getRandom()
+            };
+        }
+
+        return {
+            offsetX + RandomGenerator::getInstance().getRandom(),
+            RandomGenerator::getInstance().getRandom() > 0.5 ? (offsetY + 1.1f) : (offsetY - 0.1f)
+        };
+
     }
 
 private:

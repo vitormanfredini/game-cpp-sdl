@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 #include "Character.h"
-#include "RandomGenerator.h"
 
 class CharacterUtils {
 
@@ -27,26 +26,6 @@ public:
         }
 
         return chars[index].get();
-    }
-
-    
-    static const std::vector<float> getRandomPositionOutsideScreen(float cameraX, float cameraY){
-
-        float offsetX = cameraX - 0.5f;
-        float offsetY = cameraY - 0.5f;
-
-        if(RandomGenerator::getInstance().getRandom() > 0.5){
-            return {
-                RandomGenerator::getInstance().getRandom() > 0.5 ? (offsetX + 1.1f) : (offsetX - 0.1f),
-                offsetY + RandomGenerator::getInstance().getRandom()
-            };
-        }
-
-        return {
-            offsetX + RandomGenerator::getInstance().getRandom(),
-            RandomGenerator::getInstance().getRandom() > 0.5 ? (offsetY + 1.1f) : (offsetY - 0.1f)
-        };
-
     }
 
 };
