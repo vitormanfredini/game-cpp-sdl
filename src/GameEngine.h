@@ -449,6 +449,7 @@ private:
         }
 
         if(finalBoss){
+            std::cout << "finalBoss finalBoss finalBoss" << std::endl;
             std::vector<std::unique_ptr<Projectile>> bossProjectiles = finalBoss->fireWeapons();
             for(std::unique_ptr<Projectile>& projectile : bossProjectiles){
                 scheduleSoundToNextUpdate(projectile->getSound());
@@ -477,15 +478,6 @@ private:
                 scheduleSoundToNextUpdate(mainChar->getCollisionSound());
             }
 
-            for(size_t p=0; p<projectiles.size(); p++){
-                if(projectiles[p]->isFromMainChar() == false){
-                    continue;
-                }
-                if(projectiles[p]->checkCollision(*enemies[e])){
-                    enemies[e]->takeDamageFrom(projectiles[p].get());
-                }
-            }
-
             if(enemies[e]->isPositionFarOutsideScreen(camera->getPositionX(), camera->getPositionY())){
                 enemies[e]->setPosition(camera->getRandomPositionRightOutsideScreen());
             }
@@ -494,21 +486,25 @@ private:
 
         for(size_t p=0; p<projectiles.size(); p++){
             if(projectiles[p]->isFromMainChar()){
+                for(size_t e=0; e<enemies.size(); e++){
+                    if(projectiles[p]->checkCollision(*enemies[e])){
+                        enemies[e]->takeDamageFrom(projectiles[p].get());
+                    }
+                }
                 continue;
             }
+
             if(projectiles[p]->checkCollision(*mainChar)){
                 mainChar->takeDamageFrom(projectiles[p].get());
             }
         }
 
-        std::vector<int> diedProjectiles = {};
-        for(size_t p=0; p<projectiles.size(); p++){
-            if(projectiles[p]->isDead()){
-                diedProjectiles.push_back(p);
+        for (auto it = projectiles.begin(); it != projectiles.end(); ) {
+            if ((*it)->isDead()) {
+                it = projectiles.erase(it);
+            } else {
+                ++it;
             }
-        }
-        for(int index : diedProjectiles){
-            projectiles.erase(projectiles.begin() + index);
         }
 
         std::vector<int> diedItems = {};
