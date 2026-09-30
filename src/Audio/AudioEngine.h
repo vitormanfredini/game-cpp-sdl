@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include "CacheManager.h"
 #include "BeatManager.h"
-#include "StageSong.h"
+#include "DynamicSong.h"
 
 #define BUFFER_SIZE 512
 
@@ -86,12 +86,12 @@ public:
         return soundsCache.load(filename);
     }
 
-    void setStageSong(StageSong* newStageSong){
-        stageSong = newStageSong;
+    void setDynamicSong(DynamicSong* newDynamicSong){
+        dynamicSong = newDynamicSong;
     }
 
     void onAdvanceLevel(int level){
-        stageSong->changeLevel(level);
+        dynamicSong->triggerSectionChange(level);
     }
 
     void onUpdateFinished(int update){
@@ -161,7 +161,7 @@ public:
 
         std::vector<BeatManager::BeatUpdateAndOffset> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsUpdatesAndOffsets(length);
         for(BeatManager::BeatUpdateAndOffset beatOffset : musicBeatsOffsets){
-            for(int soundId : stageSong->getLevelLoopSounds()){
+            for(int soundId : dynamicSong->getCurrentSectionCurrentBeatAudios()){
                 playSound(soundId, beatOffset.offset);
             }
         }
@@ -209,14 +209,14 @@ private:
     int auxBuffer[BUFFER_SIZE];
     double bufferTimeMs;
 
-    BeatManager beatManagerMusic { 25442 * 4 };
-    BeatManager beatManagerUpdates { 735 };
+    BeatManager beatManagerMusic { 117600 }; // number of samples per wav/beat
+    BeatManager beatManagerUpdates { 735 }; // number of samples per game engine update
 
     std::vector<SoundScheduledToUpdate> soundsScheduledForUpdates = {};
 
     std::vector<SoundPlaying> soundsPlaying;
 
-    StageSong* stageSong;
+    DynamicSong* dynamicSong;
 
     int strongTick = 0;
 

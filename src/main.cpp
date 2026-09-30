@@ -27,7 +27,7 @@
 #include "GameObject/Ui/MenuFactory.h"
 #include "Font/FontManager.h"
 #include "Audio/AudioEngine.h"
-#include "Audio/StageSong.h"
+#include "Audio/DynamicSong.h"
 #include "GameObject/CharacterSpriteAnimationRenderer.h"
 #include "Stages/SpawnScheduleFactory.h"
 #include "GameObject/UiBarRenderer.h"
@@ -81,21 +81,133 @@ int main() {
         &weaponFactory
     };
 
-    StageSong mission1Song;
-    mission1Song.addLoopSound(0, audioEngine.loadSound("audio/song1/drums1.wav"));
+    DynamicSong stage1Song;
 
-    mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/loop1.wav"));
-    mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/drums1.wav"));
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level0.wav"),0,0,0
+    );
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level1.wav"),0,0,0
+    );
 
-    mission1Song.addLoopSound(2, audioEngine.loadSound("audio/song1/loop2.wav"));
-    mission1Song.addLoopSound(2, audioEngine.loadSound("audio/song1/drums1.wav"));
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level2.wav"),
+        audioEngine.loadSound("audio/song2/level2fill.wav"),
+        0,
+        0
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level3.wav"),
+        0,
+        0,
+        audioEngine.loadSound("audio/song2/level3outro.wav")
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level4.wav"),
+        0,
+        0,
+        audioEngine.loadSound("audio/song2/level4outro.wav")
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level5.wav"),0,0,0
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level6.wav"),0,0,0
+    );
     
-    mission1Song.addLoopSound(3, audioEngine.loadSound("audio/song1/loop3.wav"));
-    mission1Song.addLoopSound(3, audioEngine.loadSound("audio/song1/drums1.wav"));
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level7.wav"),
+        0,
+        0,
+        audioEngine.loadSound("audio/song2/level7outro.wav")
+    );
 
-    mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/loop4.wav"));
-    mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/drums1.wav"));
-    audioEngine.setStageSong(&mission1Song);
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level8.wav"),
+        audioEngine.loadSound("audio/song2/level8fill.wav"),
+        audioEngine.loadSound("audio/song2/level8variation.wav"),
+        0
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level9.wav"),
+        0,
+        audioEngine.loadSound("audio/song2/level9variation.wav"),
+        audioEngine.loadSound("audio/song2/level9outro.wav")
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level10.wav"),
+        0,
+        audioEngine.loadSound("audio/song2/level10variation.wav"),
+        audioEngine.loadSound("audio/song2/level10outro.wav")
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level11.wav"),
+        audioEngine.loadSound("audio/song2/level11fill.wav"),
+        audioEngine.loadSound("audio/song2/level11variation.wav"),
+        0
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level12.wav"),
+        0,
+        audioEngine.loadSound("audio/song2/level12variation.wav"),
+        0
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level13.wav"),
+        audioEngine.loadSound("audio/song2/level13fill.wav"),
+        audioEngine.loadSound("audio/song2/level13variation.wav"),
+        0
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level14.wav"),
+        0,
+        0,
+        audioEngine.loadSound("audio/song2/level14outro.wav")
+    );
+
+    stage1Song.addSection(
+        audioEngine.loadSound("audio/song2/level15.wav"),
+        0,
+        audioEngine.loadSound("audio/song2/level15variation.wav"),
+        0
+    );
+
+
+
+// audioEngine.loadSound("audio/song2/level13fill.wav")
+// audioEngine.loadSound("audio/song2/level13variation.wav")
+// audioEngine.loadSound("audio/song2/level13.wav")
+
+// audioEngine.loadSound("audio/song2/level14outro.wav")
+// audioEngine.loadSound("audio/song2/level14.wav")
+// audioEngine.loadSound("audio/song2/level15variation.wav")
+// audioEngine.loadSound("audio/song2/level15.wav")
+
+    // mission1Song.addLoopSound(0, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    // mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/loop1.wav"));
+    // mission1Song.addLoopSound(1, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    // mission1Song.addLoopSound(2, audioEngine.loadSound("audio/song1/loop2.wav"));
+    // mission1Song.addLoopSound(2, audioEngine.loadSound("audio/song1/drums1.wav"));
+    
+    // mission1Song.addLoopSound(3, audioEngine.loadSound("audio/song1/loop3.wav"));
+    // mission1Song.addLoopSound(3, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    // mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/loop4.wav"));
+    // mission1Song.addLoopSound(4, audioEngine.loadSound("audio/song1/drums1.wav"));
+
+    audioEngine.setDynamicSong(&stage1Song);
 
 
     SDL_Texture* mainCharTexture = nullptr;
