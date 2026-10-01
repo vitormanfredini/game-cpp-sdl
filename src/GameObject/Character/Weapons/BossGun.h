@@ -108,7 +108,7 @@ private:
 
                 std::unique_ptr<Projectile> newProjectile = createProjectile(originChar);
                 newProjectile->setAttack(attack);
-                newProjectile->setSound(fireSound);
+                newProjectile->setSound(fireSound, soundGain);
                 newProjectile->setDirection(MovementDirection(1.0f,0.0f).rotated(Utils::degreesToRadians(firingRotationAngle)));
                 newProjectile->setVelocity(0.005f);
                 newProjectiles.push_back(std::move(newProjectile));
@@ -133,7 +133,7 @@ private:
                 for(double angle : angles){
                     std::unique_ptr<Projectile> newProjectile = createProjectile(originChar);
                     newProjectile->setAttack(attack);
-                    newProjectile->setSound(fireSound);
+                    newProjectile->setSound(fireSound, soundGain);
                     newProjectile->setDirection(MovementDirection(1.0f,0.0f).rotated(Utils::degreesToRadians(angle)));
                     newProjectile->setVelocity(0.005f);
                     newProjectiles.push_back(std::move(newProjectile));

@@ -22,8 +22,9 @@ public:
         updatesBetweenFires = frequencyInUpdates;
     }
 
-    void setFireSound(int soundId){
+    void setFireSound(int soundId, float gain){
         fireSound = soundId;
+        soundGain = gain;
     }
 
     int getFireFrequency(){
@@ -46,7 +47,7 @@ public:
         if(shouldFire()){
             std::unique_ptr<Projectile> newProjectile = createProjectile(originChar);
             newProjectile->setAttack(attack);
-            newProjectile->setSound(fireSound);
+            newProjectile->setSound(fireSound, soundGain);
             newProjectiles.push_back(std::move(newProjectile));
         }
         return newProjectiles;
@@ -57,6 +58,7 @@ public:
 protected:
     float attack = 0.0f;
     int fireSound = -1;
+    float soundGain = 1.0f;
 
 private:
     int updatesBetweenFires = 30;

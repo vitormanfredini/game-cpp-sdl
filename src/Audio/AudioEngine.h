@@ -27,11 +27,13 @@ public:
         Sound* sound;
         Uint32 offset;
         Uint32 position;
+        float gain;
 
-        SoundPlaying(Sound* sound, Uint32 offset, Uint32 position)
+        SoundPlaying(Sound* sound, Uint32 offset, Uint32 position, float gain)
             :   sound(sound),
                 offset(offset),
-                position(position) {}
+                position(position),
+                gain(gain) {}
 
         bool isFinished() const {
             return position >= sound->length;
@@ -41,12 +43,21 @@ public:
     struct SoundScheduledToUpdate {
         int id;
         int update;
+        float gain;
 
-        SoundScheduledToUpdate(int id, int update): id(id), update(update) {}
+        SoundScheduledToUpdate(
+            int id,
+            int update,
+            float gain
+        ): 
+            id(id),
+            update(update),
+            gain(gain) {
+                //
+            }
     };
 
     AudioEngine(){
-        strongTick = loadSound("audio/click_strong.wav");
         bufferTimeMs = (static_cast<double>(BUFFER_SIZE) / 44100.0) * 1000.0;
         onUpdateFinished(0);
         maxCorrection = BUFFER_SIZE / 2;
@@ -148,7 +159,7 @@ public:
             auto it = soundsScheduledForUpdates.begin();
             while (it != soundsScheduledForUpdates.end()) {
                 if(it->update == beatOffset.beat){
-                    playSound(it->id, beatOffset.offset);
+                    playSound(it->id, beatOffset.offset, 0, it->gain);
                     it = soundsScheduledForUpdates.erase(it);
                 } else if(beatOffset.beat > it->update) {
                     std::cerr << "beat is " << beatOffset.beat << ". scheduled sound is for beat: " << it->update << ". removing from schedule." << std::endl;
@@ -162,7 +173,7 @@ public:
         std::vector<BeatManager::BeatUpdateAndOffset> musicBeatsOffsets = beatManagerMusic.updateAndGetBeatsUpdatesAndOffsets(length);
         for(BeatManager::BeatUpdateAndOffset beatOffset : musicBeatsOffsets){
             for(int soundId : dynamicSong->getCurrentSectionCurrentBeatAudios()){
-                playSound(soundId, beatOffset.offset);
+                playSound(soundId, beatOffset.offset, 0, musicGain);
             }
         }
 
@@ -184,7 +195,8 @@ public:
             }
 
             for (Uint32 i = 0; i < mixSamples; ++i) {
-                auxBuffer[initialIndex + i] = auxBuffer[initialIndex + i] + soundPlaying.sound->buffer[soundPlaying.position + i];
+                float sampleWithGainApplied = soundPlaying.sound->buffer[soundPlaying.position + i] * soundPlaying.gain;
+                auxBuffer[initialIndex + i] = auxBuffer[initialIndex + i] + sampleWithGainApplied;
             }
 
             soundPlaying.position += mixSamples;
@@ -200,8 +212,8 @@ public:
         removeFinishedSounds();
     }
 
-    void scheduleSoundToUpdate(int id, int update){
-        soundsScheduledForUpdates.emplace_back(id, update);
+    void scheduleSoundToUpdate(int id, int update, float gain){
+        soundsScheduledForUpdates.emplace_back(id, update, gain);
     }
 
 private:
@@ -217,20 +229,19 @@ private:
     std::vector<SoundPlaying> soundsPlaying;
 
     DynamicSong* dynamicSong;
-
-    int strongTick = 0;
+    float musicGain = 1.0f;
 
     int lastUpdateFinished;
     Uint64 timeLastUpdateFinished;
 
     int maxCorrection;
 
-    void playSound(int id, int offset = 0, int position = 0){
+    void playSound(int id, int offset, int position, float gain){
         if(id <= 0){
             return;
         }
         SDL_LockAudio();
-        soundsPlaying.emplace_back(soundsCache.get(id), offset, position);
+        soundsPlaying.emplace_back(soundsCache.get(id), offset, position, gain);
         SDL_UnlockAudio();
     }
 

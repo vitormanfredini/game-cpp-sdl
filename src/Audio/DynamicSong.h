@@ -61,6 +61,19 @@ public:
         nextSection = sectionToTrigger;
     }
 
+    DynamicSong clone(){
+        DynamicSong newDynamicSong = DynamicSong();
+        for(Section section : sections){
+            newDynamicSong.addSection(
+                section.mainSoundId,
+                section.fillSoundId,
+                section.variationSoundId,
+                section.outroSoundId
+            );
+        }
+        return newDynamicSong;
+    }
+
 private:
     int currentSection = 0;
     int nextSection = 0;

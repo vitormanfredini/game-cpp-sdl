@@ -13,6 +13,7 @@ private:
     int remainingHitsBeforeDisappearing = 1;
     int durationInUpdates = 10;
     int soundId = -1;
+    float soundGain = 0.0f;
     bool fromMainChar = true;
 
 public:
@@ -75,12 +76,24 @@ public:
         return attack;
     }
 
-    void setSound(int newSoundId){
+    void setSound(int newSoundId, float gain){
+        float maxGain = 2.0f;
+        if(gain < 0.0f){
+            soundGain = 0.0f;
+        }else if(gain > maxGain){
+            soundGain = maxGain;
+        }else{
+            soundGain = gain;
+        }
         soundId = newSoundId;
     }
 
     int getSound(){
         return soundId;
+    }
+
+    float getSoundGain(){
+        return soundGain;
     }
 
 };

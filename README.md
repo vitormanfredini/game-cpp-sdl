@@ -15,8 +15,6 @@ TODO:
 - Make upgrade menu be controlled by the keyboard also
 - Add controller support
 - AudioEngine Callback: Lock is too long. There's an opportunity to lock for less time: Lock -> copy vector of soundsPlaying to localSoundsPlaying, update positions of soundsPlaying -> remove finished -> Unlock -> Do the mixing using localSoundsPlaying.
-- Make a way to specify volume for each sound in the mix.
-- reorder renderables (enemies, items and maybe projectiles) from bottom to top to make sure they don't render in front of others that are in the the front.
 - GameEngine: make a "startMission" where everything is loaded into place before the mission begins instead of organizing everything inside the main.cpp.
 - use asserts instead of cerr. #include <cassert> assert(b != 0 && "Division by zero");
 - fix text rendering thinner on transparent background

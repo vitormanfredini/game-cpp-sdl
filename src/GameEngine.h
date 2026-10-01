@@ -224,18 +224,24 @@ public:
                 renderer->addRenderable(renderable);
             }
 
-            struct y_less_than {
+            struct character_y_less_than {
                 inline bool operator() (const std::unique_ptr<Character>& obj1, const std::unique_ptr<Character>& obj2)
                 {
                     return obj1->getY() < obj2->getY();
                 }
             };
-
-            std::sort(enemies.begin(), enemies.end(), y_less_than());
+            std::sort(enemies.begin(), enemies.end(), character_y_less_than());
             for(std::unique_ptr<Character>& enemy : enemies){
                 renderer->addRenderable(enemy.get());
             }
 
+            struct item_y_less_than {
+                inline bool operator() (const std::unique_ptr<Item>& obj1, const std::unique_ptr<Item>& obj2)
+                {
+                    return obj1->getY() < obj2->getY();
+                }
+            };
+            std::sort(items.begin(), items.end(), item_y_less_than());
             for(std::unique_ptr<Item>& item : items){
                 renderer->addRenderable(item.get());
             }
@@ -452,7 +458,7 @@ private:
         std::vector<std::unique_ptr<Projectile>> newProjectiles = mainChar->fireWeapons();
         for(std::unique_ptr<Projectile>& projectile : newProjectiles){
             projectile->setDirection(aim.normalized());
-            scheduleSoundToNextUpdate(projectile->getSound());
+            scheduleSoundToNextUpdate(projectile->getSound(), projectile->getSoundGain());
             projectiles.push_back(std::move(projectile));
         }
 
@@ -460,7 +466,7 @@ private:
             std::cout << "finalBoss finalBoss finalBoss" << std::endl;
             std::vector<std::unique_ptr<Projectile>> bossProjectiles = finalBoss->fireWeapons();
             for(std::unique_ptr<Projectile>& projectile : bossProjectiles){
-                scheduleSoundToNextUpdate(projectile->getSound());
+                scheduleSoundToNextUpdate(projectile->getSound(), projectile->getSoundGain());
                 projectile->setFromMainChar(false);
                 projectiles.push_back(std::move(projectile));
             }
@@ -483,7 +489,8 @@ private:
             if(mainChar->checkCollision(*enemies[e])){
                 mainChar->takeCollisionDamageFrom(enemies[e].get());
                 enemies[e]->takeCollisionDamageFrom(mainChar);
-                scheduleSoundToNextUpdate(mainChar->getCollisionSound());
+                float collisionSoundGain = 0.05f;
+                scheduleSoundToNextUpdate(mainChar->getCollisionSound(), collisionSoundGain);
             }
 
             if(enemies[e]->isPositionFarOutsideScreen(camera->getPositionX(), camera->getPositionY())){
@@ -571,8 +578,8 @@ private:
 
     }
 
-    void scheduleSoundToNextUpdate(int id){
-        audioEngine->scheduleSoundToUpdate(id, stageUpdatesCountTotal);
+    void scheduleSoundToNextUpdate(int id, float gain){
+        audioEngine->scheduleSoundToUpdate(id, stageUpdatesCountTotal, gain);
     }
 
 };

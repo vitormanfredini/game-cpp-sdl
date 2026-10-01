@@ -20,7 +20,7 @@ public:
         sword->setProjectileTexture(textureManager->loadTexture("images/projectile.png"));
         sword->setAttack(2.0f);
         sword->setFireFrequency(100);
-        sword->setFireSound(audioEngine->loadSound("audio/fu.wav"));
+        sword->setFireSound(audioEngine->loadSound("audio/fu.wav"), 0.1f);
         prototypes[WeaponId::Sword] = std::move(sword);
 
         std::unique_ptr<FireBallThrower> fireBallThrower = std::make_unique<FireBallThrower>();
@@ -28,7 +28,7 @@ public:
         fireBallThrower->setProjectileTexture(textureManager->loadTexture("images/projectile.png"));
         fireBallThrower->setAttack(0.5f);
         fireBallThrower->setFireFrequency(20);
-        fireBallThrower->setFireSound(audioEngine->loadSound("audio/pew.wav"));
+        fireBallThrower->setFireSound(audioEngine->loadSound("audio/pew.wav"), 0.3f);
         prototypes[WeaponId::FireBall] = std::move(fireBallThrower);
 
         std::unique_ptr<BossGun> bossGun = std::make_unique<BossGun>();
@@ -36,7 +36,7 @@ public:
         bossGun->setProjectileTexture(textureManager->loadTexture("images/dog.png"));
         bossGun->setAttack(0.5f);
         bossGun->setFireFrequency(20);
-        bossGun->setFireSound(audioEngine->loadSound("audio/pew.wav"));
+        bossGun->setFireSound(audioEngine->loadSound("audio/pew.wav"), 0.3f);
         prototypes[WeaponId::FireBall] = std::move(bossGun);
 
     }
