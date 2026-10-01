@@ -1,12 +1,6 @@
 # rage against the bad machines
 
 TODO:
-- load music from audio/song2.
-    - levelx is the main loop
-    - if levelxvariation exists it should play on measures 2 and 4
-    - if levelxfill exists it should play on measure 4 (overrides variation)
-    - if levelxoutro exists it should play on the last measure of this level (2 or 4)
-    - when a level changes, wait for measure 2 or 4 to finish before changing to next level audios.
 - BUG? Sometimes main weapon fires as like boss weapon
 - clean up spaghetti code in BossGun.h, it can be turned into a "Weapon of Weapons". Waves and Rotating can be individual Weapons managed by it.
 - make debris animate when enemies die
