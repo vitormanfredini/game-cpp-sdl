@@ -224,6 +224,14 @@ public:
                 renderer->addRenderable(renderable);
             }
 
+            struct y_less_than {
+                inline bool operator() (const std::unique_ptr<Character>& obj1, const std::unique_ptr<Character>& obj2)
+                {
+                    return obj1->getY() < obj2->getY();
+                }
+            };
+
+            std::sort(enemies.begin(), enemies.end(), y_less_than());
             for(std::unique_ptr<Character>& enemy : enemies){
                 renderer->addRenderable(enemy.get());
             }

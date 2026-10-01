@@ -57,15 +57,7 @@ public:
         return { decideAudio() };
     }
 
-    // int getCurrentBeat(){
-    //     if(currentSection >= static_cast<int>(sections.size())){
-    //         return 0;
-    //     }
-    //     return sections[currentSection].beat;
-    // }
-
     void triggerSectionChange(int sectionToTrigger){
-        std::cout << "triggerSectionChange() sectionToTrigger " << sectionToTrigger << std::endl;
         nextSection = sectionToTrigger;
     }
 
@@ -75,14 +67,25 @@ private:
     std::vector<Section> sections = {};
 
     int decideAudio(){
+
+        // 4 beats (0 to 3):
+        // 0: main sound
+        // 1: if ending the section, outro sound
+        //    if not ending the section, variation sound
+        //    if variation doesnt exist, main sound
+        // 2: main sound
+        // 3: if ending the section, outro sound
+        //    if not ending the section, fill sound
+        //    if fill doesnt exist, variation sound
+        //    if variation doesnt exist, main sound
+
         int currentBeat = sections[currentSection].beat;
-        std::cout << "section " << currentSection << ". nextSection " << nextSection << ". beat " << currentBeat << std::endl;
         sections[currentSection].beat += 1;
         if(sections[currentSection].beat >= 4){
             sections[currentSection].beat = 0;
         }
+
         bool isSectionEnding = currentSection != nextSection;
-        
         int currentMainSoundId = sections[currentSection].mainSoundId;
         int currentFillSoundId = sections[currentSection].fillSoundId;
         int currentVariationSoundId = sections[currentSection].variationSoundId;
@@ -109,6 +112,9 @@ private:
             }
             if(currentFillSoundId > 0){
                 return currentFillSoundId;
+            }
+            if(currentVariationSoundId > 0){
+                return currentVariationSoundId;
             }
         }
 
