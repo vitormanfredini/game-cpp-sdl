@@ -48,10 +48,9 @@ public:
 
     std::vector<UpgradeOption> createRandomUpgradeOptions(size_t max, std::vector<WeaponId> weaponIds){
 
-        auto& itemsVector = prototypes[UpgradeId::Item];
-        while (itemsVector.size() < max) {
-            itemsVector.push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
-            itemsVector.push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
+        while (prototypes[UpgradeId::Item].size() < max) {
+            prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Health), 1, "Poção de vida"));
+            prototypes[UpgradeId::Item].push_back(std::make_unique<UpgradeComponent>(UpgradeId::Item, itemFactory->create(ItemId::Gem), 1, "Gem"));
         }
 
         std::shuffle(std::begin(prototypes[UpgradeId::Weapon]), std::end(prototypes[UpgradeId::Weapon]), randomEngine);
@@ -104,13 +103,16 @@ public:
             });
         }
 
-        for(size_t c=0;options.size() < max; c++){
+        for(size_t c=0;c < max; c++){
             options.push_back({
                 UpgradeId::Item,
                 c,
                 prototypes[UpgradeId::Item].front()->getType(),
                 prototypes[UpgradeId::Item].front()->getDescription(options.size()+1)
             });
+            if(options.size() >= max){
+                break;
+            }
         }
 
         return options;

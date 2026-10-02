@@ -37,7 +37,7 @@ public:
         bossGun->setAttack(0.5f);
         bossGun->setFireFrequency(20);
         bossGun->setFireSound(audioEngine->loadSound("audio/pew.wav"), 0.3f);
-        prototypes[WeaponId::FireBall] = std::move(bossGun);
+        prototypes[WeaponId::BossGun] = std::move(bossGun);
 
     }
 

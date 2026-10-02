@@ -311,7 +311,7 @@ public:
         prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::MetalSmall2);
         prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::Oil);
         prototypes[CharacterType::FinalBoss]->addDebrisType(DebrisFactory::Type::Oil2);
-        prototypes[CharacterType::FinalBoss]->addWeapon(weaponFactory->create(WeaponId::FireBall));
+        prototypes[CharacterType::FinalBoss]->addWeapon(weaponFactory->create(WeaponId::BossGun));
     }
 
     std::unique_ptr<Character> create(CharacterType characterType) {

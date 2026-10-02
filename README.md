@@ -1,7 +1,6 @@
 # rage against the bad machines
 
 TODO:
-- BUG? Sometimes main weapon fires as like boss weapon
 - clean up spaghetti code in BossGun.h, it can be turned into a "Weapon of Weapons". Waves and Rotating can be individual Weapons managed by it.
 - make debris animate when enemies die
 - make enemies do some animation when they die before disappearing
